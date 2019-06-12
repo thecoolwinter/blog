@@ -2,7 +2,7 @@
 baseurl: ""
 url: "https://thecoolwinter.github.io"
 title: WindChill Blog # site's title
-description: "My blog for awesome swift, iOS, javascript and HTML code." # used by search engines
+description: "My blog for awesome swift, iOS, javascript and HTML." # used by search engines
 
 defaults:
   - 
@@ -16,20 +16,19 @@ theme_settings:
   # Meta
   avatar: assets/img/triangle.png
   color_image: /assets/img/lineart.png # In post when you set color
-  favicon: assets/favicon.ico
+  favicon: assets/swift.ico
 
   # Header and footer text
-  header_text: Change header text in <code>_config.yml</code>
-  header_feature_image: assets/img/pexels/triangular.jpeg
-  footer_text: >
-    Powered by <a href="https://jekyllrb.com/">Jekyll</a> with <a href="https://github.com/sylhare/Type-on-Strap">Type on Strap</a>
+  header_text: 
+  header_feature_image: 
+  footer_text: Copyright WindChillMedia 2019
 
   # Icons
   rss: true  # Make sure you created a feed.xml with feed.xml layout
   email_address: # Full email address, e.g. "sam@example.com"
   behance:
   bitbucket:
-  dribbble:
+  dribbble: 
   facebook:
   flickr:
   gitlab:
@@ -63,7 +62,7 @@ theme_settings:
     email: true
 
   # Scripts / Features 
-  google_analytics: # Tracking ID, e.g. "UA-000000-01"
+  google_analytics:  "UA-141921853-1" # Tracking ID, e.g. "UA-000000-01"
   disqus_shortname:
   katex: true # Enable if using math markup
 
