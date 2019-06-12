@@ -1,8 +1,9 @@
 # SITE CONFIGURATION
 baseurl: ""
 url: "https://thecoolwinter.github.io"
-title: WindChill Blog # site's title
+title: WindChillBlog # site's title
 description: "My blog for awesome swift, iOS, javascript and HTML." # used by search engines
+future: true
 
 defaults:
   - 

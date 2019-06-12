@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Subscribing to RSS feeds using IFTTT
+hide_title: true   
 tags: [IFTTT, Firebase, Firebase Functions]
 ---
 # Subscribing to RSS feeds using IFTTT
