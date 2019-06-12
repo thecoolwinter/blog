@@ -1,8 +1,8 @@
 # SITE CONFIGURATION
-baseurl: "/Type-on-Strap"
-url: "https://sylhare.github.io"
-title: Type on Strap # site's title
-description: "A website with blog posts and pages" # used by search engines
+baseurl: ""
+url: "https://thecoolwinter.github.io"
+title: WindChill Blog # site's title
+description: "My blog for awesome swift, iOS, javascript and HTML code." # used by search engines
 
 defaults:
   - 
@@ -33,7 +33,7 @@ theme_settings:
   facebook:
   flickr:
   gitlab:
-  github: "sylhare"
+  github: "thecoolwinter"
   google_plus:
   instagram:
   keybase:
@@ -41,7 +41,7 @@ theme_settings:
   pinterest:
   reddit:
   soundcloud:
-  stack_exchange:  # Full URL
+  stack_exchange: "https://stackoverflow.com/users/10453550/thecoolwinter" # Full URL
   steam:
   tumblr:
   twitter: # "twitter username"
@@ -51,9 +51,9 @@ theme_settings:
 
   # Sharing options
   share_buttons:
-    facebook: true
+    facebook:
     twitter: true
-    google_plus: true
+    google_plus:
     tumblr:
     pinterest:
     pocket:
@@ -93,14 +93,10 @@ paginate_path: "blog/page:num"
 
 # AUTHORS
 authors:
-  mhagnumdw: # author-id
-    name: MhagnumDw
+  thecoolwinter:
+    name: Khan Winter
     avatar: "assets/img/avatars/mhagnumdw_avatar.jpg"
-    url: 
-  sylhare:
-    name: Sylhare
-    avatar: "assets/img/avatars/sylhare_avatar.png"
-    url: "https://github.com/sylhare"
+    url: "https://thecoolwinter.github.io"
 
 # PORTFOLIO
 collections:
