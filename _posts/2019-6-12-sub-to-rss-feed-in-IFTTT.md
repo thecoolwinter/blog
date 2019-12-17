@@ -30,7 +30,7 @@ Click on the 'Go to console' button in the top right corner and create a project
 
 Now that you have a project started, you should see a screen like this one:
 
-![2019-6-12-firebaseHome](/Users/khan/Desktop/blog/assets/img/posts/2019-6-12-firebaseHome.png)
+![2019-6-12-firebaseHome](./assets/img/posts/2019-6-12-firebaseHome.png)
 
 Head to Functions in the left-hand menu.
 
@@ -38,7 +38,7 @@ Head to Functions in the left-hand menu.
 
 You should be at this page:
 
-![New IFTTT Applet](/Users/khan/Desktop/blog/assets/img/posts/2019-6-12-newApplet.png)
+![New IFTTT Applet](./assets/img/posts/2019-6-12-newApplet.png)
 
 Next, add an event by pressing 'this'.
 
@@ -46,7 +46,7 @@ Search for RSS and click on the resulting category to add it. You should see an 
 
 Then enter in the url of your RSS feed. Like so:
 
-![2019-6-12-rssApplet](/Users/khan/Desktop/blog/assets/img/posts/2019-6-12-rssApplet.png)
+![2019-6-12-rssApplet](./assets/img/posts/2019-6-12-rssApplet.png)
 
 Then create the trigger.
 
