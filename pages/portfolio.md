@@ -1,10 +1,8 @@
 --- 
 layout: page
 title : Portfolio 
-permalink: /portfolio/
-subtitle: "Projects I am working on" 
+permalink: https://thecoolwinter.github.io
+subtitle: "My portfolio" 
 feature-img: "assets/img/pexels/computer.jpeg"
 tags: [Archive]
 ---
-
-{% include portfolio.html %}
