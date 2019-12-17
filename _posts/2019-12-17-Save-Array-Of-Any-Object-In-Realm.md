@@ -56,7 +56,7 @@ The getter simply maps the `_collars` object to an array and returns the array.
 
 ```swift
 get {
-	return _collars.map{ $0 }
+  return _collars.map{ $0 }
 }
 ```
 
