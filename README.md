@@ -3,6 +3,14 @@
 [![Build Status](https://travis-ci.org/sylhare/Type-on-Strap.svg?branch=master)](https://travis-ci.org/sylhare/Type-on-Strap)
 [![Gem Version](https://badge.fury.io/rb/type-on-strap.svg)](https://badge.fury.io/rb/type-on-strap)
 
+
+
+# My Blog!
+
+
+
+###### ignore lol
+
 A free and open-source [Jekyll](https://jekyllrb.com) theme. Based on Rohan Chandra [type-theme](https://github.com/rohanchandra/type-theme) with a few new features:
 
 * Responsive design
@@ -17,7 +25,7 @@ A free and open-source [Jekyll](https://jekyllrb.com) theme. Based on Rohan Chan
 * Free of rights images from [pexels](https://www.pexels.com/)
 
 > [Demo](https://sylhare.github.io/Type-on-Strap/)
- 
+
 [![Default Type on Strap blog](https://github.com/Sylhare/Type-on-Strap/blob/master/screenshot.png?raw=true)](https://sylhare.github.io/Type-on-Strap/)
 
 ## Table of Contents
@@ -67,7 +75,7 @@ jekyll-theme-basically-basic
 ├── _config.yml                # sample configuration
 └── index.html                 # sample home page (blog page paginated)
 ```
-	
+
 ## Configure Type on Strap
 
 Open `_config.yml` in a text editor to change most of the blog's settings.

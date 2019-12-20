@@ -10,7 +10,7 @@ published: true
 
 # Save and retrieve arrays of objects in Realm Swift
 
-###### The problem: Realm only allows you to save lists of objects (like arrays) in the `List<T>` format.
+### The problem: Realm only allows you to save lists of objects (like arrays) in the `List<T>` format.
 
 For instance we'll take this dog object. The dog can have multiple Collars, but you have to store them in a list like so.
 
