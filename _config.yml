@@ -65,7 +65,7 @@ theme_settings:
   # Scripts / Features 
   google_analytics:  "UA-141921853-1" # Tracking ID, e.g. "UA-000000-01"
   disqus_shortname:
-  katex: true # Enable if using math markup
+  katex: false # Enable if using math markup
 
   # Localization strings
   str_follow_on: "Follow on"
@@ -82,7 +82,7 @@ theme_settings:
   str_javascript_required_disqus: "Please enable JavaScript to view comments."
 
   # Post navigation
-  post_navigation: false
+  post_navigation: true
 
   # Colours, typography and padding
   # Open the "_sass > base" folder, and open "_variables.scss"
