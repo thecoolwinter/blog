@@ -18,15 +18,14 @@ Somewhere in your startup code -I use a container view for all my views, but the
 
 ```swift
 func setAuthListener() {
-		Auth.auth().addStateDidChangeListener { (auth, user) in
-			if user == nil {
-				// The user is either logged out, or something went wrong. 
-        // You can use the Auth.auth().currentUser.reload() function 
-        //	 to try to find the error using the FIRErrorCode enum
-			}
-			
-		}
+	Auth.auth().addStateDidChangeListener { (auth, user) in
+		if user == nil {
+			// The user is either logged out, or something went wrong. 
+			// You can use the Auth.auth().currentUser.reload() function 
+			//	 to try to find the error using the FIRErrorCode enum
+		}	
 	}
+}
 ```
 
 Then just fire that function somewhere at the start of your app.
