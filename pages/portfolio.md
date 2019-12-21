@@ -1,7 +1,7 @@
 ---
 layout: page
 title : Portfolio 
-permalink: https://thecoolwinter.github.io
+permalink: 
 subtitle: "My portfolio" 
 feature-img: "assets/img/pexels/computer.jpeg"
 tags: [Archive]
