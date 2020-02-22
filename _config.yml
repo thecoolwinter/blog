@@ -64,7 +64,7 @@ theme_settings:
 
   # Scripts / Features 
   google_analytics:  "UA-158895203-1" # Tracking ID, e.g. "UA-000000-01"
-  disqus_shortname:
+  disqus_shortname: "windchillblog"
   katex: false # Enable if using math markup
 
   # Localization strings
