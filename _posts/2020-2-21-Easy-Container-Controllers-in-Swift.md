@@ -17,3 +17,4 @@ Container controllers are like a larger, older brother to the UIViewController. 
 Container controllers do a few things that make life as a developer much easier. First, they naturally separate your UI code into two parts. Instead of having your `Auth.onSignOut()` function in your AppDelegate (which can get very messy, very quick among other reasons not to do that), you have the `Auth.onSignOut()` happen in a separated, clean container that can directly interact with it's sub-controllers without having to use any `window.controllers.first` junk.
 
 # Sounds good to me. How do I do this?
+
