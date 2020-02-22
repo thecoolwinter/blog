@@ -22,7 +22,7 @@ theme_settings:
   # Header and footer text
   header_text: 
   header_feature_image: 
-  footer_text: Copyright WindChillMedia 2019
+  footer_text: Copyright WindChillMedia 2020
 
   # Icons
   rss: true  # Make sure you created a feed.xml with feed.xml layout

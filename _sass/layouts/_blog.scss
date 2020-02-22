@@ -24,16 +24,16 @@
     }
 
     //For white images
-    p,
-    a,
-    li,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5 {
-        @extend .header-txt-shadow;
-    }
+    // p,
+    // a,
+    // li,
+    // h1,
+    // h2,
+    // h3,
+    // h4,
+    // h5 {
+    //     @extend .header-txt-shadow;
+    // }
 
     p:last-child {
         margin-bottom: 0;
