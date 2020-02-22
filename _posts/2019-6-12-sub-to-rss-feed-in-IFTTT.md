@@ -1,14 +1,13 @@
 ---
 layout: post
 title: Sending firebase notifications for an RSS post
-hide_title: true   
+hide_title: false   
 tags: [IFTTT, Firebase, Firebase Functions]
 excerpt: Use webhooks and cloud functions to automate notifications for your favorite blog.
 author: thecoolwinter
 published: false
 ---
-# Sending firebase notifications for an RSS post
-### Use webhooks and cloud functions to automate notifications for your favorite blog.
+## Use webhooks and cloud functions to automate notifications for your favorite blog.
 
 I had an idea, my favorite author (Patrick Rothfus) is currently writing his next book. I was bored, so I decided to create an app to send me a notification when he posted his next blog post. To accomplish this I decided to use a combination of two free services: Google Firebase and IFTTT.
 
@@ -30,7 +29,7 @@ Click on the 'Go to console' button in the top right corner and create a project
 
 Now that you have a project started, you should see a screen like this one:
 
-![2019-6-12-firebaseHome](./assets/img/posts/2019-6-12-firebaseHome.png)
+![2019-6-12-firebaseHome](../assets/img/posts/2019-6-12-firebaseHome.png)
 
 Head to Functions in the left-hand menu.
 
@@ -38,7 +37,7 @@ Head to Functions in the left-hand menu.
 
 You should be at this page:
 
-![New IFTTT Applet](./assets/img/posts/2019-6-12-newApplet.png)
+![New IFTTT Applet](../assets/img/posts/2019-6-12-newApplet.png)
 
 Next, add an event by pressing 'this'.
 
@@ -46,7 +45,7 @@ Search for RSS and click on the resulting category to add it. You should see an 
 
 Then enter in the url of your RSS feed. Like so:
 
-![2019-6-12-rssApplet](./assets/img/posts/2019-6-12-rssApplet.png)
+![2019-6-12-rssApplet](../assets/img/posts/2019-6-12-rssApplet.png)
 
 Then create the trigger.
 

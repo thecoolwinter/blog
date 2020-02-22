@@ -1,16 +1,14 @@
 ---
 layout: post
 title: Save Arrays of Objects in Realm
-hide_title: true
+hide_title: false
 tags: [Realm, Swift, iOS]
 excerpt: Create a mapping field on a realm object to easily save and retrieve arrays of anything from a realm object.
 author: thecoolwinter
 published: true
 ---
 
-# Save and retrieve arrays of objects in Realm Swift
-
-### The problem: Realm only allows you to save lists of objects (like arrays) in the `List<T>` format.
+## The problem: Realm only allows you to save lists of objects (like arrays) in the `List<T>` format.
 
 For instance we'll take this dog object. The dog can have multiple Collars, but you have to store them in a list like so.
 
@@ -44,6 +42,7 @@ class Dog: Object {
         _collars.append(objectsIn: newValue)
       }
     }
+  	// The original property is here, we simply renamed it and added the above collar variable.
   	let _collars = List<Collar>()
 }
 ```
@@ -70,3 +69,4 @@ try! realm.write {
 }
 ```
 
+This method makes it easier to work with the `List<>` object and allows for simpler, easier to read code in the rest of your app.
