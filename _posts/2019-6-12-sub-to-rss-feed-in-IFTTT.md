@@ -7,6 +7,14 @@ excerpt: Use webhooks and cloud functions to automate notifications for your fav
 author: thecoolwinter
 published: false
 ---
+# Send firebase notifications for an RSS post
+
+##### Use webhooks and cloud functions to automate notifications for your favorite blog.
+
+------
+
+
+
 ## Use webhooks and cloud functions to automate notifications for your favorite blog.
 
 I had an idea, my favorite author (Patrick Rothfus) is currently writing his next book. I was bored, so I decided to create an app to send me a notification when he posted his next blog post. To accomplish this I decided to use a combination of two free services: Google Firebase and IFTTT.
