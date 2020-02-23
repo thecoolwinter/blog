@@ -4,6 +4,7 @@ permalink: /sitemap/xml/
 title: "Sitemap XML File For Google Search Indexing"
 sitemap:
   exclude: 'yes'
+hide: 'yes'
 ---
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
