@@ -27,8 +27,8 @@ extension UIViewController {
   it takes care of adding the child, adding the view as a subview and then 
   telling the subview that it's moved to a new parent.
 */
-	func add(_ child: UIViewController) {
-  	addChild(child)
+  func add(_ child: UIViewController) {
+    addChild(child)
     view.addSubview(child.view)
     child.didMove(toParent: self)
   }
@@ -39,11 +39,11 @@ extension UIViewController {
   func remove() {
 // First we check if the parent view controller exists, 
 // if not we can stop the whole thing right now.
-  	guard parent != nil else { return }
+    guard parent != nil else { return }
 		
 // Here we enumerate through each subview telling them that their
 // going to be removed and then removing them.
-		children.forEach({ 
+    children.forEach({ 
       $0.willMove(toParent: nil)
       $0.view.removeFromSuperview() 
       $0.removeFromParent() 
@@ -70,26 +70,26 @@ import UIKit
 
 class ContainerController: UIViewController {
 	
-	static let shared = ContainerController()
+  static let shared = ContainerController()
 	
-	var displayedView: UIViewController?
+  var displayedView: UIViewController?
 	
-	override func viewDidLoad() {
-		super.viewDidLoad()
+  override func viewDidLoad() {
+    super.viewDidLoad()
 		
-		if displayedView == nil {
-			displayedView = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
-			add(displayedView!)
-		}
-	}
+    if displayedView == nil {
+      displayedView = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
+      add(displayedView!)
+    }
+  }
 	
-	public func transitionTo(_ view: UIViewController) {
-		if displayedView != nil{
-			displayedView!.remove()
-		}
-		add(view)
-		displayedView = view
-	}
+  public func transitionTo(_ view: UIViewController) {
+    if displayedView != nil{
+      displayedView!.remove()
+    }
+    add(view)
+    displayedView = view
+  }
 }
 ```
 
@@ -97,7 +97,7 @@ Simple. In it we give a simple UIViewController with one method called `transiti
 
 We also added a default view to be displayed in the `viewDidLoad()`. It just makes sure that when we initialize this class it automatically populates the `displayedView` variable. In this example I intitialize the root controller from the `main` storyboard, but you can replace it with any view controller or even omit this code entirely.
 
-Also! I created a singleton by adding a `static let shared = ContainerController()` variable. You can read more about singletons [here]() but they basically make it so we can keep track of one container controller for the entire app.
+Also! I created a singleton by adding a `static let shared = ContainerController()` variable. You can read more about singletons [here](https://cocoacasts.com/what-is-a-singleton-and-how-to-create-one-in-swift) but they basically make it so we can keep track of one container controller for the entire app.
 
 <small>TL;DR: Some people dislike singletons. However, in this case the ability to access the container controller from anywhere in your app without having to implement a delegate method or callback into every single view controller greatly outweighs the tiny bit of overhead a singleton creates. </small>
 
@@ -111,35 +111,35 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     
-		var controller: UIViewController!
+    var controller: UIViewController!
 		
-		let container = ContainerController.shared
+    let container = ContainerController.shared
 		
     // In this example I'm using FirebaseAuth for authentication.
     // I check if a user is logged in, and if they are I send them
     // to the "Admin" view. Otherwise they go to the "Auth" view.
-		if Auth.auth().currentUser != nil {
+    if Auth.auth().currentUser != nil {
       
-			let storyboard = UIStoryboard(name: "Admin", bundle: nil)
-			controller = storyboard.instantiateInitialViewController()!
+      let storyboard = UIStoryboard(name: "Admin", bundle: nil)
+      controller = storyboard.instantiateInitialViewController()!
       
-		} else {
+    } else {
       
-			let storyboard = UIStoryboard(name: "Auth", bundle: nil)
-			controller = storyboard.instantiateInitialViewController()!
+      let storyboard = UIStoryboard(name: "Auth", bundle: nil)
+      controller = storyboard.instantiateInitialViewController()!
       
-		}
+    }
 		
     // Make the container the root view controller.
-		self.window?.rootViewController = container
-		self.window?.makeKeyAndVisible()
+    self.window?.rootViewController = container
+    self.window?.makeKeyAndVisible()
         
     // Transition to the pre-defined controller
     container.transitionTo(controller)
     
-		return true
+    return true
   }
 
 }
