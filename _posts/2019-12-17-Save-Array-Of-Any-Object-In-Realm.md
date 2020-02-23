@@ -6,6 +6,8 @@ tags: [Realm, Swift, iOS]
 excerpt: Create a mapping field on a realm object to easily save and retrieve arrays of anything from a realm object.
 author: thecoolwinter
 published: true
+sitemap:
+  lastmod: 2019-12-17
 ---
 
 ## The problem: Realm only allows you to save lists of objects (like arrays) in the `List<T>` format.

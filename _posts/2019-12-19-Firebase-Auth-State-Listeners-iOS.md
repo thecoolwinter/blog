@@ -5,6 +5,8 @@ tags: [Firebase, Swift, iOS]
 excerpt: Receive notification when firebase users auth state changes on iOS.
 author: thecoolwinter
 published: true
+sitemap:
+  lastmod: 2019-12-19
 ---
 
 ## Firebase auth lets you pass a handler function when the auth state changes.

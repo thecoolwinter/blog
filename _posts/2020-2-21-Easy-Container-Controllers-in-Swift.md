@@ -4,6 +4,9 @@ title: Easy Container Controllers in Swift
 tags: [Swift, iOS, UIKit]
 excerpt: Create a container controller to separate and simplify your UIKit views.
 author: thecoolwinter
+sitemap:
+  lastmod: 2020-02-23
+  priority: 1
 ---
 
 ## What are container controllers?
