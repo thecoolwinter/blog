@@ -5,7 +5,6 @@ hide_title: false
 tags: [IFTTT, Firebase, Firebase Functions]
 excerpt: Use webhooks and cloud functions to automate notifications for your favorite blog.
 author: thecoolwinter
-published: false
 ---
 ## Use webhooks and cloud functions to automate notifications for your favorite blog.
 

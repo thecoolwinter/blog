@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Firebase Auth State Listeners iOS
-tags: [Realm, Swift, iOS]
+tags: [Firebase, Swift, iOS]
 excerpt: Receive notification when firebase users auth state changes on iOS.
 author: thecoolwinter
 published: true
