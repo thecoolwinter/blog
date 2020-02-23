@@ -7,14 +7,6 @@ author: thecoolwinter
 published: false
 ---
 
-# Easy Container Controllers in Swift
-
-##### Create a container controller to simplify your UIViewControllers.
-
-------
-
-
-
 ## What are container controllers?
 
 Container controllers are like a larger, older brother to the UIViewController. They come in extremely handy when dealing with things like Auth state and UIView transitions. UIKit already comes with a few container controllers pre-installed. Some examples of these are the `UINavigationController`, or the `UITabViewController`. Each of those controllers have one or more sub-controllers and help with things like transitions or UI that needs to stay similar between each of the sub-controllers they contain.

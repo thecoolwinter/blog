@@ -8,14 +8,6 @@ author: thecoolwinter
 published: true
 ---
 
-# Save Arrays of Objects in Realm
-
-##### Create a mapping field on a realm object to easily save and retrieve arrays of anything from a realm object.
-
-------
-
-
-
 ## The problem: Realm only allows you to save lists of objects (like arrays) in the `List<T>` format.
 
 For instance we'll take this dog object. The dog can have multiple Collars, but you have to store them in a list like so.

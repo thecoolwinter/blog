@@ -7,14 +7,6 @@ author: thecoolwinter
 published: true
 ---
 
-# Firebase Auth State Listeners in iOS
-
-##### Receive notification when firebase users auth state changes on iOS.
-
-------
-
-
-
 ## Firebase auth lets you pass a handler function when the auth state changes.
 
 In my use case I need to receive state change alerts. My user might be disabled by an admin or a bot, or the account is stopped for security reasons. But, I need to update user interfaces and data code to match that the user is logged out.
