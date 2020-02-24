@@ -78,7 +78,7 @@ theme_settings:
   str_next_post: "Next post"
   str_previous_post: "Previous post"
   str_next_page: "Next Page"
-  str_previous_page: "Previos Page"
+  str_previous_page: "Previous Page"
   str_javascript_required_disqus: "Please enable JavaScript to view comments."
 
   # Post navigation

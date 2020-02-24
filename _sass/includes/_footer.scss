@@ -6,6 +6,17 @@
     color: lighten($text-color, 24%);
     font-size: 0.9em;
 
+    .footer-items {
+        ul {
+            list-style: none;
+            white-space:nowrap;
+            li {
+                display: inline; 
+                padding: 3px;
+            }
+        }
+    }
+
     .footer-icons {
         ul {
             list-style: none;
