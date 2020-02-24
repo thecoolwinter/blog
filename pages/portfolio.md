@@ -11,7 +11,7 @@ tags: [Archive]
 
 [FuelingTimer](https://apps.apple.com/us/app/fueling-timer/id1453121223) is my most successful app on the iOS app store with over 2,000 users. It's a simple diet-timer app for people who follow the Optavia diet. Optavia requires you to eat 4 or 5 times a day, and sometimes it's hard to remember to eat at all those times, so I made an app that sends reminders throughout the day at specified intervals to help remind people.
 
-![](../assets/img/posts/fuelingTimerImage.png)
+![App Icon](../assets/img/posts/fuelingTimerImage.png)
 
 
 # ClearBudget β
