@@ -2,7 +2,7 @@
 baseurl: ""
 url: "windchillblog.com"
 title: WindChillBlog # site's title
-description: "My blog for useful code" # used by search engines
+description: "Fun and Useful Swift and Web Code" # used by search engines
 future: true
 
 defaults:
