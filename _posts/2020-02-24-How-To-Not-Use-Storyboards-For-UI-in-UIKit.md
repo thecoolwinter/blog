@@ -1,6 +1,6 @@
 ---
 layout: post
-title: How To Not Use Storyboards For UI in UIKit 
+title: Programatic UI in UIKit without Storyboards
 hide_title: false
 tags: [Swift, UIKit]
 excerpt: Use simple functions and layout anchors to create a simple UI without storyboards.
