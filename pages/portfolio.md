@@ -3,7 +3,7 @@ layout: page
 title : Portfolio 
 permalink: 
 subtitle: "My portfolio" 
-feature-img: "assets/img/pexels/about_background.jpg"
+# feature-img: "assets/img/pexels/about_background.jpg"
 tags: [Archive]
 ---
 
