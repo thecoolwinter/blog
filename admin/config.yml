@@ -47,6 +47,6 @@ collections:
             widget: "date"
             format: "YYYY-MM-DD"
       - label: "Content"
-        name: "content"
+        name: "body"
         widget: "markdown"
         
