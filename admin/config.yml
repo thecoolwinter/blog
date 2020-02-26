@@ -46,3 +46,7 @@ collections:
             name: "lastmod"
             widget: "date"
             format: "YYYY-MM-DD"
+      - label: "Content"
+        name: "content"
+        widget: "markdown"
+        
