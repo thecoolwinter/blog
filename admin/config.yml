@@ -1,0 +1,48 @@
+backend:
+    name: github
+    repo: thecoolwinter/blog
+
+publish_mode: editorial_workflow
+media_folder: "assets/img/posts"
+
+collections:
+  - name: "post"
+    label: "Post"
+    folder: "_posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - label: "Layout"
+        name: "layout"
+        widget: "hidden"
+        default: "post"
+      - label: "Author"
+        name: "author"
+        widget: "hidden"
+        default: "thecoolwinter"
+      - label: "Hide Title"
+        name: "hide_title"
+        widget: "hidden"
+        default: false
+      - label: "Title"
+        name: "title"
+        widget: "string"
+      - label: "Tags"
+        name: "tags"
+        widget: "list"
+        default: ["iOS"]
+      - label: "Excerpt"
+        name: "excerpt"
+        widget: "string"
+      - label: "Published"
+        name: "published"
+        widget: "boolean"
+        default: false
+      - label: "Site Map"
+        name: "sitemap"
+        widget: "object"
+        fields: 
+          - label: "Last Modification"
+            name: "lastmod"
+            widget: "date"
+            format: "YYYY-MM-DD"
