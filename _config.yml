@@ -99,22 +99,22 @@ authors:
     url: "https://thecoolwinter.github.io"
 
 # PORTFOLIO
-# collections:
-#   snippets:
-#     output: true
-#     permalink: /:collection/:title
-#     name: "Snippets"
-#     excerpt: "Quick Bits of Code."
-#   articles:
-#     output: true
-#     permalink: /:collection/:title
-#     name: "Posts"
-#     excerpt: "All My Posts"
-#   how-tos:
-#     output: true
-#     permalink: /:collection/:title
-#     name: "How To's"
-#     excerpt: "Learn To Make Something"
+collections:
+  snippets:
+    output: true
+    permalink: /:collection/:title
+    name: "Snippets"
+    excerpt: "Quick Bits of Code."
+  articles:
+    output: true
+    permalink: /:collection/:title
+    name: "Posts"
+    excerpt: "All My Posts"
+  how-tos:
+    output: true
+    permalink: /:collection/:title
+    name: "How To's"
+    excerpt: "Learn To Make Something"
 
 # BUILD SETTINGS
 markdown: kramdown
@@ -122,7 +122,19 @@ highlighter: rouge
 sass:
   sass_dir: _sass
   style: :compressed
-plugins: [jekyll-paginate, jekyll-seo-tag]
+plugins: 
+  - jekyll-paginate 
+  - jekyll-seo-tag
+  - jekyll-feed
+  - jekyll/tagging
+  - jekyll-tagging-related_posts
+#/feed/<COLLECTION>.xml
+feed:
+  excerpt_only: true
+  collections:
+    - snippets
+    - articles
+    - how-tos
 exclude: [".jekyll-cache", "Gemfile", "Gemfile.lock", "type-on-strap.gemspec", "*.gem", ".idea",
           "LICENSE", "README.md", "screenshot.png", "assets/package.json", "assets/node_modules", "assets/gulpfile.js"]
 # theme: type-on-strap # Uncomment if using the theme as a jekyll theme gem
