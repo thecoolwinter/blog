@@ -1,6 +1,6 @@
 ---
 layout: null
-permalink: /sitemap/xml/
+permalink: /sitemap.xml
 title: "Sitemap XML File For Google Search Indexing"
 sitemap:
   exclude: 'yes'
