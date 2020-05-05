@@ -1,4 +1,26 @@
+<!-- <div class="collections">
+  {% for collection in site.collections %}
+  <div class="collection-teaser">
+    <div>
+      <h3>{{ collection.name }}</h3>
+      <p>{{ collection.excerpt }}</p>
+    </div>
+    <button type="button" >Show More</button>
+    {% for post in collection.docs %}
+    <div class="items">
+      <h1>
+        <a aria-label="{{ post.title }}" class="post-link" href="{{ post.url | relative_url }}">
+          {{ post.title }}
+        </a>
+      </h1>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div> -->
+
 <div class="posts">
+    <!-- <h3 class="name">More Articles</h1> -->
     {% for post in paginator.posts %}
     <div class="post-teaser">
         {% if post.thumbnail %}

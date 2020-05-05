@@ -100,9 +100,21 @@ authors:
 
 # PORTFOLIO
 collections:
-  portfolio:
+  snippets:
     output: true
-    permalink: /:collection/:name
+    permalink: /:collection/:title
+    name: "Snippets"
+    excerpt: "Quick Bits of Code."
+  articles:
+    output: true
+    permalink: /:collection/:title
+    name: "Posts"
+    excerpt: "All My Posts"
+  how-tos:
+    output: true
+    permalink: /:collection/:title
+    name: "How To's"
+    excerpt: "Learn To Make Something"
 
 # BUILD SETTINGS
 markdown: kramdown

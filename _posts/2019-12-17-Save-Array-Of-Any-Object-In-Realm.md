@@ -8,6 +8,7 @@ author: thecoolwinter
 published: true
 sitemap:
   lastmod: 2019-12-17
+categories: snippets
 ---
 
 ## The problem: Realm only allows you to save lists of objects (like arrays) in the `List<T>` format.

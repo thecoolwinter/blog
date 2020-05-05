@@ -7,6 +7,7 @@ author: thecoolwinter
 published: true
 sitemap:
   lastmod: 2019-12-19
+categories: snippets
 ---
 
 ## Firebase auth lets you pass a handler function when the auth state changes.

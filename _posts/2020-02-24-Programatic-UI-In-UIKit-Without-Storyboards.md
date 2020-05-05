@@ -8,11 +8,15 @@ author: thecoolwinter
 published: true
 sitemap:
   lastmod: 2020-02-25
+categories: how-tos
 ---
 
 ## Why are storyboards all that bad?
+
 #### Answer: They're not
-Really, storyboards are super good at helping create UI. They make it easy to see exactly what you're building and work with constraints on each view. Sometimes though, it's easier to not use them. For more repetitive views, using storyboards will be a pain, having to link every single input and output to your `UIViewController` file, copy-pasting the whole thing. It leads to bugs and spaghetti code. 
+Really
+
+, storyboards are super good at helping create UI. They make it easy to see exactly what you're building and work with constraints on each view. Sometimes though, it's easier to not use them. For more repetitive views, using storyboards will be a pain, having to link every single input and output to your `UIViewController` file, copy-pasting the whole thing. It leads to bugs and spaghetti code. 
 
 Sometimes though, in an app with many views storyboards get messy and overloaded. It then becomes easier to use programmatic views and try not to use storyboards. Otherwise there's no disadvantage to using them.
 

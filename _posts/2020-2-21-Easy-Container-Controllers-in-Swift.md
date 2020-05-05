@@ -7,6 +7,7 @@ author: thecoolwinter
 sitemap:
   lastmod: 2020-02-23
   priority: 1
+categories: how-tos
 ---
 
 ## What are container controllers?
