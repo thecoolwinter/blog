@@ -128,6 +128,7 @@ plugins:
   - jekyll-feed
   - jekyll/tagging
   - jekyll-tagging-related_posts
+  - jekyll-postfiles
 #/feed/<COLLECTION>.xml
 feed:
   excerpt_only: true

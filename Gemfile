@@ -1,5 +1,10 @@
 source "https://rubygems.org"
-gemspec
+gem 'jekyll'
 # gem 'jekyll-manager', group: :jekyll_plugins
-gem 'jekyll-feed'
-gem 'jekyll-tagging-related_posts'
+group :jekyll_plugins do 
+    gem 'jekyll-feed'
+    gem 'jekyll-tagging-related_posts'
+    gem 'jekyll-postfiles'  
+    gem 'jekyll-paginate'
+    gem 'jekyll-seo-tag'
+end
