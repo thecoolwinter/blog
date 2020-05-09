@@ -39,6 +39,19 @@
     padding: 0.5em 0.75em;
 }
 
+.sm-button {
+    border-radius: 0.3em;
+    border: 1px solid;
+    display: inline-block;
+    margin: 0.75em 0;
+    padding: 0.2em 0.5em;
+    font-size: 0.9rem;
+}
+
+a.sm-button {
+    @extend .button-link;
+}
+
 a.button {
     @extend .button-link;
 }

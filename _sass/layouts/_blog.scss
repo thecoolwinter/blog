@@ -166,4 +166,39 @@
     .excerpt {
         margin-top: 1em;
     }
+
+    .heading {
+        @extend %padding-regular;
+        padding-top: 0px;
+        width: 100%;
+        margin-bottom: 0;
+        display: inline-block;
+    }
+}
+
+.scrolling-wrapper {
+    height: 165px;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  
+    .card {
+        flex: 0 0 auto;
+        margin-right: 10px;
+    }
+
+    :-webkit-scrollbar {
+        display: none;
+      }
+}
+
+.card {
+    width: 150px;
+    height: 120px;
+    background: rgb(112,179,236);
+    background: linear-gradient(180deg, rgba(112,179,236,1) 0%, rgba(0,88,163,1) 100%); 
+    padding: 10px;
+    border-radius: 15px;
+    // white-space: ;
 }

@@ -1,0 +1,4 @@
+---
+permalink: /snippets/
+layout: snippets
+---

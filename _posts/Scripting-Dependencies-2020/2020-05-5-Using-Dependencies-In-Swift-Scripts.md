@@ -83,7 +83,7 @@ The last thing we need to make is a `Package.swift` file. This tells SPM what co
 
 Your file structure should look like this.
 
-![file structure](Screen Shot 2020-05-05 at 2.10.01 PM.png)
+![file structure](Screen Shot 2020-05-05 at 2.31.22 PM.png)
 
 Open Package.swift and copy-paste the following into the file.
 

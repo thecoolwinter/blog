@@ -1,5 +1,4 @@
 ---
-
 layout: post
 title: Scripting With Swift
 hide_title: false

@@ -1,0 +1,4 @@
+---
+permalink: /articles/
+layout: articles
+---

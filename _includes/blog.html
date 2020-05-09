@@ -1,26 +1,32 @@
-<!-- <div class="collections">
+<div class="collections">
   {% for collection in site.collections %}
+  {% if collection.name != nil %}
   <div class="collection-teaser">
     <div>
       <h3>{{ collection.name }}</h3>
       <p>{{ collection.excerpt }}</p>
     </div>
-    <button type="button" >Show More</button>
-    {% for post in collection.docs %}
-    <div class="items">
-      <h1>
-        <a aria-label="{{ post.title }}" class="post-link" href="{{ post.url | relative_url }}">
-          {{ post.title }}
-        </a>
-      </h1>
-    </div>
-    {% endfor %}
+    <a class="sm-button" href="/{{ collection.label }}/">Show More</a>
   </div>
+  <div class="scrolling-wrapper">
+  {% for post in site.posts %}
+  {% if post.categories contains collection.label or collection.label == "articles" %}
+    <div class="card">
+      <h5>
+        <a aria-label="{{ post.title }}" class="post-link" href="{{ post.url | relative_url }}">
+          {{ post.title | replace:" "," <wbr>"}}
+        </a>
+      </h5>
+    </div>
+    {% endif %}
   {% endfor %}
-</div> -->
+  </div>  
+  {% endif %}
+  {% endfor %}
+</div>
 
 <div class="posts">
-    <!-- <h3 class="name">More Articles</h1> -->
+    <h3 class="name">More Articles</h1>
     {% for post in paginator.posts %}
     <div class="post-teaser">
         {% if post.thumbnail %}

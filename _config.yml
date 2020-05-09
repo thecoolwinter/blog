@@ -2,7 +2,7 @@
 baseurl: ""
 url: "windchillblog.com"
 title: WindChillBlog # site's title
-description: "Useful Code" # used by search engines
+description: "Making Useful Code" # used by search engines
 future: true
 
 defaults:
@@ -98,7 +98,6 @@ authors:
     avatar: "assets/img/avatars/Khan.jpg"
     url: "https://thecoolwinter.github.io"
 
-# PORTFOLIO
 collections:
   snippets:
     output: true
