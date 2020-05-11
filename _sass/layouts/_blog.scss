@@ -103,6 +103,10 @@
     }
 }
 
+// a {
+//     transition: 0.25s;
+// }
+
 /* --- Post listing --- */
 .posts {
     .name {
@@ -200,5 +204,8 @@
     background: linear-gradient(180deg, rgba(112,179,236,1) 0%, rgba(0,88,163,1) 100%); 
     padding: 10px;
     border-radius: 15px;
-    // white-space: ;
+
+    a:hover {
+        color: #ffffff;
+    }
 }

@@ -56,6 +56,10 @@ a.button {
     @extend .button-link;
 }
 
+a {
+    transition: 0.25s;
+}
+
 .button-link {
     &:hover {
         background: $link-color;
