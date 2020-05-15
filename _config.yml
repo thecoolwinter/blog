@@ -4,6 +4,7 @@ url: "windchillblog.com"
 title: WindChillBlog # site's title
 description: "Making Useful Code" # used by search engines
 future: true
+logo: assets/img/wind_icon.png
 
 defaults:
   - 
@@ -128,7 +129,6 @@ plugins:
   - jekyll/tagging
   - jekyll-tagging-related_posts
   - jekyll-postfiles
-#/feed/<COLLECTION>.xml
 feed:
   excerpt_only: true
   collections:

@@ -7,7 +7,7 @@ excerpt: Create a mapping field on a realm object to easily save and retrieve ar
 author: thecoolwinter
 published: true
 sitemap:
-  lastmod: 2019-12-17
+  lastmod: 2020-05-14
 categories: snippets
 ---
 
