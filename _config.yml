@@ -1,4 +1,5 @@
 # SITE CONFIGURATION
+
 baseurl: ""
 url: "windchillblog.com"
 title: WindChillBlog # site's title
