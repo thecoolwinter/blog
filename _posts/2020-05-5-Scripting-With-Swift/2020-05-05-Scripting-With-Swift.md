@@ -7,7 +7,7 @@ excerpt: Make fast, simple scripts with your favorite language.
 author: thecoolwinter
 published: true
 sitemap:
-  lastmod: 2020-05-05
+  lastmod: 2020-11-04
 categories: snippets
 ---
 

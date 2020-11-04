@@ -7,7 +7,7 @@ excerpt: Install Jupyter Notebooks on a mac (Catalina) using homebrew
 author: thecoolwinter
 published: true
 sitemap:
-  lastmod: 2020-05-10
+  lastmod: 2020-11-04
 categories: snippets
 ---
 
@@ -44,4 +44,4 @@ Run that code in a cell in the notebook and let it install.
 
 #### Python location
 
-To find where python is located run `print(sys.executable)` in a cell after `import sys`. It'll print out the exact directory where jupyter's python is located.
+To find where python is located run `print(sys.executable)` in a jupyter cell after `import sys`. It'll print out the exact directory where jupyter's python is located.

@@ -7,7 +7,7 @@ excerpt: Use simple functions and layout anchors to create a simple UI without s
 author: thecoolwinter
 published: true
 sitemap:
-  lastmod: 2020-02-25
+  lastmod: 2020-11-04
 categories: how-tos
 ---
 
