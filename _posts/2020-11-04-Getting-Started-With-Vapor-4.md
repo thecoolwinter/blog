@@ -3,7 +3,7 @@ layout: post
 title: Getting Started With Vapor 4.0
 hide_title: false
 tags: [Swift, Vapor]
-excerpt: 
+excerpt: Building a small Toggl Clone using Vapor.
 author: thecoolwinter
 published: true
 sitemap:
