@@ -7,16 +7,15 @@ subtitle: "My portfolio"
 tags: [Archive]
 ---
 
+# OpenBudget
+
+OpenBudget is a budgeting app for regular people. I've been budgeting for years, and hated most budgeting app's UI's and controls. Each one I tried felt clanky and didn't feel like they cared about the user experience at all. So I set our to make OpenBudget a budgeting app that is simple, intuitive and easy to use.
+
+Now OpenBudget is available on the App Store for free, and was recently featured on Indie App Santa. It's a budgeting app allowing users to categorize their money and save easier and better. 
+
 # Fueling Timer
 
-[FuelingTimer](https://apps.apple.com/us/app/fueling-timer/id1453121223) is my most successful app on the iOS app store with over 2,000 users. It's a simple diet-timer app for people who follow the Optavia diet. Optavia requires you to eat 4 or 5 times a day, and sometimes it's hard to remember to eat at all those times, so I made an app that sends reminders throughout the day at specified intervals to help remind people.
+[FuelingTimer](https://apps.apple.com/us/app/fueling-timer/id1453121223) has held a top 100 spot in Utilities on the iOS app store with over 2,000 monthly users. It's a simple diet-timer app for people who follow the Optavia diet. Optavia requires you to eat 4 or 5 times a day, and sometimes it's hard to remember to eat at all those times, so I made an app that sends reminders throughout the day at specified intervals to help remind people.
 
 ![App Icon](../assets/img/posts/fuelingTimerImage.png)
-
-
-# ClearBudget β
-
-Clearbudget is a simple-intuitive budgeting app for everyone. Clearbudget brings all your finances together by linking your bank accounts directly to the app. It supports cross-device syncing as well, so you can keep track of your expenses anywhere. 
-
-Clearbudget is built for regular people. It's not trying to sell you any cards or trying to get you to open a new bank account or invest in a new product. You've already got that part down. Clearbudget gives you the tools to get a clear picture of your financial situation, and then act on it.
 
