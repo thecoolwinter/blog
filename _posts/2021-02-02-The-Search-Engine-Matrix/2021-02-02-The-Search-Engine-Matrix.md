@@ -5,7 +5,7 @@ hide_title: false
 tags: [Math]
 excerpt: One way search engines like google rank page poplarity using matrices.
 author: thecoolwinter
-published: false
+published: true
 sitemap:
   lastmod: 2021-02-03
 categories:
