@@ -10,6 +10,7 @@ sitemap:
   lastmod: 2021-02-03
 categories:
 katex: true
+image: 2021/02/02/1.png
 ---
 
 ## Search engines rank pages based on how likely you are to visit them
