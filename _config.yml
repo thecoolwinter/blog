@@ -1,7 +1,7 @@
 # SITE CONFIGURATION
 
 baseurl: ""
-url: "windchillblog.com"
+url: "https://windchillblog.com"
 title: WindChillBlog # site's title
 description: "Fun, useful code" # used by search engines
 tagline: "Fun, useful code"
