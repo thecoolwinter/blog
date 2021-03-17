@@ -10,7 +10,7 @@ sitemap:
   lastmod: 2021-02-03
 categories:
 katex: true
-image: 2021/02/02/1.png
+image: 2021/02/02/twitter.jpg
 ---
 
 ## Search engines rank pages based on how likely you are to visit them
@@ -24,7 +24,6 @@ The answer: **Matrices**
 If you haven't taken Linear Algebra, there's a good chance you have never heard of matrices. So here's a brief explaination.
 
 **Matrices** hold numbers in a grid, sort of like a Sudoku board. Below is a matrix called the _Identity Matrix_ You can think of it as the 1 of matrices.
-
 $$
 I=\begin{pmatrix}1&0&0\\ 0&1&0\\ 0&0&1\end{pmatrix}
 $$

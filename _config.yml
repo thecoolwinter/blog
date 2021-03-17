@@ -3,15 +3,35 @@
 baseurl: ""
 url: "windchillblog.com"
 title: WindChillBlog # site's title
-description: "Making Useful Code" # used by search engines
+description: "Fun, useful code" # used by search engines
+tagline: "Fun, useful code"
 future: true
 logo: assets/img/wind_icon.png
+
+# SEO Info
+twitter:
+  username: thecoolwinter
+  card: summary
+
+social:
+  name: Khan Winter
+  links:
+    - https://twitter.com/thecoolwinter
+    - https://windchillblog.com
+    - https://thecoolwinter.github.io
+
+# AUTHOR
+author:
+  name: Khan Winter
+  twitter: thecoolwinter
+  avatar: "assets/img/avatars/Khan.jpg"
+  url: "https://thecoolwinter.github.io"
 
 defaults:
   - scope:
       path: "" # an empty string here means all files in the project
     values:
-      image: assets/img/wind_icon.png # seo tag
+      image: assets/img/Default.jpg # seo tag
 
 # THEME-SPECIFIC CONFIGURATION
 theme_settings:
@@ -91,13 +111,6 @@ theme_settings:
 # PAGINATION
 paginate: 20
 paginate_path: "blog/page:num"
-
-# AUTHORS
-authors:
-  thecoolwinter:
-    name: Khan Winter
-    avatar: "assets/img/avatars/Khan.jpg"
-    url: "https://thecoolwinter.github.io"
 
 collections:
   snippets:
