@@ -24,11 +24,12 @@ The answer: **Matrices**
 If you haven't taken Linear Algebra, there's a good chance you have never heard of matrices. So here's a brief explaination.
 
 **Matrices** hold numbers in a grid, sort of like a Sudoku board. Below is a matrix called the _Identity Matrix_ You can think of it as the 1 of matrices.
+
 $$
 I=\begin{pmatrix}1&0&0\\ 0&1&0\\ 0&0&1\end{pmatrix}
 $$
 
-You can use matrices like other numbers, adding, subtracting, multiplying, dividing etc. For instance if we multiply $$I$$ by 2 we get
+You can use matrices like other numbers, adding, subtracting, multiplying, dividing etc. For instance if we multiply *I* by 2 we get
 
 $$
 I\cdot 2=\begin{pmatrix}2&0&0\\ 0&2&0\\ 0&0&2\end{pmatrix}
