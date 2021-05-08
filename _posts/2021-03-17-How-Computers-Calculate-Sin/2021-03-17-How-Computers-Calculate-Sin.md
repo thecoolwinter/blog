@@ -30,7 +30,7 @@ Here I'll show you how computers estimate sin for any value.
 
 ## Sine and derivatives
 
-> Before we take a deeper dive into the math, here's some background for those of us who need a refresher.
+#### Before we take a deeper dive into the math, there's two concepts we need to understand.
 
 ------
 
@@ -39,19 +39,19 @@ Here I'll show you how computers estimate sin for any value.
 For a little background I'll start by explaining two important concepts. First, $$sin(x)$$. You may remember this fun function from a high school algebra class. $$sin(x)$$ has these important properties. 
 
 1. Sine is infinite, meaning it'll have a value at any number you put into it. 
-2.  It's also periodic, which means that it repeats itself over and over again (like a wave).
+2. It's also periodic, which means that it repeats itself over and over again (like a wave).
 
 Here's a graph of *y=sin(x)*.
 
 ![y=sin(x)](1.png)
 
-As you can see, the value of *sin(x)* goes up and down between $$\frac{\pi}{2}$$ and $$-\frac{\pi}{2}$$.
+As you can see, the value of *sin(x)* goes up and down between $$-1$$ and $$1$$.
 
 You can also tell that it's not coming to an end. It'll go on forever from −&infin; all the way to +&infin;.
 
-#### One more important thing about sine is that the curve 0 to $$\frac{\pi}{4}$$ is repeated on the entire rest of sine. The curve might be backwards or upside down, but it's always exactly the same. 
+#### One more important thing about sine is that the curve 0 to $$\frac{\pi}{2}$$ is repeated on the entire rest of sine. The curve might be backwards or upside down, but it's always exactly the same. 
 
-#### That means if we can figure out values for any point in $$0$$ to $$\frac{\pi}{4}$$, we can figure out points for anywhere on sine.
+#### That means if we can figure out values for any point in $$0$$ to $$\frac{\pi}{2}$$, we can figure out points for anywhere on sine.
 
 ------
 
@@ -79,7 +79,7 @@ $$
 
 ***Acceleration***. Acceleration is *the change in velocity over time*.
 
-Here's a graph of all these functions over time. You'll notice the velocity is going up at a constant rate *a*, and the position is going up exponentially.
+Here's a graph of all these functions over time. You'll notice the velocity is going up at a constant rate *a*, and the position is going up exponentially. If we dropped a ball off a cliff. The ball would fall faster over time, so the velocity would steadily increase, but the acceleration would always be *$$9.81\frac{m}{s^2}$$*.
 
 ![Derivatives](derivatives.png)
 
@@ -89,13 +89,18 @@ derivative\:of\:f\left(x\right)=f'\left(x\right)
 $$
 So from now on, if you see *f'(x)* that's the derivative of the function *f*. If we add more *'* to the function if grows in derivatives. So the second derivative of *f* is
 $$
-second\:derivative\:of\:f\left(x\right)=f''\left(x\right)
+second\:derivative\:of\:f\left(x\right)=f''\left(x\right)second\:derivative\:of\:f\left(x\right)=f''\left(x\right)
 $$
 
+------
 
-## Taylor Series
 
-Taylor series are a function that equals another function. Basically, a mathemetician named Brook Taylor realized that any function is equal to this sum
+
+## How do we use derivatives to calculate sine?
+
+### A: Taylor Series
+
+Taylor series estimate a function. Basically, a mathemetician named Brook Taylor realized that any function is equal to this sum
 
 
 $$
@@ -113,9 +118,9 @@ Taylor series work on the idea that the function is related to it's derivatives 
 
 But, we don't always have to add up to infinity. In fact, the series is very close to $$f(x)$$ for a short bit after only a few sums of the Taylor series. 
 
-This comes in handy if say, we only need to know values for a specific part of the function say *\*ahem\** 0 to $$\frac{\pi }{4}$$.
+This comes in handy if say, we only need to know values for a specific part of the function say *\*ahem\** 0 to $$\frac{\pi }{2}$$.
 
-In fact, this is the Taylor series to the 7th degree, which happens to equal $$sin(x)$$ nearly exactly from $$0$$ to $$\frac{\pi }{4}$$.
+In fact, this is the Taylor series to the 7th degree, which happens to equal $$sin(x)$$ nearly exactly from $$0$$ to $$\frac{\pi }{2}$$.
 
 
 $$
@@ -177,38 +182,48 @@ func usersin(_ x: Double) -> Double {
   return x+v*(S1+z*r)                   // Taylor function part 2/2
 }
 
-print("Pi/6")
-print("usersin:\t\(usersin(Double.pi/6))")
-print("sin:\t\t\(sin(Double.pi/6))")
-print("\nPi/8")
-print("usersin:\t\(usersin(Double.pi/8))")
-print("sin:\t\t\(sin(Double.pi/8))")
-print("\nPi/21")
-print("usersin:\t\(usersin(Double.pi/21))")
-print("sin:\t\t\(sin(Double.pi/21))"
+func printUserSin(_ input: Double, name: String) {
+    print("x\t=\t\(name)")
+    print("usersin(x):\t\(usersin(input))")
+    print("sin(x):\t\t\(sin(input))")
+    print("")
+}
+printUserSin(Double.pi/6, name: "Pi/6")
+printUserSin(Double.pi/8, name: "Pi/8")
+printUserSin(Double.pi/21, name: "Pi/21")
+printUserSin(Double.pi/2, name: "Pi/2")
+printUserSin(Double.pi/2 - 0.01, name: "Pi/2 - 0.01")
 ```
 
-Which gives us:
+Which spits out:
 
 ```bash
-Pi/6
-usersin:	0.4999999999999961
-sin:		0.49999999999999994
+x	=	Pi/6
+usersin(x):	0.4999999999999961
+sin(x):		0.49999999999999994
 
-Pi/8
-usersin:	0.38268343236508884
-sin:		0.3826834323650898
+x	=	Pi/8
+usersin(x):	0.38268343236508884
+sin(x):		0.3826834323650898
 
-Pi/21
-usersin:	0.14904226617617444
-sin:		0.14904226617617444
+x	=	Pi/21
+usersin(x):	0.14904226617617444
+sin(x):		0.14904226617617444
+
+x	=	Pi/2
+usersin(x):	1.000000000251294
+sin(x):		1.0
+
+x	=	Pi/2 - 0.01
+usersin(x):	0.9999500006418387
+sin(x):		0.9999500004166653
 ```
 
-Which is **nearly** completely accurate for all the values we gave it. Pretty cool!
+Which is **nearly** completely accurate for all the values we gave it, plenty close for any calculation we may need, and plenty fast as well!
 
 ## Conclusion
 
-I've shown a very naive implementation of $$sin(x)$$. It doesn't take into account values outside of $$0$$ to $$\frac{\pi}{4}$$ and doesn't account for negative values. In fact, this is the bare minimum you would want from a `sin` function. 
+I've shown a very naive implementation of $$sin(x)$$. It doesn't take into account values outside of $$0$$ to $$\frac{\pi}{2}$$ and doesn't account for negative values. In fact, this is the bare minimum you would want from a `sin` function. 
 
 In a future post I'll go over some of the tricks computer scientists have used to get around those problems, and compare speeds of this function with C and C++.
 
