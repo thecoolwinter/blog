@@ -14,21 +14,21 @@ Computer engineering major at the University of Minnesota Twin Cities. I’m a f
 
 Developed custom in-house software to move daily medical documentation to a fully paperless iPad and Web-based system which included an admin dashboard and passkey-protected kiosk and mobile apps. Developed custom payroll software, making it easier for payroll administrators to notify employees using automated emails for bi-weekly pay stubs.
 
-### OpenBudget - iOS, iPadOS, MacOS App - openbudget.us
+### OpenBudget - iOS, iPadOS, MacOS App - [openbudget.us](https://openbudget.us/)
 
 I built OpenBudget to make budgeting money easier. The app provides a smooth onramp into budgeting using virtual envelopes and provides useful statistical data, charts, export options and full historical transaction search. The app makes use of a Javascript backend for processing recurring transactions and user authentication. It has also been featured by Apple in the App Store.
 
-### Fueling Timer - iOS App - fuelingtimer.app
+### Fueling Timer - iOS App - [fuelingtimer.app](https://www.fuelingtimer.app)
 
 FuelingTimer helps people using Optavia™ diets keep track of when to eat “fuelings” using local notifications. Advanced customization options allow it to be used on multiple diet plans as in transitioning to long-term healthy habits. It can also scan food labels for tracking dietary information. FuelingTimer has appeared in the top 100 apps for Utilities since its release.
 
-### iOS Workshop Instructor - adcumn.org
+### iOS Workshop Instructor - [adcumn.org](https://adcumn.org/board/)
 
 Taught a series of workshops at the University of Minnesota App Developers Club. The workshops covered iOS development using SwiftUI using Swift. In addition to technical skills, I taught good app architecture and design concepts for building great apps.
 
 # Open Source
 
-### CodeEdit - github.com/CodeEditApp
+### CodeEdit - [github.com/CodeEditApp](https://github.com/CodeEditApp/CodeEdit)
 
 Developing an open source IDE native to MacOS. Contributing to issues and bug reports as well as reviewing pull requests and code quality. Developed features such as fast project-wide search, tab components, and other UI components. Participate in weekly meetings and leading live coding sessions for new contributors. 
 
