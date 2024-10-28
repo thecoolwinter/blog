@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><title>Khan's Blog</title><link href="/resources/index.css" rel="stylesheet"/><link href="/resources/prism.css" rel="stylesheet"/></head><body><article><h2>Swift-sh</h2><p>Swift-sh is an amazing dependency package from <a href="https://github.com/mxcl/swift-sh">Max Howel</a>. The library makes it easy to use any Swift Package Manager (SPM) package into your Swift scripts. (<a href="https://windchillblog.com/snippets/2020/05/05/scripting-with-swift">more on writing Swift scripts</a>)</p><p>In this example I'll be importing the <a href="https://github.com/paulot/Colors">Colors library by paulot</a> and the <a href="https://github.com/jkandzi/Progress.swift">Progress library from jkandzi</a> . A mixture of these two libraries makes for fun, colorful script output like this.</p><img src="Screen Shot 2020-05-05 at 2.10.01 PM.png" alt="cool terminal example"/><p>Which I think is fun. We'll be importing both libraries using Swift-sh.</p><h2>Install Swift-sh</h2><p>To install swift-sh you'll need <a href="https://docs.brew.sh/Installation">homebrew</a> installed on your mac.</p><p>Then, it's just a simple command to install</p><p><code>brew install mxcl/made/swift-sh</code></p><small>Go check out [Max's GitHub](https://github.com/mxcl) and [Patreon](https://www.patreon.com/mxcl). He's an amazing programmer and has built tons of important open source tools</small><h2>Create The Script</h2><p><code>cd</code> into the directory you'll run your script in and run <code>touch main.swift</code> to create an empty script. Then make it executable using <code>chmod +x main.swift</code>.</p><p>Now open the file using any editor and enter this on the first line.</p><pre><code class="language-swift">#!/usr/bin/swift sh
+</code></pre><p>This tells the terminal to use <code>swift sh</code> to execute our script, which is exactly what we want.</p><h2>Import Progress</h2><p>Next, in the <code>main.swift</code> file do a normal import like you would in any other Swift project.</p><pre><code class="language-swift">import Foundation
+import Progress
+import Colors
+</code></pre><p>If you run this code right now you'll get an error because there aren't any packages linked to your script. Let's import Progress with swift-sh like this.</p><pre><code class="language-swift">import Progress // jkandzi/Progress.swift
+</code></pre><p>The comment after the import statement tells swift-sh to retreive the SPM package Progress.swift from GitHub. You tell swift-sh where the package is by giving it the path to the repository on GitHub.</p><h2>Import Colors</h2><p>Now that Progress is imported successfully lets import Colors.</p><p>Colors doesn't have SPM support naturally, so I'm going to give it one. I've downloaded the source code from here and grabbed all the files in the folder Colors. I've deleted the files <code>Colors.o</code><code>Info.plist</code> and <code>ANSITextColorCode.o</code> as the script doesn't need them.</p><p>Now go back to the directory your script is in and run <code>mkdir Colors</code>. <code>cd</code> into the new directory and run <code>mkdir Sources</code>.</p><p>Next, drag and drop the downloaded Colors folder into the Sources folder you just made.</p><p>The last thing we need to make is a <code>Package.swift</code> file. This tells SPM what code is available for this package. Make one using <code>touch Package.swift</code></p><p>Your file structure should look like this.</p><img src="Screen Shot 2020-05-05 at 2.31.22 PM.png" alt="file structure"/><p>Open Package.swift and copy-paste the following into the file.</p><pre><code class="language-swift">// swift-tools-version:5.1
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
+import PackageDescription
+
+let package = Package(
+    name: "Colors",
+    products: [
+        .library(
+            name: "Colors",
+            targets: ["Colors"]),
+    ],
+    targets: [
+        .target(
+            name: "Colors",
+            dependencies: [])
+    ]
+)
+
+</code></pre><p>Save it, and you now have a SPM package!</p><p>Lets go back to the <code>main.swift</code> file and import Colors using swift-sh like this.</p><pre><code class="language-swift">import Colors // ./Colors/
+</code></pre><h2>Run The Script</h2><p>Now that all the dependencies are working, your script should look like this.</p><pre><code class="language-swift">#!/usr/bin/swift sh
+
+import Foundation
+import Colors // ./Colors/
+import Progress // jkandzi/Progress.swift
+</code></pre><p>Add this code to give some fun output when you run the script.</p><pre><code class="language-swift">#!/usr/bin/swift sh
+
+import Foundation
+import Colors // ./Colors/
+import Progress // jkandzi/Progress.swift
+
+print(Colors.Red("The Script is Running, Downloading Important Data..."))
+for _ in Progress(0...100) {
+    sleep(1)
+}
+print(Colors.Green("Script Complete!"))
+</code></pre><p>To run the script run <code>./main.swift</code> in the same directory as the script. If you get an error saying <code>zsh: permission denied: ./main.swift</code> run <code>chmod +x main.swift</code> to fix it.</p><p>Your terminal should now be counting down from 101, nice job!</p><img src="Screen Shot 2020-05-05 at 2.40.38 PM.png" alt="finished script"/><p>Full usage documentation for swift-sh can be found <a href="https://github.com/mxcl/swift-sh#usage">here</a>. I've only covered two ways of using this library but there's much more you can do with it.</p></article><footer><p>Copyright ©️ Khan Winter 2024</p><p>Built In Swift</p><p><a href="https://twitter.com/thecoolwinter" rel="me">Twitter</a> | <a href="https://threads.net/thecoolwinter" rel="me">Threads</a> | <a href>RSS</a></p></footer></body></html>
