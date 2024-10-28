@@ -1,12 +1,10 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><title>Khan's Blog</title><link href="/resources/index.css" rel="stylesheet"/><link href="/resources/prism.css" rel="stylesheet"/></head><body><article><h2>Why are storyboards all that bad?</h2><h4>Answer: They're not</h4><p>Really</p><p>, storyboards are super good at helping create UI. They make it easy to see exactly what you're building and work with constraints on each view. Sometimes though, it's easier to not use them. For more repetitive views, using storyboards will be a pain, having to link every single input and output to your <code>UIViewController</code> file, copy-pasting the whole thing. It leads to bugs and spaghetti code.</p><p>Sometimes though, in an app with many views storyboards get messy and overloaded. It then becomes easier to use programmatic views and try not to use storyboards. Otherwise there's no disadvantage to using them.</p><h2>The best way that I've found to create View Controllers programmatically is this.</h2><h5>We'll be making a simple UI with a label, image and button as an example.</h5><p>First, create your <code>UIViewController</code>. We'll call it <code>SampleViewController</code></p><pre><code class="language-swift">import UIKit
+<!DOCTYPE html><html><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><meta content="dark light" name="color-scheme"/><title>Khan's Blog</title><link href="/resources/index.css" rel="stylesheet"/><link href="/resources/prism.css" rel="stylesheet"/><link href="/resources/code-theme.css" rel="stylesheet"/><script src="/resources/index.js"></script><script src="/resources/prism.js"></script></head><body><div class="content"><article><h2>Why are storyboards all that bad?</h2><h4>Answer: They're not</h4><p>Really</p><p>, storyboards are super good at helping create UI. They make it easy to see exactly what you're building and work with constraints on each view. Sometimes though, it's easier to not use them. For more repetitive views, using storyboards will be a pain, having to link every single input and output to your <code>UIViewController</code> file, copy-pasting the whole thing. It leads to bugs and spaghetti code.</p><p>Sometimes though, in an app with many views storyboards get messy and overloaded. It then becomes easier to use programmatic views and try not to use storyboards. Otherwise there's no disadvantage to using them.</p><h2>The best way that I've found to create View Controllers programmatically is this.</h2><h5>We'll be making a simple UI with a label, image and button as an example.</h5><p>First, create your <code>UIViewController</code>. We'll call it <code>SampleViewController</code></p><pre><code class="language-swift">import UIKit
 
 class SampleViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-  override func viewDidLoad() {
-    super.viewDidLoad()
-     
-  }
-
+    }
 }
 </code></pre><p>There. Now lets add a few methods underneath the <code>viewDidLoad()</code> function.</p><pre><code class="language-swift">private func setUpViews() {
 
@@ -24,64 +22,6 @@ var image: UIImage?
 ...
 </code></pre><h2>Great! Now lets populate those variables.</h2><p>In the <code>setUpViews()</code> function put this code in.</p><pre><code class="language-swift">private func setUpViews() {
 
-  label = UILabel()
-  label?.text = "Hello World!"
-  label?.translatesAutoresizingMaskToConstraints = false //Important to do with all views. If you don't set this to false, iOS will break all the constraints you will set.
-
-  button = UIButton()
-  button?.titleLabel.text = "Press Me"
-  button?.tintColor = .systemBlue
-  button?.translatesAutoresizingMaskToConstraints = false //Important
-  button?.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside) //Will return an error right now, ignore it as we haven't added the target function yet.
-
-  image = UIImage()
-  image?.image = UIImage(systemName: "gamecontroller")
-  image?.translatesAutoresizingMaskToConstraints = false //Important
-
-  //Add the views we just created to the view hierarchy
-  view.addSubview(label!) //we can force-unwrap these because we know we just made them and they won't be nil.
-  view.addSubview(button!)
-  view.addSubview(image!)
-}
-</code></pre><p>Awesome! It's easy right? You have complete access to each view you're adding right here in this function. You modify it and add targets and images cleanly and knowing exactly what each one is going to be.</p><h2>Now lets add some constraints and lay out our UI.</h2><p>We'll be using layout anchors to layout our views. They're much simpler to deal with than constraints.</p><p>In the <code>setUpConstraints()</code> function we defined before enter this.</p><pre><code class="language-swift">private func setUpConstraints() {
-  NSLayoutConstriant.activate([
-    // Place the label in the top
-    label.topAnchor.constraint(equalTo: view.topAnchor),
-    label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
-    label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
-
-    // put the button centered below the label
-    button.topAnchor.constraint(equalTo: label.bottomAnchor),
-    button.widthAnchor.constraint(equalToConstant: 250),
-    button.heightAnchor.constraint(equalToConstant: 100),
-    button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-
-    //put the image below the button
-    image.topAnchor.constraint(equalTo: button.bottomAnchor),
-    image.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
-    image.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
-  ])
-}
-</code></pre><p>The function <code>NSLayoutConstraint.activate([])</code> activates multiple constraints at once. So we use it here to activate all of ours at once.</p><p><strong>Make sure to add the <code>setUpViews()</code> and <code>setUpConstraints</code> to your <code>viewDidLoad()</code> function. Otherwise our code won't ever be executed :).</strong></p><p>Let's also add the button target code at the end of the file:</p><pre><code class="language-swift">@objc func buttonPressed() {
-  print("You Pressed the Button!")
-}
-</code></pre><h2>Sweet! You're all done! You've made a UIViewController with a UI without any storyboards.</h2><hr><p>Here's the full code:</p><pre><code class="language-swift">import UIKit
-
-class SampleViewController: UIViewController {
-
-  var label: UILabel?
-  var button: UIButton?
-  var image: UIImage?
-
-  override func viewDidLoad() {
-    super.viewDidLoad()
-     
-    setUpViews()
-    setUpConstraints()
-  }
-  
-  private func setUpViews() {
-
     label = UILabel()
     label?.text = "Hello World!"
     label?.translatesAutoresizingMaskToConstraints = false //Important to do with all views. If you don't set this to false, iOS will break all the constraints you will set.
@@ -96,34 +36,91 @@ class SampleViewController: UIViewController {
     image?.image = UIImage(systemName: "gamecontroller")
     image?.translatesAutoresizingMaskToConstraints = false //Important
 
-//Add the views we just created to the view hierarchy
+    //Add the views we just created to the view hierarchy
     view.addSubview(label!) //we can force-unwrap these because we know we just made them and they won't be nil.
     view.addSubview(button!)
     view.addSubview(image!)
-  }
-
-  private func setUpConstraints() {
-    NSLayoutConstriant.activate([
-// Place the label in the top
-      label.topAnchor.constraint(equalTo: view.topAnchor),
-      label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
-      label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
-
-// put the button centered below the label
-      button.topAnchor.constraint(equalTo: label.bottomAnchor),
-      button.widthAnchor.constraint(equalToConstant: 250),
-      button.heightAnchor.constraint(equalToConstant: 100),
-      button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-
-//put the image below the button
-      image.topAnchor.constraint(equalTo: button.bottomAnchor),
-      image.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
-      image.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
-    ])
-  }
-  
-  @objc func buttonPressed() {
-    print("You Pressed the Button!")
-  }
 }
-</code></pre></article><footer><p>Copyright ©️ Khan Winter 2024</p><p>Built In Swift</p><p><a href="https://twitter.com/thecoolwinter" rel="me">Twitter</a> | <a href="https://threads.net/thecoolwinter" rel="me">Threads</a> | <a href>RSS</a></p></footer></body></html>
+</code></pre><p>Awesome! It's easy right? You have complete access to each view you're adding right here in this function. You modify it and add targets and images cleanly and knowing exactly what each one is going to be.</p><h2>Now lets add some constraints and lay out our UI.</h2><p>We'll be using layout anchors to layout our views. They're much simpler to deal with than constraints.</p><p>In the <code>setUpConstraints()</code> function we defined before enter this.</p><pre><code class="language-swift">private func setUpConstraints() {
+    NSLayoutConstriant.activate([
+        // Place the label in the top
+        label.topAnchor.constraint(equalTo: view.topAnchor),
+        label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+        label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+
+        // put the button centered below the label
+        button.topAnchor.constraint(equalTo: label.bottomAnchor),
+        button.widthAnchor.constraint(equalToConstant: 250),
+        button.heightAnchor.constraint(equalToConstant: 100),
+        button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
+        //put the image below the button
+        image.topAnchor.constraint(equalTo: button.bottomAnchor),
+        image.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+        image.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
+    ])
+}
+</code></pre><p>The function <code>NSLayoutConstraint.activate([])</code> activates multiple constraints at once. So we use it here to activate all of ours at once.</p><p><strong>Make sure to add the <code>setUpViews()</code> and <code>setUpConstraints</code> to your <code>viewDidLoad()</code> function. Otherwise our code won't ever be executed :).</strong></p><p>Let's also add the button target code at the end of the file:</p><pre><code class="language-swift">@objc func buttonPressed() {
+    print("You Pressed the Button!")
+}
+</code></pre><h2>Sweet! You're all done! You've made a UIViewController with a UI without any storyboards.</h2><hr><p>Here's the full code:</p><pre><code class="language-swift">import UIKit
+
+class SampleViewController: UIViewController {
+
+    var label: UILabel?
+    var button: UIButton?
+    var image: UIImage?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+     
+        setUpViews()
+        setUpConstraints()
+    }
+
+    private func setUpViews() {
+        label = UILabel()
+        label?.text = "Hello World!"
+        label?.translatesAutoresizingMaskToConstraints = false //Important to do with all views. If you don't set this to false, iOS will break all the constraints you will set.
+
+        button = UIButton()
+        button?.titleLabel.text = "Press Me"
+        button?.tintColor = .systemBlue
+        button?.translatesAutoresizingMaskToConstraints = false //Important
+        button?.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside) //Will return an error right now, ignore it as we haven't added the target function yet.
+
+        image = UIImage()
+        image?.image = UIImage(systemName: "gamecontroller")
+        image?.translatesAutoresizingMaskToConstraints = false //Important
+
+        //Add the views we just created to the view hierarchy
+        view.addSubview(label!) //we can force-unwrap these because we know we just made them and they won't be nil.
+        view.addSubview(button!)
+        view.addSubview(image!)
+    }
+
+    private func setUpConstraints() {
+        NSLayoutConstriant.activate([
+            // Place the label in the top
+            label.topAnchor.constraint(equalTo: view.topAnchor),
+            label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+
+            // put the button centered below the label
+            button.topAnchor.constraint(equalTo: label.bottomAnchor),
+            button.widthAnchor.constraint(equalToConstant: 250),
+            button.heightAnchor.constraint(equalToConstant: 100),
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
+            //put the image below the button
+            image.topAnchor.constraint(equalTo: button.bottomAnchor),
+            image.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            image.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
+        ])
+    }
+
+    @objc func buttonPressed() {
+        print("You Pressed the Button!")
+    }
+}
+</code></pre></article></div><footer><p>Copyright ©️ Khan Winter 2024</p><p>Built In Swift</p><p><a href="https://twitter.com/thecoolwinter" rel="me" target="_blank">Twitter</a> | <a href="https://threads.net/thecoolwinter" rel="me" target="_blank">Threads</a> | <a href>RSS</a></p></footer></body></html>

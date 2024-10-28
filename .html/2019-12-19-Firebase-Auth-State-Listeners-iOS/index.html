@@ -1,14 +1,14 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><title>Khan's Blog</title><link href="/resources/index.css" rel="stylesheet"/><link href="/resources/prism.css" rel="stylesheet"/></head><body><article><h2>Firebase auth lets you pass a handler function when the auth state changes.</h2><p>In my use case I need to receive state change alerts. My user might be disabled by an admin or a bot, or the account is stopped for security reasons. But, I need to update user interfaces and data code to match that the user is logged out.</p><h2>Fortunately its easy with firebase</h2><p>Somewhere in your startup code -I use a container view for all my views, but the AppDelegate or SceneManager works well here- put this snippet in.</p><pre><code class="language-swift">func setAuthListener() {
-	  Auth.auth().addStateDidChangeListener { (auth, user) in
-		    if user == nil {
-// The user is either logged out, or something went wrong. 
-// You can use the Auth.auth().currentUser.reload() function 
-// to try to find the error using the FIRErrorCode enum
-		    }	
-/*
-Otherwise, we now have a signed in user. Usually that just means 
-we carry on, but you could put some custom handler here too.
-*/
-	  }
+<!DOCTYPE html><html><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><meta content="dark light" name="color-scheme"/><title>Khan's Blog</title><link href="/resources/index.css" rel="stylesheet"/><link href="/resources/prism.css" rel="stylesheet"/><link href="/resources/code-theme.css" rel="stylesheet"/><script src="/resources/index.js"></script><script src="/resources/prism.js"></script></head><body><div class="content"><article><h2>Firebase auth lets you pass a handler function when the auth state changes.</h2><p>In my use case I need to receive state change alerts. My user might be disabled by an admin or a bot, or the account is stopped for security reasons. But, I need to update user interfaces and data code to match that the user is logged out.</p><h2>Fortunately its easy with firebase</h2><p>Somewhere in your startup code -I use a container view for all my views, but the AppDelegate or SceneManager works well here- put this snippet in.</p><pre><code class="language-swift">func setAuthListener() {
+    Auth.auth().addStateDidChangeListener { (auth, user) in
+        guard let user else {
+            // The user is either logged out, or something went wrong. 
+            // You can use the Auth.auth().currentUser.reload() function 
+            // to try to find the error using the FIRErrorCode enum
+            return
+        }
+
+        // Otherwise, we now have a signed in user. Usually that just means 
+        // we carry on, but you could put some custom handler here too.
+    }
 }
-</code></pre><p>Then just fire that function somewhere at the start of your app, or in a container controller like we made in <a href="https://windchillblog.com/2020/2/21/easy-container-controllers-in-swift">this</a> article.</p></article><footer><p>Copyright ©️ Khan Winter 2024</p><p>Built In Swift</p><p><a href="https://twitter.com/thecoolwinter" rel="me">Twitter</a> | <a href="https://threads.net/thecoolwinter" rel="me">Threads</a> | <a href>RSS</a></p></footer></body></html>
+</code></pre><p>Then just fire that function somewhere at the start of your app, or in a container controller like we made in <a href="https://windchillblog.com/2020/2/21/easy-container-controllers-in-swift">this</a> article.</p></article></div><footer><p>Copyright ©️ Khan Winter 2024</p><p>Built In Swift</p><p><a href="https://twitter.com/thecoolwinter" rel="me" target="_blank">Twitter</a> | <a href="https://threads.net/thecoolwinter" rel="me" target="_blank">Threads</a> | <a href>RSS</a></p></footer></body></html>

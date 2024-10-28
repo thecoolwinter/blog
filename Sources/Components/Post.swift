@@ -57,7 +57,7 @@ struct Post: Component {
                         "integrity": "sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+",
                         "crossorigin": "anonymous"
                     ]
-                )
+                ) { EmptyComponent() }
                 Tag(
                     "script",
                     [
@@ -66,8 +66,9 @@ struct Post: Component {
                         "integrity": "sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg",
                         "crossorigin": "anonymous"
                     ]
-                )
+                ) { EmptyComponent() }
             }
+
             parsed.html
         }
     }

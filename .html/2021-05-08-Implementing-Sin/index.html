@@ -1,0 +1,58 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><meta content="dark light" name="color-scheme"/><title>Khan's Blog</title><link href="/resources/index.css" rel="stylesheet"/><link href="/resources/prism.css" rel="stylesheet"/><link href="/resources/code-theme.css" rel="stylesheet"/><script src="/resources/index.js"></script><script src="/resources/prism.js"></script></head><body><div class="content"><article><link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" rel="stylesheet"></link><script crossorigin="anonymous" defer integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><h2>Previously on...</h2><p>In my last post, I used Taylor Series to come up with a function to estimate $$sin(x)$$ for any number between $$0$$ and $$frac{pi}{2}$$. While this is cool, it's rather useless. But, thankfully, I can use the numbers we can already to calculate any number of $$sin(x)$$.</p><blockquote><p>If you haven't read my previous post, it's a good read and will definitely make this post make much more sense. <a href="https://windchillblog.com/2021/03/17/How-Computers-Calculate-Sin.html">You can read that post here</a>.</p></blockquote><h2>Sin Repeats</h2><p>$$sin(x)$$ has an awesome property that I'm going to take complete advantage of for this implementation. <strong>Sin is the exact same from $$0$$ to $$frac{pi}{2}$$ everywhere else on the number line.</strong> All the rest of the numbers are flipped horizontally, or vertically, or both.</p><p>It's easier to see this with the graph of $$sin(x)$$.</p><img src="sin.png" alt="sin(x) with points 0, pi/2, 3pi/2, pi and 2pi highlighted"/><p>It's pretty easy if you can rotate your phone/laptop to see that the curve from $$0$$ to $$frac{pi}{2}$$ is the flipped horizontally between $$frac{pi}{2}$$ and $$pi$$, then horizontally and vertically between $$pi$$ and $$frac{3pi}{2}$$, and finally flipped vertially from $$frac{3pi}{2}$$ to $$2pi$$.</p><h2>Flip Flops 🩴</h2><p>Since we can already calculate all the numbers from $$0$$ to $$frac{pi}{2}$$ in $$sin$$, all we've gotta do is figure out some swift functions to flip flop around our existing results.</p><p>Here's what we're starting with, with each quadrant that we need to flip or flop in a different color.</p><img src="orig.png" alt="orig"/><ol><li>Vertical Flips</li></ol><p>It's pretty easy to flip a function vertically. In math it's called the <em>reflection</em> of a function. All we have to do is make the entire function negative and it'll be flipped vertically.</p><img src="vert.gif"/><blockquote><p>Source: https://mathbitsnotebook.com/Algebra1/FunctionGraphs/FNGTransformationFunctions.html</p></blockquote><p>The only areas we need to vertically flip $$sin(x)$$ are between $$pi$$ and $$2pi$$, where $$sin(x)$$ is negative.</p><p>After applying the vertical flops, our graph looks like this</p><img src="vert-flip.png" alt="vert-flip"/><ol start="2"><li>Horizontal Flops</li></ol><p>Now all we have to do is flop the blue and purple lines backwards. We can do this by just shifting the $$x$$ value $$frac{pi}{2}$$ to the left.</p><p>After the horizontal flop we end up with this graph.</p><img src="hor-flip.png" alt="hor-flip"/><p>Sweet! Now we can use these flip flops in our sin function in swift to calculate any value for $$sin(x)$$.</p><h2>Swift Flip Flops 🐥🩴</h2><p>Now to implement these stylish shoes in Swift.</p><ol><li>Vertical Flips</li></ol><p>As said before, all we have to do to flip a function vertically is make sin negative. That's super easy in swift, so here's the vertical flip function.</p><pre><code class="language-swift">sin(-input)
+</code></pre><ol start="2"><li>Horizontal Flops</li></ol><p>All we need to do here is subtract $$frac{pi}{2}$$ from the <code>input</code> variable and we're good to go!</p><pre><code class="language-swift">sin(input - (Double.pi/2))
+</code></pre><h2>Finally...</h2><p>Yay! Now all we have to do is</p><ol><li>Reduce $$x$$ to be between $$0$$ and $$2pi$$.</li><li>Flip flop our way to our result!</li></ol><p>Here are the few rules that we'll need to follow to figure out which flip or flop to use.</p><ol><li>If $$x$$ is between $$pi$$ and $$2pi$$, flip it <u>vertically</u>.</li><li>If $$x$$ is between $$frac{pi}{2}$$ and $$pi$$ <em>or</em> $$frac{3pi}{2}$$ and $$2pi$$, flip it <u>horizontally</u>.</li></ol><p>With these rules in mind, we almost have the swift code written for us! I'll just take those "If $$x$$ is..." and turn them into <code>if</code> statements.</p><p>Here's the final swift implementation of $$sin(x)$$.</p><pre><code class="language-swift">let S1 = -1.66666666666666324348e-01;  // -1/(3!)
+let S2 = 8.3333333332248946124e-03;    //  1/(5!)
+let S3 = -1.98412698298579493134e-04;  // -1/(7!)
+let S4 = 2.75573137070700676789e-06;   //  1/(9!)
+let S5 = -2.50507602534068634195e-08;  // -1/(11!)
+let S6 = 1.58969099521155010221e-10;   //  1/(13!)
+
+func usersin(_ xOrig: Double) -&gt; Double {
+    // Reduce x to be between 0 and 2pi
+    var x = xOrig.truncatingRemainder(dividingBy: 2 * Double.pi)
+
+    // If it's between pi/2 =&gt; pi or 3pi/2 =&gt; 2pi. Flip it horizontally
+    if (x &gt; Double.pi/2 &amp;&amp; x &lt; Double.pi) || (x &gt; (3*Double.pi)/2 &amp;&amp; x &lt; 2*Double.pi) {
+        x = x - (Double.pi/2)
+    }
+
+    let z = x*x                          // x^2
+    let v = z*x                          // x^3
+    let r = S2+z*(S3+z*(S4+z*(S5+z*S6))) // Taylor function part 1/2
+
+    // Flip the function if needed, eg between pi and 2pi
+    if x &gt; Double.pi &amp;&amp; x &lt; Double.pi * 2 {
+        return -x+v*(S1+z*r)             // Taylor function part 2/2 (but negative)
+    } else {
+        // No need for vertical flip
+        return x+v*(S1+z*r)             // Taylor function part 2/2
+    }
+}
+</code></pre><h2>Benchmark</h2><p>I decided to test the speed of this implementation, and the benchmarks look pretty good. For 1,000,000 $$sin(x)$$ operations, the results look like:</p><pre><code>Time elapsed for User Sin: 0.7528519630432129 s.
+Time elapsed for Normal Sin: 0.6716610193252563 s.
+</code></pre><p>So not too far off between them. The code I used to benchmark is below.</p><pre><code class="language-swift">#!/usr/bin/swift
+
+import Foundation
+
+... User sin defined up here ...
+
+func printTimeElapsedWhenRunning(title: String, operation: (() -&gt; Void)) {
+    let startTime = CFAbsoluteTimeGetCurrent()
+    operation()
+    let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+    print("Time elapsed for \(title): \(timeElapsed) s.")
+}
+
+printTimeElapsedWhenRunning(title: "User Sin") {
+    for i in 0..&lt;1000000 {
+        let _ = usersin(Double(i))
+    }
+}
+
+printTimeElapsedWhenRunning(title: "Normal Sin") {
+    for i in 0..&lt;1000000 {
+        let _ = sin(Double(i))
+    }
+}
+
+</code></pre><blockquote><p>After running this code ~10 times the results were within 0.001s of each other, so the error from this test is negligible.</p></blockquote><h2>Conclusion</h2><p>While it's fun to figure out and define our own implementation of $$sin(x)$$, it's not super practical. Other programers have already figured out this math, and have figured out ways of making it slightly faster than my own. So, is it practical? No. But it was fun to do!</p></article></div><footer><p>Copyright ©️ Khan Winter 2024</p><p>Built In Swift</p><p><a href="https://twitter.com/thecoolwinter" rel="me" target="_blank">Twitter</a> | <a href="https://threads.net/thecoolwinter" rel="me" target="_blank">Threads</a> | <a href>RSS</a></p></footer></body></html>

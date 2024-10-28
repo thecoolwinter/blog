@@ -11,8 +11,8 @@ This object has `name`, and `dateUpdated` properties. The `dateUpdated` property
 
 ```swift
 class Name: Codable {
-  var name: String
-  var dateUpdated: Date
+    var name: String
+    var dateUpdated: Date
 }
 ```
 
@@ -20,10 +20,10 @@ To make my life easier, I've added a custom init to this object to convert it fr
 
 ```swift
 extension Name {
-  init(dictionary: [String: Any]) throws {
-    let data = try JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted)
-    self = try decoder.decode(Self.self, from: data)
-  }
+    init(dictionary: [String: Any]) throws {
+        let data = try JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted)
+        self = try decoder.decode(Self.self, from: data)
+    }
 }
 ```
 
@@ -31,8 +31,8 @@ Pretty easy! Now when I get a response from Firestore I can just convert it to m
 
 ```swift
 if let document = snapshot.documents.first {
-  let data = document.data()
-  let name: Name? = try? Name(data)
+    let data = document.data()
+    let name: Name? = try? Name(data)
 }
 ```
 
@@ -40,11 +40,11 @@ And I have a function that converts the object into a dictionary to save it to f
 
 ```swift
 func dictionary() throws -> [String: Any] {
-  let data = try JSONEncoder().encode(self)
-  guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
-    throw NSError()
-  }
-  return dictionary
+    let data = try JSONEncoder().encode(self)
+    guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+        throw NSError()
+    }
+    return dictionary
 }
 ```
 
@@ -66,22 +66,22 @@ It's pretty simple actually, we just tell the `JSONDecoder` and `JSONEncoder` to
 
 ```swift
 extension Name {
-  init(dictionary: [String: Any]) throws {
-    let data = try JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted)
-    let decoder = JSONDecoder() // Change
-    decoder.dateDecodingStrategy = .secondsSince1970 // Change
-    self = try decoder.decode(Self.self, from: data) // Change
-  }
-  
-  func dictionary() throws -> [String: Any] {
-    let encoder = JSONEncoder() // Change
-    encoder.dateEncodingStrategy = .secondsSince1970 // Change    
-    let data = try encoder.encode(self)
-    guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
-      throw NSError()
+    init(dictionary: [String: Any]) throws {
+        let data = try JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted)
+        let decoder = JSONDecoder() // Change
+        decoder.dateDecodingStrategy = .secondsSince1970 // Change
+        self = try decoder.decode(Self.self, from: data) // Change
     }
-    return dictionary
-  }
+
+    func dictionary() throws -> [String: Any] {
+        let encoder = JSONEncoder() // Change
+        encoder.dateEncodingStrategy = .secondsSince1970 // Change    
+        let data = try encoder.encode(self)
+        guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+          throw NSError()
+        }
+        return dictionary
+    }
 }
 ```
 

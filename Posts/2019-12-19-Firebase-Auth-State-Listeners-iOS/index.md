@@ -15,17 +15,17 @@ Somewhere in your startup code -I use a container view for all my views, but the
 
 ```swift
 func setAuthListener() {
-	  Auth.auth().addStateDidChangeListener { (auth, user) in
-		    if user == nil {
-// The user is either logged out, or something went wrong. 
-// You can use the Auth.auth().currentUser.reload() function 
-// to try to find the error using the FIRErrorCode enum
-		    }	
-/*
-Otherwise, we now have a signed in user. Usually that just means 
-we carry on, but you could put some custom handler here too.
-*/
-	  }
+    Auth.auth().addStateDidChangeListener { (auth, user) in
+        guard let user else {
+            // The user is either logged out, or something went wrong. 
+            // You can use the Auth.auth().currentUser.reload() function 
+            // to try to find the error using the FIRErrorCode enum
+            return
+        }
+
+        // Otherwise, we now have a signed in user. Usually that just means 
+        // we carry on, but you could put some custom handler here too.
+    }
 }
 ```
 

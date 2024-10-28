@@ -10,7 +10,9 @@ struct Page<Content: Component>: Component {
     var body: some Component {
         Head(loadCodeStyles: loadCodeStyles)
         Tag("body") {
-            content()
+            Tag("div", ["class": "content"]) {
+                content()
+            }
             Footer()
         }
     }

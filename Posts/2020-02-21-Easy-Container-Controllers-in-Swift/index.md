@@ -21,39 +21,39 @@ Make a new file for this extension and put the following code in.
 import UIKit
 
 extension UIViewController {
-/*
-  This method gives us a function to quickly add a child view controller,
-  it takes care of adding the child, adding the view as a subview and then 
-  telling the subview that it's moved to a new parent.
-*/
-  func add(_ child: UIViewController) {
-    addChild(child)
-    view.addSubview(child.view)
-    child.didMove(toParent: self)
-  }
+    /*
+     This method gives us a function to quickly add a child view controller,
+     it takes care of adding the child, adding the view as a subview and then
+     telling the subview that it's moved to a new parent.
+     */
+    func add(_ child: UIViewController) {
+        addChild(child)
+        view.addSubview(child.view)
+        child.didMove(toParent: self)
+    }
 
-/*
-  This method makes it simpler to remove a child view controller.
-*/
-  func remove() {
-// First we check if the parent view controller exists, 
-// if not we can stop the whole thing right now.
-    guard parent != nil else { return }
-		
-// Here we enumerate through each subview telling them that their
-// going to be removed and then removing them.
-    children.forEach({ 
-      $0.willMove(toParent: nil)
-      $0.view.removeFromSuperview() 
-      $0.removeFromParent() 
-    })
-		
-// These tell this view controller that it will be moving to nil parent
-// and then removes it from the parent view controller.
-    willMove(toParent: nil)
-    view.removeFromSuperview()
-    removeFromParent()
-  }
+    /*
+     This method makes it simpler to remove a child view controller.
+     */
+    func remove() {
+        // First we check if the parent view controller exists,
+        // if not we can stop the whole thing right now.
+        guard parent != nil else { return }
+
+        // Here we enumerate through each subview telling them that their
+        // going to be removed and then removing them.
+        children.forEach({
+            $0.willMove(toParent: nil)
+            $0.view.removeFromSuperview()
+            $0.removeFromParent()
+        })
+
+        // These tell this view controller that it will be moving to nil parent
+        // and then removes it from the parent view controller.
+        willMove(toParent: nil)
+        view.removeFromSuperview()
+        removeFromParent()
+    }
 }
 
 ```
@@ -68,28 +68,29 @@ Here's the main code of the controller.
 import UIKit
 
 class ContainerController: UIViewController {
-	
-  static let shared = ContainerController()
-	
-  var displayedView: UIViewController?
-	
-  override func viewDidLoad() {
-    super.viewDidLoad()
-		
-    if displayedView == nil {
-      displayedView = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
-      add(displayedView!)
+
+    static let shared = ContainerController()
+
+    var displayedView: UIViewController?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        if displayedView == nil {
+            displayedView = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
+            add(displayedView!)
+        }
     }
-  }
-	
-  public func transitionTo(_ view: UIViewController) {
-    if displayedView != nil{
-      displayedView!.remove()
+
+    public func transitionTo(_ view: UIViewController) {
+        if displayedView != nil{
+            displayedView!.remove()
+        }
+        add(view)
+        displayedView = view
     }
-    add(view)
-    displayedView = view
-  }
 }
+
 ```
 
 Simple. In it we give a simple UIViewController with one method called `transitionTo(_ view:)` which can be called by outside controllers to change what view is displayed.
@@ -110,36 +111,36 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    
-    var controller: UIViewController!
-		
-    let container = ContainerController.shared
-		
-    // In this example I'm using FirebaseAuth for authentication.
-    // I check if a user is logged in, and if they are I send them
-    // to the "Admin" view. Otherwise they go to the "Auth" view.
-    if Auth.auth().currentUser != nil {
-      
-      let storyboard = UIStoryboard(name: "Admin", bundle: nil)
-      controller = storyboard.instantiateInitialViewController()!
-      
-    } else {
-      
-      let storyboard = UIStoryboard(name: "Auth", bundle: nil)
-      controller = storyboard.instantiateInitialViewController()!
-      
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+        var controller: UIViewController!
+
+        let container = ContainerController.shared
+
+        // In this example I'm using FirebaseAuth for authentication.
+        // I check if a user is logged in, and if they are I send them
+        // to the "Admin" view. Otherwise they go to the "Auth" view.
+        if Auth.auth().currentUser != nil {
+
+            let storyboard = UIStoryboard(name: "Admin", bundle: nil)
+            controller = storyboard.instantiateInitialViewController()!
+
+        } else {
+
+            let storyboard = UIStoryboard(name: "Auth", bundle: nil)
+            controller = storyboard.instantiateInitialViewController()!
+
+        }
+
+        // Make the container the root view controller.
+        self.window?.rootViewController = container
+        self.window?.makeKeyAndVisible()
+
+        // Transition to the pre-defined controller
+        container.transitionTo(controller)
+
+        return true
     }
-		
-    // Make the container the root view controller.
-    self.window?.rootViewController = container
-    self.window?.makeKeyAndVisible()
-        
-    // Transition to the pre-defined controller
-    container.transitionTo(controller)
-    
-    return true
-  }
 
 }
 ```

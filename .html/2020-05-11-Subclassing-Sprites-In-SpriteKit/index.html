@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><title>Khan's Blog</title><link href="/resources/index.css" rel="stylesheet"/><link href="/resources/prism.css" rel="stylesheet"/></head><body><article><h2>Subclassing</h2><p>Subclassing <code>SKSpriteNode</code>s makes it easy to have multiple classes of a similar sprite. One use case for this would be in a breakout-like game where there are multiple kinds of blocks that can do different things.</p><p>In this example we'll start with a normal <code>BlockNode</code>. Then, we'll subclass it to create a new type of block called <code>ExplosionNode</code>.</p><h2>Block Node</h2><p>The code for the original block node looks like this.</p><pre><code class="language-swift">class BlockNode: SKSpriteNode {
+<!DOCTYPE html><html><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><meta content="dark light" name="color-scheme"/><title>Khan's Blog</title><link href="/resources/index.css" rel="stylesheet"/><link href="/resources/prism.css" rel="stylesheet"/><link href="/resources/code-theme.css" rel="stylesheet"/><script src="/resources/index.js"></script><script src="/resources/prism.js"></script></head><body><div class="content"><article><h2>Subclassing</h2><p>Subclassing <code>SKSpriteNode</code>s makes it easy to have multiple classes of a similar sprite. One use case for this would be in a breakout-like game where there are multiple kinds of blocks that can do different things.</p><p>In this example we'll start with a normal <code>BlockNode</code>. Then, we'll subclass it to create a new type of block called <code>ExplosionNode</code>.</p><h2>Block Node</h2><p>The code for the original block node looks like this.</p><pre><code class="language-swift">class BlockNode: SKSpriteNode {
     
     var background: SKShapeNode?
     
@@ -28,18 +28,16 @@
 </code></pre><p>This simple SKSpriteNode class creates a block with a grey background. It can be created using <code>BlockNode(size: CGSize())</code>.</p><p>In the game when the ball touches the block, <code>endBlock()</code> is called to remove the block.</p><p>Now that we have a normal block lets make another, more fun, block.</p><h2>Explosion Block</h2><p>We can easily subclass the <code>BlockNode</code> by adding it to the class definition of <code>ExplosionBlockNode</code> like so.</p><pre><code class="language-swift">class ExplosionBlockNode: BlockNode {
 	...
 }
-</code></pre><p>Now lets override the init function that makes the block grey, and instead make it red.</p><pre><code class="language-swift">
- 	convenience init(size: CGSize) {
-		self.init(texture: nil, color: .clear, size: size)
+</code></pre><p>Now lets override the init function that makes the block grey, and instead make it red.</p><pre><code class="language-swift">    convenience init(size: CGSize) {
+        self.init(texture: nil, color: .clear, size: size)
         
 		background = SKShapeNode(rectOf: size, cornerRadius: 5)
-     background!.fillColor = .red
-     background!.strokeColor = .darkGray
-     addChild(background!)
-	}
-</code></pre><p>Now the block can be created using the same method as the normal block, except now using <code>ExplosionBlockNode(size: CGSize())</code>. This initializer will create a red block instead of a grey one.</p><p>We can also change the <code>endBlock()</code> function to being special for the explosion block by simply adding it to the <code>ExplosionBlockNode</code> like this.</p><pre><code class="language-swift">
-	override public func endBlock() {
-		guard let scene = self.scene as? GameScene else { self.removeFromParent(); return }
+        background!.fillColor = .red
+        background!.strokeColor = .darkGray
+        addChild(background!)
+    }
+</code></pre><p>Now the block can be created using the same method as the normal block, except now using <code>ExplosionBlockNode(size: CGSize())</code>. This initializer will create a red block instead of a grey one.</p><p>We can also change the <code>endBlock()</code> function to being special for the explosion block by simply adding it to the <code>ExplosionBlockNode</code> like this.</p><pre><code class="language-swift">    override public func endBlock() {
+        guard let scene = self.scene as? GameScene else { self.removeFromParent(); return }
 
         let scoreLabel = SKLabelNode(text: "Boom")
         scoreLabel.color = .red
@@ -47,24 +45,24 @@
         scoreLabel.fontSize = 24
         scene.addChild(scoreLabel)
         scoreLabel.run(.sequence([.group([.moveTo(y: self.position.y + 50, duration: 0.4), .fadeOut(withDuration: 0.3)]), .removeFromParent()]))
-        
+
         scene.addChild(field)
-		field.run(SKAction.sequence([SKAction.wait(forDuration: 0.05),SKAction.removeFromParent()]))
+        field.run(SKAction.sequence([SKAction.wait(forDuration: 0.05),SKAction.removeFromParent()]))
         removeFromParent()
     }
 </code></pre><p>Now when we call the <code>endBlock</code> method on the explosion block it'll add a little label saying "Boom" that fades quickly and animates up.</p><p>The final explosion block code looks like this.</p><pre><code class="language-swift">class ExplosionBlockNode: BlockNode {
 
-	convenience init(size: CGSize) {
-		self.init(texture: nil, color: .clear, size: size)
-        
-		background = SKShapeNode(rectOf: size, cornerRadius: 5)
-     background!.fillColor = .red
-     background!.strokeColor = .darkGray
-     addChild(background!)
-	}
+    convenience init(size: CGSize) {
+        self.init(texture: nil, color: .clear, size: size)
 
-	override public func endBlock() {
-		guard let scene = self.scene as? GameScene else { self.removeFromParent(); return }
+        background = SKShapeNode(rectOf: size, cornerRadius: 5)
+        background!.fillColor = .red
+        background!.strokeColor = .darkGray
+        addChild(background!)
+    }
+
+    override public func endBlock() {
+        guard let scene = self.scene as? GameScene else { self.removeFromParent(); return }
 
         let scoreLabel = SKLabelNode(text: "Boom")
         scoreLabel.color = .red
@@ -72,11 +70,11 @@
         scoreLabel.fontSize = 24
         scene.addChild(scoreLabel)
         scoreLabel.run(.sequence([.group([.moveTo(y: self.position.y + 50, duration: 0.4), .fadeOut(withDuration: 0.3)]), .removeFromParent()]))
-        
+
         scene.addChild(field)
-		field.run(SKAction.sequence([SKAction.wait(forDuration: 0.05),SKAction.removeFromParent()]))
+        field.run(SKAction.sequence([SKAction.wait(forDuration: 0.05),SKAction.removeFromParent()]))
         removeFromParent()
     }
 
 }
-</code></pre></article><footer><p>Copyright ©️ Khan Winter 2024</p><p>Built In Swift</p><p><a href="https://twitter.com/thecoolwinter" rel="me">Twitter</a> | <a href="https://threads.net/thecoolwinter" rel="me">Threads</a> | <a href>RSS</a></p></footer></body></html>
+</code></pre></article></div><footer><p>Copyright ©️ Khan Winter 2024</p><p>Built In Swift</p><p><a href="https://twitter.com/thecoolwinter" rel="me" target="_blank">Twitter</a> | <a href="https://threads.net/thecoolwinter" rel="me" target="_blank">Threads</a> | <a href>RSS</a></p></footer></body></html>

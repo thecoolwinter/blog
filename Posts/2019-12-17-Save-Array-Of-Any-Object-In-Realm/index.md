@@ -13,13 +13,13 @@ For instance we'll take this dog object. The dog can have multiple Collars, but 
 class Dog: Object {
     @objc dynamic var name = ""
     @objc dynamic var age = 0
-  
-  	let collars = List<Collar>()
+
+    let collars = List<Collar>()
 }
 
 class Collar: Object {
-  @objc dynamic var color = "Blue"
-  @objc dynamic var favorite = false
+    @objc dynamic var color = "Blue"
+    @objc dynamic var favorite = false
 }
 ```
 
@@ -29,8 +29,8 @@ This makes for slightly confusing code when trying to retrieve the collars from 
 class Dog: Object {
     @objc dynamic var name = ""
     @objc dynamic var age = 0
-  
-  	var collars: [Collar] {
+
+    var collars: [Collar] {
       get {
         return _collars.map{ $0 }
       }
@@ -39,8 +39,8 @@ class Dog: Object {
         _collars.append(objectsIn: newValue)
       }
     }
-  	// The original property is here, we simply renamed it and added the above collar variable.
-  	let _collars = List<Collar>()
+    // The original property is here, we simply renamed it and added the above collar variable.
+    let _collars = List<Collar>()
 }
 ```
 
@@ -52,7 +52,7 @@ The getter simply maps the `_collars` object to an array and returns the array.
 
 ```swift
 get {
-  return _collars.map{ $0 }
+    return _collars.map{ $0 }
 }
 ```
 
@@ -62,7 +62,7 @@ Now we can use the `collars` property just like any other array. Just make sure 
 
 ```swift
 try! realm.write {
-  dog.collars = [Collar(color: "Red", favorite: false), Collar(color: "Blue", favorite: true)]
+    dog.collars = [Collar(color: "Red", favorite: false), Collar(color: "Blue", favorite: true)]
 }
 ```
 

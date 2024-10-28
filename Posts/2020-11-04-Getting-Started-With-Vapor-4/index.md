@@ -105,7 +105,6 @@ import JWT
 ```
 
 
-
 ## Conclusion
 
 There we go! You now have an empty vapor project with an empty database and all the dependencies installed. I'll be making a part 2 soon for this series, when it's up it'll be linked right here!

@@ -29,23 +29,6 @@ Hello World
 user@Computer ~ % 
 ```
 
-
-
-## You've done it!
-
-Now you have a running Swift script. You can add anything you want to the script, except things like UIKit or SwiftUI. Those won't work and you'll want Xcode's help using them.
-
-Some ideas on what you could do:
-
-- Twitter bots
-- Schedule a backup
-- Automatically copy-paste large folders
-- Automatically push a git repository
-- Retreive stock market data and save it in a local database
-- So much more!
-
-
-
 ### One more thing to note
 
 Xcode's autocomplete will not work for scripts. So what I do is create a playground, write and debug the script and then when it's ready copy-paste it into the script file you just made. Then, you have autocomplete while writing the script.

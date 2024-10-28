@@ -9,19 +9,19 @@ created_at: 2021-08-07
 
 Lists of objects can often be sorted by a variable, eg calendar events are often sorted by the date they are for. Like so:
 
-```
+```plaintext
 Event 1: 10:00 AM
 Event 2: 11:00 AM
 Event 3: 12:00 PM
 ```
 
-Sometimes though, we need to sort objects in a list that don't have an easy way to sort, or we need to allow users to sort the objects to their desire. The user will most likely expect his/her sort order to be kept, and we also can't just store an Array of objects in a db. 
+Sometimes though, we need to sort objects in a list that don't have an easy way to sort, or we need to allow users to sort the objects to their desire. The user will most likely expect his/her sort order to be kept, and we also can't just store an Array of objects in a db.
 
 The other problem is if we give all the objects a number value to sort by, we can't update <u>every single object</u> in the database with a new sort number. That's just impractical and a waste of compute time and energy.
 
 The solution is to sort the items by a `Double` variable. The objects will look basically like this at first:
 
-```
+```plaintext
 Item 1: 10.0
 Item 2: 20.0
 Item 3: 30.0
@@ -29,7 +29,7 @@ Item 3: 30.0
 
 When the user moves Item 3 up a slot, we just give it a number between items 1 and 2, like this:
 
-```
+```plaintext
 Item 1: 10.0
 Item 3: 25.0 <- Inserted here
 Item 2: 20.0
@@ -37,7 +37,7 @@ Item 2: 20.0
 
 If a user moves Item 3 back down, we just add 10.0 to the biggest item's order, and get the list we started out with:
 
-```
+```plaintext
 Item 1: 10.0
 Item 2: 20.0
 Item 3: 30.0
@@ -45,7 +45,7 @@ Item 3: 30.0
 
 Finally, if the user moves Item 3 to the top of the list, we find a number between `0.0` and Item 1's order, and give it to Item 3:
 
-```
+```plaintext
 Item 3:  5.0 <-- Halfway between 0 and 10
 Item 1: 10.0
 Item 2: 20.0
@@ -63,9 +63,9 @@ The main idea behind this solution is having a variable on all our objects in th
 
 ```swift
 struct Item {
-  var id: UUID = UUID()
-  var label: String
-  var order: Double
+    var id: UUID = UUID()
+    var label: String
+    var order: Double
 }
 ```
 
@@ -74,8 +74,7 @@ Notice that we're adding an `order` variable as type `Double` to this object. In
 When we go to fetch the `Todo`s we'll just sort them by the `order` variable. For Core Data this looks like this:
 
 ```swift
-@FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Item.order, ascending: true)], 
-              animation: .default)
+@FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Item.order, ascending: true)], animation: .default)
 private var items: FetchedResults<Item>
 ```
 
@@ -92,18 +91,18 @@ When an `Item` is added, we need to give it an initial order value. The code may
 
 ```swift
 func addItem() {
-	withAnimation {
-		let newItem = Item(context: viewContext)
-    newItem.label = "New Item!"
-    
-    if items.count > 0 { // Check if there are items
-			newItem.order = items.last!.order + 25.0 // Add some more to the order
-		} else {
-			newItem.order = 100.0 // Give some padding from 0.0 for later
-		}
+    withAnimation {
+        let newItem = Item(context: viewContext)
+        newItem.label = "New Item!"
 
-    try! viewContext.save()
-	}
+        if items.count > 0 { // Check if there are items
+            newItem.order = items.last!.order + 25.0 // Add some more to the order
+        } else {
+            newItem.order = 100.0 // Give some padding from 0.0 for later
+        }
+
+        try! viewContext.save()
+    }
 }
 ```
 
@@ -117,7 +116,7 @@ When an item is moved, things get a little more tricky. There are 3 paths here t
 2. The item is moved to the bottom of the list
 3. The item is put somewhere in the middle
 
-We'll always need to find an order value between two values to insert the item somewhere. 
+We'll always need to find an order value between two values to insert the item somewhere.
 
 For the three cases the `upper` and `lower` order values will be between:
 
@@ -175,4 +174,4 @@ Here's the code from the example project in action.
 <video width="400" controls>
   <source src="/2021/08/07/video.mp4" type="video/mp4">
   Your browser does not support the video tag.
-</video> 
+</video>

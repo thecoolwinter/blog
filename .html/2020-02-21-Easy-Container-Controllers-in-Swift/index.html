@@ -1,101 +1,102 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><title>Khan's Blog</title><link href="/resources/index.css" rel="stylesheet"/><link href="/resources/prism.css" rel="stylesheet"/></head><body><article><h2>What are container controllers?</h2><p>Container controllers are like a larger, older brother to the UIViewController. They come in extremely handy when dealing with things like Auth state and UIViewController transitions. UIKit already comes with a few container controllers that you most likely know very well. Some examples of these are the <code>UINavigationController</code>, or the <code>UITabViewController</code>. Each of those controllers have one or more sub-controllers and help with things like transitions or UI that needs to stay similar between each of the sub-controllers they contain.</p><h2>Why should I spend the time to make one?</h2><p>Container controllers do a few things that make life as a developer much easier. First, they naturally separate your UI code. Instead of having your <code>Auth.onSignOut()</code> function in your AppDelegate (which can get very messy, very quickly), you have the <code>Auth.onSignOut()</code> happen in a separated container that can directly interact with it's sub-controllers without having to use any <code>window.controllers.first</code> junk.</p><h2>First we need a few extensions.</h2><p>Make a new file for this extension and put the following code in.</p><pre><code class="language-swift">import UIKit
+<!DOCTYPE html><html><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><meta content="dark light" name="color-scheme"/><title>Khan's Blog</title><link href="/resources/index.css" rel="stylesheet"/><link href="/resources/prism.css" rel="stylesheet"/><link href="/resources/code-theme.css" rel="stylesheet"/><script src="/resources/index.js"></script><script src="/resources/prism.js"></script></head><body><div class="content"><article><h2>What are container controllers?</h2><p>Container controllers are like a larger, older brother to the UIViewController. They come in extremely handy when dealing with things like Auth state and UIViewController transitions. UIKit already comes with a few container controllers that you most likely know very well. Some examples of these are the <code>UINavigationController</code>, or the <code>UITabViewController</code>. Each of those controllers have one or more sub-controllers and help with things like transitions or UI that needs to stay similar between each of the sub-controllers they contain.</p><h2>Why should I spend the time to make one?</h2><p>Container controllers do a few things that make life as a developer much easier. First, they naturally separate your UI code. Instead of having your <code>Auth.onSignOut()</code> function in your AppDelegate (which can get very messy, very quickly), you have the <code>Auth.onSignOut()</code> happen in a separated container that can directly interact with it's sub-controllers without having to use any <code>window.controllers.first</code> junk.</p><h2>First we need a few extensions.</h2><p>Make a new file for this extension and put the following code in.</p><pre><code class="language-swift">import UIKit
 
 extension UIViewController {
-/*
-  This method gives us a function to quickly add a child view controller,
-  it takes care of adding the child, adding the view as a subview and then 
-  telling the subview that it's moved to a new parent.
-*/
-  func add(_ child: UIViewController) {
-    addChild(child)
-    view.addSubview(child.view)
-    child.didMove(toParent: self)
-  }
+    /*
+     This method gives us a function to quickly add a child view controller,
+     it takes care of adding the child, adding the view as a subview and then
+     telling the subview that it's moved to a new parent.
+     */
+    func add(_ child: UIViewController) {
+        addChild(child)
+        view.addSubview(child.view)
+        child.didMove(toParent: self)
+    }
 
-/*
-  This method makes it simpler to remove a child view controller.
-*/
-  func remove() {
-// First we check if the parent view controller exists, 
-// if not we can stop the whole thing right now.
-    guard parent != nil else { return }
-		
-// Here we enumerate through each subview telling them that their
-// going to be removed and then removing them.
-    children.forEach({ 
-      $0.willMove(toParent: nil)
-      $0.view.removeFromSuperview() 
-      $0.removeFromParent() 
-    })
-		
-// These tell this view controller that it will be moving to nil parent
-// and then removes it from the parent view controller.
-    willMove(toParent: nil)
-    view.removeFromSuperview()
-    removeFromParent()
-  }
+    /*
+     This method makes it simpler to remove a child view controller.
+     */
+    func remove() {
+        // First we check if the parent view controller exists,
+        // if not we can stop the whole thing right now.
+        guard parent != nil else { return }
+
+        // Here we enumerate through each subview telling them that their
+        // going to be removed and then removing them.
+        children.forEach({
+            $0.willMove(toParent: nil)
+            $0.view.removeFromSuperview()
+            $0.removeFromParent()
+        })
+
+        // These tell this view controller that it will be moving to nil parent
+        // and then removes it from the parent view controller.
+        willMove(toParent: nil)
+        view.removeFromSuperview()
+        removeFromParent()
+    }
 }
 
 </code></pre><p>Read through the comments above for more detail on this peice of code. Basically this extension makes it easier to add and remove child view controllers.</p><h2>Implementing the Container Controller.</h2><p>Here's the main code of the controller.</p><pre><code class="language-swift">import UIKit
 
 class ContainerController: UIViewController {
-	
-  static let shared = ContainerController()
-	
-  var displayedView: UIViewController?
-	
-  override func viewDidLoad() {
-    super.viewDidLoad()
-		
-    if displayedView == nil {
-      displayedView = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
-      add(displayedView!)
+
+    static let shared = ContainerController()
+
+    var displayedView: UIViewController?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        if displayedView == nil {
+            displayedView = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
+            add(displayedView!)
+        }
     }
-  }
-	
-  public func transitionTo(_ view: UIViewController) {
-    if displayedView != nil{
-      displayedView!.remove()
+
+    public func transitionTo(_ view: UIViewController) {
+        if displayedView != nil{
+            displayedView!.remove()
+        }
+        add(view)
+        displayedView = view
     }
-    add(view)
-    displayedView = view
-  }
 }
+
 </code></pre><p>Simple. In it we give a simple UIViewController with one method called <code>transitionTo(_ view:)</code> which can be called by outside controllers to change what view is displayed.</p><p>We also added a default view to be displayed in the <code>viewDidLoad()</code>. It just makes sure that when we initialize this class it automatically populates the <code>displayedView</code> variable. In this example I intitialize the root controller from the <code>main</code> storyboard, but you can replace it with any view controller or even omit this code entirely.</p><p>Also! I created a singleton by adding a <code>static let shared = ContainerController()</code> variable. You can read more about singletons <a href="https://cocoacasts.com/what-is-a-singleton-and-how-to-create-one-in-swift">here</a> but they basically make it so we can keep track of one container controller for the entire app.</p><small>TL;DR: Some people dislike singletons. However, in this case the ability to access the container controller from anywhere in your app without having to implement a delegate method or callback into every single view controller greatly outweighs the tiny bit of overhead a singleton creates. </small><h2>Sweet. How do I use it?</h2><p>Really easily. The main way I use it is in my AppDelegate (or SceneManager) like so:</p><pre><code class="language-swift">import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -&gt; Bool {
-    
-    var controller: UIViewController!
-		
-    let container = ContainerController.shared
-		
-    // In this example I'm using FirebaseAuth for authentication.
-    // I check if a user is logged in, and if they are I send them
-    // to the "Admin" view. Otherwise they go to the "Auth" view.
-    if Auth.auth().currentUser != nil {
-      
-      let storyboard = UIStoryboard(name: "Admin", bundle: nil)
-      controller = storyboard.instantiateInitialViewController()!
-      
-    } else {
-      
-      let storyboard = UIStoryboard(name: "Auth", bundle: nil)
-      controller = storyboard.instantiateInitialViewController()!
-      
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -&gt; Bool {
+
+        var controller: UIViewController!
+
+        let container = ContainerController.shared
+
+        // In this example I'm using FirebaseAuth for authentication.
+        // I check if a user is logged in, and if they are I send them
+        // to the "Admin" view. Otherwise they go to the "Auth" view.
+        if Auth.auth().currentUser != nil {
+
+            let storyboard = UIStoryboard(name: "Admin", bundle: nil)
+            controller = storyboard.instantiateInitialViewController()!
+
+        } else {
+
+            let storyboard = UIStoryboard(name: "Auth", bundle: nil)
+            controller = storyboard.instantiateInitialViewController()!
+
+        }
+
+        // Make the container the root view controller.
+        self.window?.rootViewController = container
+        self.window?.makeKeyAndVisible()
+
+        // Transition to the pre-defined controller
+        container.transitionTo(controller)
+
+        return true
     }
-		
-    // Make the container the root view controller.
-    self.window?.rootViewController = container
-    self.window?.makeKeyAndVisible()
-        
-    // Transition to the pre-defined controller
-    container.transitionTo(controller)
-    
-    return true
-  }
 
 }
-</code></pre><p>Really fairly simple to use. It can also be used from a view controller after the app is already running. To access the container at the root one can simply use <code>ContainerController.shared</code>.</p><hr><p>This post was heavily inspired by John Sundell's post <a href="https://www.swiftbysundell.com/articles/custom-container-view-controllers-in-swift/">here</a>. Go check it out, he's an amazing writer and developer.</p></article><footer><p>Copyright ©️ Khan Winter 2024</p><p>Built In Swift</p><p><a href="https://twitter.com/thecoolwinter" rel="me">Twitter</a> | <a href="https://threads.net/thecoolwinter" rel="me">Threads</a> | <a href>RSS</a></p></footer></body></html>
+</code></pre><p>Really fairly simple to use. It can also be used from a view controller after the app is already running. To access the container at the root one can simply use <code>ContainerController.shared</code>.</p><hr><p>This post was heavily inspired by John Sundell's post <a href="https://www.swiftbysundell.com/articles/custom-container-view-controllers-in-swift/">here</a>. Go check it out, he's an amazing writer and developer.</p></article></div><footer><p>Copyright ©️ Khan Winter 2024</p><p>Built In Swift</p><p><a href="https://twitter.com/thecoolwinter" rel="me" target="_blank">Twitter</a> | <a href="https://threads.net/thecoolwinter" rel="me" target="_blank">Threads</a> | <a href>RSS</a></p></footer></body></html>

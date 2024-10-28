@@ -61,15 +61,14 @@ class ExplosionBlockNode: BlockNode {
 Now lets override the init function that makes the block grey, and instead make it red.
 
 ```swift
-
- 	convenience init(size: CGSize) {
-		self.init(texture: nil, color: .clear, size: size)
+    convenience init(size: CGSize) {
+        self.init(texture: nil, color: .clear, size: size)
         
 		background = SKShapeNode(rectOf: size, cornerRadius: 5)
-     background!.fillColor = .red
-     background!.strokeColor = .darkGray
-     addChild(background!)
-	}
+        background!.fillColor = .red
+        background!.strokeColor = .darkGray
+        addChild(background!)
+    }
 ```
 
 Now the block can be created using the same method as the normal block, except now using `ExplosionBlockNode(size: CGSize())`. This initializer will create a red block instead of a grey one.
@@ -77,9 +76,8 @@ Now the block can be created using the same method as the normal block, except n
 We can also change the `endBlock()` function to being special for the explosion block by simply adding it to the `ExplosionBlockNode` like this.
 
 ```swift
-
-	override public func endBlock() {
-		guard let scene = self.scene as? GameScene else { self.removeFromParent(); return }
+    override public func endBlock() {
+        guard let scene = self.scene as? GameScene else { self.removeFromParent(); return }
 
         let scoreLabel = SKLabelNode(text: "Boom")
         scoreLabel.color = .red
@@ -87,9 +85,9 @@ We can also change the `endBlock()` function to being special for the explosion 
         scoreLabel.fontSize = 24
         scene.addChild(scoreLabel)
         scoreLabel.run(.sequence([.group([.moveTo(y: self.position.y + 50, duration: 0.4), .fadeOut(withDuration: 0.3)]), .removeFromParent()]))
-        
+
         scene.addChild(field)
-		field.run(SKAction.sequence([SKAction.wait(forDuration: 0.05),SKAction.removeFromParent()]))
+        field.run(SKAction.sequence([SKAction.wait(forDuration: 0.05),SKAction.removeFromParent()]))
         removeFromParent()
     }
 ```
@@ -100,17 +98,17 @@ The final explosion block code looks like this.
 ```swift
 class ExplosionBlockNode: BlockNode {
 
-	convenience init(size: CGSize) {
-		self.init(texture: nil, color: .clear, size: size)
-        
-		background = SKShapeNode(rectOf: size, cornerRadius: 5)
-     background!.fillColor = .red
-     background!.strokeColor = .darkGray
-     addChild(background!)
-	}
+    convenience init(size: CGSize) {
+        self.init(texture: nil, color: .clear, size: size)
 
-	override public func endBlock() {
-		guard let scene = self.scene as? GameScene else { self.removeFromParent(); return }
+        background = SKShapeNode(rectOf: size, cornerRadius: 5)
+        background!.fillColor = .red
+        background!.strokeColor = .darkGray
+        addChild(background!)
+    }
+
+    override public func endBlock() {
+        guard let scene = self.scene as? GameScene else { self.removeFromParent(); return }
 
         let scoreLabel = SKLabelNode(text: "Boom")
         scoreLabel.color = .red
@@ -118,9 +116,9 @@ class ExplosionBlockNode: BlockNode {
         scoreLabel.fontSize = 24
         scene.addChild(scoreLabel)
         scoreLabel.run(.sequence([.group([.moveTo(y: self.position.y + 50, duration: 0.4), .fadeOut(withDuration: 0.3)]), .removeFromParent()]))
-        
+
         scene.addChild(field)
-		field.run(SKAction.sequence([SKAction.wait(forDuration: 0.05),SKAction.removeFromParent()]))
+        field.run(SKAction.sequence([SKAction.wait(forDuration: 0.05),SKAction.removeFromParent()]))
         removeFromParent()
     }
 

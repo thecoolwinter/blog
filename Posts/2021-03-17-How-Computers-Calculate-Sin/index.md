@@ -141,10 +141,10 @@ let S5 = -2.50507602534068634195e-08;  // -1/(11!)
 let S6 = 1.58969099521155010221e-10;   //  1/(13!)
 
 func usersin(_ x: Double) -> Double {
-  let z = x*x                          // x^2
-  let v = z*x                          // x^3
-  let r = S2+z*(S3+z*(S4+z*(S5+z*S6))) // Taylor function part 1/2
-  return x+v*(S1+z*r)                   // Taylor function part 2/2
+    let z = x*x                          // x^2
+    let v = z*x                          // x^3
+    let r = S2+z*(S3+z*(S4+z*(S5+z*S6))) // Taylor function part 1/2
+    return x+v*(S1+z*r)                   // Taylor function part 2/2
 }
 ```
 
@@ -170,10 +170,10 @@ let S5 = -2.50507602534068634195e-08;  // -1/(11!)
 let S6 = 1.58969099521155010221e-10;   //  1/(13!)
 
 func usersin(_ x: Double) -> Double {
-  let z = x*x                          // x^2
-  let v = z*x                          // x^3
-  let r = S2+z*(S3+z*(S4+z*(S5+z*S6))) // Taylor function part 1/2
-  return x+v*(S1+z*r)                   // Taylor function part 2/2
+    let z = x*x                          // x^2
+    let v = z*x                          // x^3
+    let r = S2+z*(S3+z*(S4+z*(S5+z*S6))) // Taylor function part 1/2
+    return x+v*(S1+z*r)                   // Taylor function part 2/2
 }
 
 func printUserSin(_ input: Double, name: String) {
@@ -193,24 +193,24 @@ Which spits out:
 
 ```bash
 x	=	Pi/6
-usersin(x):	0.4999999999999961
-sin(x):		0.49999999999999994
+usersin(x): 0.4999999999999961
+sin(x):     0.49999999999999994
 
 x	=	Pi/8
-usersin(x):	0.38268343236508884
-sin(x):		0.3826834323650898
+usersin(x): 0.38268343236508884
+sin(x):     0.3826834323650898
 
 x	=	Pi/21
-usersin(x):	0.14904226617617444
-sin(x):		0.14904226617617444
+usersin(x): 0.14904226617617444
+sin(x):     0.14904226617617444
 
 x	=	Pi/2
-usersin(x):	1.000000000251294
-sin(x):		1.0
+usersin(x): 1.000000000251294
+sin(x):     1.0
 
 x	=	Pi/2 - 0.01
-usersin(x):	0.9999500006418387
-sin(x):		0.9999500004166653
+usersin(x): 0.9999500006418387
+sin(x):     0.9999500004166653
 ```
 
 Which is **nearly** completely accurate for all the values we gave it, plenty close for any calculation we may need, and plenty fast as well!
