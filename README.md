@@ -1,5 +1,12 @@
 # Khan's Blog
 
+### Deploying
+
+- Using Cloudflare's Wrangler cli via NPX
+
+```bash
+npx wrangler pages deploy .html
+```
 
 
 ### Prism Config:
