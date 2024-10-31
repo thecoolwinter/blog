@@ -173,8 +173,6 @@ Using some fun math we're able to turn a human problem (_what's the most popular
 
 KhanAcademy has some great resources on Matrices, Eigenvectors and Eigenvalues if you'd like to learn more here -> [https://www.khanacademy.org/math/linear-algebra](https://www.khanacademy.org/math/linear-algebra)
 
----
-
 _If you have access to Matlab, and want to check my work or mess around on your own, here's the Matlab code I used for the second example._
 
 ```matlab
@@ -192,5 +190,3 @@ p =
     0.2830
 
 ```
-
----

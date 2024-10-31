@@ -76,6 +76,26 @@ struct BlogPost: Component {
                 }
 
                 post.markdown.html
+
+                Tag("hr") { EmptyComponent() }
+
+                Tag("div", ["class": "article-footer"]) {
+                    P { post.createdAt.formatted(date: .abbreviated, time: .omitted) }
+
+                    Tag("div", ["class": "avatar", "href": "/about.html"]) {
+                        A("/about.html") {
+                            Img(resourceName: "avatar.webp", alt: "Avatar Image", size: (24, 24))
+                            Tag("span") { "Khan Winter" }
+                        }
+                        "·"
+                        A("https://twitter.com/thecoolwinter", ["target": "_blank"]) {
+                            Constants.xSVG
+                        }
+                        A("https://threads.net/thecoolwinter", ["target": "_blank"]) {
+                            Constants.threadsSVG
+                        }
+                    }
+                }
             }
         }
     }
