@@ -19,6 +19,8 @@ do {
         CleanOutJob(),
         CopyResourcesJob(),
         HomePageJob(),
+        AboutPageJob(),
+        NotFoundPageJob(),
         BlogPostJob(),
         CopySupplementalsJob(),
         SitemapTxtJob(),

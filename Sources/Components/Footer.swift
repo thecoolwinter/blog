@@ -4,7 +4,7 @@ struct Footer: Component {
     var body: some Component {
         Tag("footer") {
             P { "Copyright ©️ Khan Winter \(Date().year)" }
-            P { "Built In Swift" }
+            P { A("https://github.com/thecoolwinter/blog") { "Built In Swift" } }
             P {
                 A("https://twitter.com/thecoolwinter", ["rel": "me", "target": "_blank"]) { "Twitter" }
                 " | "
