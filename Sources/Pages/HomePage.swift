@@ -8,6 +8,11 @@ struct HomePage: Component {
 
         Page(loadCodeStyles: false) {
             Tag("div", ["class": "home"]) {
+                Tag("div", ["class": "home-header"]) {
+                    Img(resourceName: "avatar-large.webp", alt: "Avatar", size: (128, 128))
+                    P { "Khan's Online Web Log (aka: my blog)!" }
+                }
+
                 Tag("ul") {
                     for (post, path) in posts {
                         let url = path.deletingPathExtension().appendingPathExtension("html").path()
