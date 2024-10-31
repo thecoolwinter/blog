@@ -3,7 +3,7 @@ import Foundation
 struct CopyResourcesJob: Job {
     var title: String { "Copy Resources To Output Dir" }
     var handler: () throws -> Void = {
-        let outDir = outDir.appending(path: "resources")
+        let outDir = outDir.appending(path: "assets")
 
         if !FileManager.default.fileExists(atPath: outDir.path()) {
             try FileManager.default.createDirectory(atPath: outDir.path(), withIntermediateDirectories: true)

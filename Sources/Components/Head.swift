@@ -17,14 +17,14 @@ struct Head: Component {
 
             Tag("title") { "Khan's Blog" }
 
-            Tag("link", ["rel": "stylesheet", "href": "/resources/index.css"])
-            Tag("script", ["src": "/resources/index.js"]) { EmptyComponent() }
+            Tag("link", ["rel": "stylesheet", "href": "/assets/index.css"])
+            Tag("script", ["src": "/assets/index.js"]) { EmptyComponent() }
 
             if loadCodeStyles {
-                Tag("link", ["rel": "stylesheet", "href": "/resources/prism.css"])
-                Tag("link", ["rel": "stylesheet", "href": "/resources/code-theme.css"])
+                Tag("link", ["rel": "stylesheet", "href": "/assets/prism.css"])
+                Tag("link", ["rel": "stylesheet", "href": "/assets/code-theme.css"])
 
-                Tag("script", ["src": "/resources/prism.js"]) { EmptyComponent() }
+                Tag("script", ["src": "/assets/prism.js"]) { EmptyComponent() }
             }
 
             Tag("link", ["rel": "prefetch", "href": "/index.html", "data-nav": "true"])
