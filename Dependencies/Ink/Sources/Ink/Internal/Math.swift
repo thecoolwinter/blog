@@ -2,7 +2,7 @@ internal struct InlineMath: Fragment {
     let raw: Substring
 
     static func read(using reader: inout Reader) throws -> InlineMath {
-        let count = try reader.readCount(of: "$")
+        let count = reader.readCount(of: "$")
         try require(count == 1 || count == 2)
         let content = try reader.read(until: "$", required: true, allowWhitespace: true, allowLineBreaks: true)
         if count == 2 {
@@ -14,7 +14,7 @@ internal struct InlineMath: Fragment {
     var modifierTarget: Modifier.Target { .inlineMath }
 
     func html(usingURLs urls: NamedURLCollection, modifiers: ModifierCollection) -> String {
-        "<span class=\"math-block\">$\(raw)$</span>"
+        "<span class=\"math-inline\">$\(raw)$</span>"
     }
 
     func plainText() -> String {
