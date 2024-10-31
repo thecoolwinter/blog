@@ -5,18 +5,19 @@ excerpt: Use simple functions and layout anchors to create a simple UI without s
 created_at: 2020-11-04
 ---
 
+> This doesn't reflect my opinions circa 2024, however I'm leaving this public cause removing media is always bad.
+> This was written while I was in high school, so take it with a large grain of salt and don't judge my writing abilities 😅.
+
 ## Why are storyboards all that bad?
 
-#### Answer: They're not
-Really
-
-, storyboards are super good at helping create UI. They make it easy to see exactly what you're building and work with constraints on each view. Sometimes though, it's easier to not use them. For more repetitive views, using storyboards will be a pain, having to link every single input and output to your `UIViewController` file, copy-pasting the whole thing. It leads to bugs and spaghetti code. 
+### Answer: They're not
+Really, storyboards are super good at helping create UI. They make it easy to see exactly what you're building and work with constraints on each view. Sometimes though, it's easier to not use them. For more repetitive views, using storyboards will be a pain, having to link every single input and output to your `UIViewController` file, copy-pasting the whole thing. It leads to bugs and spaghetti code. 
 
 Sometimes though, in an app with many views storyboards get messy and overloaded. It then becomes easier to use programmatic views and try not to use storyboards. Otherwise there's no disadvantage to using them.
 
 ## The best way that I've found to create View Controllers programmatically is this.
 
-##### We'll be making a simple UI with a label, image and button as an example.
+**We'll be making a simple UI with a label, image and button as an example.**
 
 First, create your `UIViewController`. We'll call it `SampleViewController`
 

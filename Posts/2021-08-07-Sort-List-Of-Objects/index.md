@@ -148,7 +148,7 @@ if destination == items.count {
 
 Then, we can get numbers between the upper and lower limits like
 
-```swi
+```swift
 var newOrders: [Double] = stride(from: lower, to: upper, by: (upper - lower)/Double(sourceItems.count + 1)).map { $0 }
 newOrders.remove(at: 0)
 ```
@@ -172,6 +172,6 @@ Done! 🎉
 Here's the code from the example project in action.
 
 <video width="400" controls>
-  <source src="/2021/08/07/video.mp4" type="video/mp4">
+  <source src="video.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>

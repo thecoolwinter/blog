@@ -2,9 +2,9 @@ import Foundation
 
 struct BlogPostJob: Job {
     var title: String { "Write Posts To Disk" }
-    var handler = { (params: JobParams) in
-        for (post, path) in JobHelpers.getAllPosts(postsDir: params.postsDir) {
-            let outURL = params.outDir.appending(path: path.relativePath).deletingPathExtension().appendingPathExtension("html")
+    var handler = {
+        for (post, path) in JobHelpers.getAllPosts(postsDir: postsDir) {
+            let outURL = outDir.appending(path: path.relativePath).deletingPathExtension().appendingPathExtension("html")
             print(" - Writing Post:", outURL.relativePath)
             let html = HTMLRenderer.render {
                 BlogPost(post: post)

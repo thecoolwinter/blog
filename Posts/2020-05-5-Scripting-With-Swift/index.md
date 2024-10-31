@@ -1,7 +1,7 @@
 ---
-title: Scripting With Swifts
+title: Scripting With Swift
 tags: [Swift, scripting]
-excerpt: Make fast, simple scripts with your favorite language.
+excerpt: Make fast, simple scripts with my favorite language.
 created_at: 2020-11-04
 ---
 

@@ -3,3 +3,4 @@
 .build
 .html
 node_modules/
+/*.xcodeproj

@@ -51,7 +51,7 @@ In this graph, website 1 links only to website 2, website 2 links to both 1 and 
 For each website we want to know how it links to the other websites **mathematically**. So, for website 2, we'll make a single-column matrix like this:
 ![Single-column matrix](2.png)
 
-This matrix only has one column, which adds up to 1. We got the numbers for the matrix by adding up all the links that that website links to, and dividing one by that sum, eg: $$\frac{1}{Number\:Of\:Links}$$. We'll now create this matrix for each website, and combine them into one, larger matrix which we'll label $$A$$.
+This matrix only has one column, which adds up to 1. We got the numbers for the matrix by adding up all the links that that website links to, and dividing one by that sum, eg: $\frac{1}{Number\:Of\:Links}$. We'll now create this matrix for each website, and combine them into one, larger matrix which we'll label $A$.
 
 $$
 A=\:\begin{pmatrix}0&\frac{1}{2}&\frac{1}{2}\\ 1&0&\frac{1}{2}\\ 0&\frac{1}{2}&0\end{pmatrix}
@@ -71,13 +71,13 @@ This is a lot of writing, so I'll convert this into a formula.
 
 ---
 
-We'll start our walk through the links at page one. This is step one, so we'll name this variable $$p_0$$. $$p_0$$ is going to be a matrix representing the probability of us being on any page after we've taken 0 steps. We're starting at website 1, so we have a 100% probability in the next step of going to website 2, meaning the matrix looks like this.
+We'll start our walk through the links at page one. This is step one, so we'll name this variable $p_0$. $p_0$ is going to be a matrix representing the probability of us being on any page after we've taken 0 steps. We're starting at website 1, so we have a 100% probability in the next step of going to website 2, meaning the matrix looks like this.
 
 $$
 p_0=\begin{pmatrix}0\\ 1\\ 0\end{pmatrix}
 $$
 
-If I multiply $$p_0$$ by $$A$$ (which we created earlier) we'll end up with the probability of being at any of the resulting websites after one step ($$p_1$$).
+If I multiply $p_0$ by $A$ (which we created earlier) we'll end up with the probability of being at any of the resulting websites after one step ($p_1$).
 
 $$
 p_1=A\cdot \:p_0=\:\begin{pmatrix}0&\frac{1}{2}&\frac{1}{2}\\ 1&0&\frac{1}{2}\\ 0&\frac{1}{2}&0\end{pmatrix}\cdot \begin{pmatrix}1\\ 0\\ 0\end{pmatrix}=\begin{pmatrix}0\\ 1\\ 0\end{pmatrix}
@@ -91,13 +91,13 @@ $$
 p_2=A\cdot \:p_1=A\cdot A\cdot p_0=A^2p_0=\:\begin{pmatrix}0&\frac{1}{2}&\frac{1}{2}\\ \:1&0&\frac{1}{2}\\ \:0&\frac{1}{2}&0\end{pmatrix}\cdot \begin{pmatrix}0\\ \:1\\ \:0\end{pmatrix}=\begin{pmatrix}\frac{1}{2}\\ 0\\ \frac{1}{2}\end{pmatrix}
 $$
 
-I'm starting to see a patern. For each step we take, we're really just adding one power to $$A$$. On step one, we found $$A^1*p_0$$, on step two we found $$A^2*p_0$$, and so on. Because of that, we can say the following formula is true.
+I'm starting to see a patern. For each step we take, we're really just adding one power to $A$. On step one, we found $A^1*p_0$, on step two we found $A^2*p_0$, and so on. Because of that, we can say the following formula is true.
 
 $$
 p_n=Ap_n=A^np_0
 $$
 
-#### If we take a larger number of steps, we'll find the probability of being at any website in the graph.
+**If we take a larger number of steps, we'll find the probability of being at any website in the graph.**
 
 What if we find $$p_{15}$$? _(by the way I'm using [symbolab](https://www.symbolab.com/solver/matrix-calculator) for these smaller computations)_
 
@@ -107,7 +107,7 @@ $$
 
 This means after 15 steps through each website, **we've got the highest probability of landing on website 2, then website 1, then website 3.**
 
-#### **Congrats! You've found how likely a user is to navigate to each of these three sites!**
+**Congrats! You've found how likely a user is to navigate to each of these three sites!**
 
 ## This seems really work-intensive
 

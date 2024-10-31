@@ -24,7 +24,7 @@ Here I'll show you how computers estimate sin for any value.
 
 ## Sine and derivatives
 
-#### Before we take a deeper dive into the math, there's two concepts we need to understand.
+**Before we take a deeper dive into the math, there's two concepts we need to understand.**
 
 ------
 
@@ -43,9 +43,9 @@ As you can see, the value of *sin(x)* goes up and down between $$-1$$ and $$1$$.
 
 You can also tell that it's not coming to an end. It'll go on forever from −&infin; all the way to +&infin;.
 
-#### One more important thing about sine is that the curve 0 to $$\frac{\pi}{2}$$ is repeated on the entire rest of sine. The curve might be backwards or upside down, but it's always exactly the same. 
+**One more important thing about sine is that the curve 0 to $$\frac{\pi}{2}$$ is repeated on the entire rest of sine. The curve might be backwards or upside down, but it's always exactly the same.**
 
-#### That means if we can figure out values for any point in $$0$$ to $$\frac{\pi}{2}$$, we can figure out points for anywhere on sine.
+**That means if we can figure out values for any point in $$0$$ to $$\frac{\pi}{2}$$, we can figure out points for anywhere on sine.**
 
 ------
 

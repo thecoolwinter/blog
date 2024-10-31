@@ -13,13 +13,13 @@ I'll be building a small time tracking API similar to [Toggl](https://toggl.com/
 
 ## Get Started - Installation
 
-#### Install Swift
+### Install Swift
 
 If you're running a Mac, and already have Xcode installed. Great, you can skip this step. If not, go to the [App Store](https://apps.apple.com/us/app/xcode/id497799835?mt=12) and download it.
 
 If you're running a Linux computer, you'll have to go over to the [Swift Downloads](https://swift.org/download/#using-downloads) page, and follow the instructions there for your distribution.
 
-#### Install Vapor
+### Install Vapor
 
 We're going to need the vapor toolbox to run any project we make.
 
@@ -56,7 +56,7 @@ Once you have the url of your database, make a `.env` file in the root directory
 
 ## Finally, Swift
 
-#### Dependencies
+### Dependencies
 
 Make an Xcode project by running `vapor xcode` in your project's directory.
 
@@ -78,7 +78,7 @@ Then, below where it says `.package(url: "https://github.com/vapor/vapor.git", f
 
 This will install Fluent, Vapor's database framework, JWT, which we'll use for user authentication and the Fluent Postgres Driver so we can use our Postgres database.
 
-#### Connect the database
+### Connect the database
 
 In your `configure.swift` file under Sources > App add the following extension to the top of the file.
 

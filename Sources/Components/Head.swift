@@ -1,3 +1,7 @@
+import Foundation
+class Balls {
+
+}
 struct Head: Component {
     let loadCodeStyles: Bool
 
@@ -14,13 +18,26 @@ struct Head: Component {
             Tag("title") { "Khan's Blog" }
 
             Tag("link", ["rel": "stylesheet", "href": "/resources/index.css"])
+            Tag("script", ["src": "/resources/index.js"]) { EmptyComponent() }
 
             if loadCodeStyles {
                 Tag("link", ["rel": "stylesheet", "href": "/resources/prism.css"])
                 Tag("link", ["rel": "stylesheet", "href": "/resources/code-theme.css"])
 
-                Tag("script", ["src": "/resources/index.js"]) { EmptyComponent() }
                 Tag("script", ["src": "/resources/prism.js"]) { EmptyComponent() }
+            }
+
+            Tag("link", ["rel": "prefetch", "href": "/index.html", "data-nav": "true"])
+            Tag("link", ["rel": "prefetch", "href": "/about.html", "data-nav": "true"])
+            for post in JobHelpers.getAllPosts(postsDir: postsDir) {
+                Tag(
+                    "link",
+                    [
+                        "rel": "prefetch",
+                        "href": "/" + post.url.deletingPathExtension().appendingPathExtension("html").path(),
+                        "data-nav": "true"
+                    ]
+                )
             }
         }
     }

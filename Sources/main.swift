@@ -4,9 +4,9 @@ guard CommandLine.arguments.count == 2 else {
     fatalError("Invalid Argument Count")
 }
 
-private let rootDir = URL(fileURLWithPath: CommandLine.arguments[1])
-private let postsDir = rootDir.appending(path: Constants.postsDir)
-private let outDir = rootDir.appending(path: Constants.outDir)
+let rootDir = URL(fileURLWithPath: CommandLine.arguments[1])
+let postsDir = rootDir.appending(path: Constants.postsDir)
+let outDir = rootDir.appending(path: Constants.outDir)
 
 struct JobParams {
     let rootDir: URL
@@ -19,14 +19,14 @@ do {
         CleanOutJob(),
         CopyResourcesJob(),
         HomePageJob(),
-        BlogPostJob()
+        BlogPostJob(),
+        CopySupplementalsJob(),
+        MinifyJob()
     ]
-
-    let params = JobParams(rootDir: rootDir, postsDir: postsDir, outDir: outDir)
 
     for (idx, job) in jobs.enumerated() {
         print("Step \(idx): \(job.title)")
-        try job.handler(params)
+        try job.handler()
     }
 
     print("Finished! 🎉")
