@@ -1,0 +1,90 @@
+pre[class*="language-"] {
+    border-radius: 8px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(232, 232, 232);
+}
+
+pre[class*="language-"] *::selection {
+    background: rgb(179, 215, 255);
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+    font-size: 0.9em;
+    background: var(--code-background);
+    font-family: "SF Mono", SFMono-Regular, ui-monospace, "DejaVu Sans Mono", Menlo, Consolas, monospace;
+    line-height: 1.6em;
+
+    direction: ltr;
+    text-align: left;
+    word-spacing: normal;
+    word-break: normal;
+
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+.token.keyword,
+.token.boolean {
+    color: rgb(155, 35, 147);
+}
+
+.token.class-name,
+.token.function {
+    color: #326D74;
+}
+
+.token.builtin {
+    color: #6C36A9;
+}
+
+.token.number,
+.token.char {
+    color: #1C00CF;
+}
+
+.token.string {
+    color: #C41A16;
+}
+
+.token.symbol {
+    color: #643820;
+}
+
+.token.regex {
+    color: #C41A16;
+}
+
+.token.url {
+    color: #0E0EFF;
+}
+
+.token.operator, .token.punctuation {
+    color: #111;
+}
+
+.token.variable, .token.constant, .token.property {
+    color: #326D74;
+}
+
+.token.comment {
+    color: #5D6C79;
+}
+
+.token.attribute {
+    color: #326D74;
+}
+
+.token.inerted {
+    color: #60ff4f;
+}
+
+.token.deleted {
+    color: #f23e2e;
+}

@@ -1,4 +1,0 @@
----
-permalink: /articles/
-layout: articles
----
