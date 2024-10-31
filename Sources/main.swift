@@ -23,6 +23,7 @@ do {
         CopySupplementalsJob(),
         SitemapTxtJob(),
         RobotsTxtJob(),
+        NetlifyRedirectsJob(),
         MinifyJob()
     ]
 
