@@ -1,11 +1,12 @@
 git switch -C deploy
 git rm -rf .
+find . -maxdepth 1 -not -path './.git*' -not -path '.' -exec rm -rf {} +
 git checkout main -- .
 
-cd Scripts && npm install
+cd Scripts && npm install && cd ../
 swift run blog ./
 
-find . -mindepth 1 -not -path './.html*' -not -path './.git*' -not -path '.' -exec rm -rf {} +
+find . -maxdepth 1 -not -path './.html*' -not -path './.git*' -not -path '.' -exec rm -rf {} +
 
 cp -r .html/* .
 rm -rf .html
