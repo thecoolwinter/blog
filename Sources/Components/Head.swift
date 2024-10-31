@@ -12,7 +12,7 @@ struct Head: Component {
     var body: some Component {
         Tag("head") {
             Tag("meta", ["charset": "utf-8"])
-            Tag("meta", ["name":"viewport", "content": "width=device-width, initial-scale=1, maximum-scale=1"])
+            Tag("meta", ["name":"viewport", "content": "width=device-width, initial-scale=1, maximum-scale=5"])
             Tag("meta", ["name": "color-scheme", "content": "dark light"])
 
             Tag("title") { "Khan's Blog" }
@@ -24,7 +24,7 @@ struct Head: Component {
                 Tag("link", ["rel": "stylesheet", "href": "/assets/prism.css"])
                 Tag("link", ["rel": "stylesheet", "href": "/assets/code-theme.css"])
 
-                Tag("script", ["src": "/assets/prism.js"]) { EmptyComponent() }
+                Tag("script", ["src": "/assets/prism.js", "defer": ""]) { EmptyComponent() }
             }
 
             Tag("link", ["rel": "prefetch", "href": "/index.html", "data-nav": "true"])

@@ -21,6 +21,8 @@ do {
         HomePageJob(),
         BlogPostJob(),
         CopySupplementalsJob(),
+        SitemapTxtJob(),
+        RobotsTxtJob(),
         MinifyJob()
     ]
 

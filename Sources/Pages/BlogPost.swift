@@ -20,10 +20,10 @@ struct BlogPost: Component {
                             Tag("span") { "Khan Winter" }
                         }
                         "·"
-                        A("https://twitter.com/thecoolwinter", ["target": "_blank"]) {
+                        A("https://twitter.com/thecoolwinter", ["target": "_blank", "aria-label": "My Twitter"]) {
                             Constants.xSVG
                         }
-                        A("https://threads.net/thecoolwinter", ["target": "_blank"]) {
+                        A("https://threads.net/thecoolwinter", ["target": "_blank", "aria-label": "My Threads"]) {
                             Constants.threadsSVG
                         }
                     }
