@@ -6,7 +6,7 @@ struct HomePage: Component {
     var body: some Component {
         let posts = JobHelpers.getAllPosts(postsDir: postsDir).sorted(by: { $0.post.createdAt > $1.post.createdAt })
 
-        Page(loadCodeStyles: false) {
+        Page(title: "Posts", description: "Khan Winter's Blog Posts", path: "index.html", loadCodeStyles: false) {
             Tag("div", ["class": "home"]) {
                 Tag("div", ["class": "home-header"]) {
                     Img(resourceName: "avatar-large.webp", alt: "Avatar", size: (128, 128))

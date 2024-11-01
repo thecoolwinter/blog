@@ -3,19 +3,47 @@ class Balls {
 
 }
 struct Head: Component {
+    let title: String
+    let description: String
+    let path: String
     let loadCodeStyles: Bool
 
-    init(loadCodeStyles: Bool = false) {
+    init(title: String, description: String, path: String, loadCodeStyles: Bool = false) {
+        self.title = title
+        self.description = description
+        self.path = path
         self.loadCodeStyles = loadCodeStyles
     }
 
     var body: some Component {
         Tag("head") {
-            Tag("meta", ["charset": "utf-8"])
-            Tag("meta", ["name":"viewport", "content": "width=device-width, initial-scale=1, maximum-scale=5"])
-            Tag("meta", ["name": "color-scheme", "content": "dark light"])
+            Meta("charset", "utf-8")
+            Meta("viewport", "width=device-width, initial-scale=1, maximum-scale=5")
+            Meta("color-scheme", "only light")
 
-            Tag("title") { "Khan's Blog" }
+            Tag("title") { "Khan's Blog · \(title)" }
+            Meta("description", description)
+            Meta("robots", "index, follow")
+            Meta("keywords", "Khan Winter, Swift, macOS, JavaScript, iOS, web development, blog, SwiftUI")
+
+            MetaProperty("og:type", "website")
+            MetaProperty("og:sitename", "Khan's Blog")
+            MetaProperty("og:url", "https://khanwinter.com/\(path)")
+            MetaProperty("og:title", "Khan's Blog · \(title)")
+            MetaProperty("og:description", description)
+
+            MetaProperty("twitter:url", "https://khanwinter.com/\(path)")
+            MetaProperty("twitter:title", "Khan's Blog · \(title)")
+            MetaProperty("twitter:description", description)
+
+            if path == "index.html" {
+                Tag("link", ["rel": "canonical", "href": "https://khanwinter.com/\(path)"])
+            } else {
+                Tag("link", ["rel": "canonical", "href": "https://khanwinter.com/"])
+            }
+            Tag("link", ["rel": "me", "href": "https://twitter.com/thecoolwinter"])
+            Tag("link", ["rel": "me", "href": "https://mastodon.social/@thecoolwinter"])
+            Tag("link", ["rel": "me", "href": "https://threads.net/thecoolwinter"])
 
             Tag("link", ["rel": "stylesheet", "href": "/assets/index.css"])
             Tag("script", ["src": "/assets/index.js"]) { EmptyComponent() }

@@ -3,7 +3,12 @@ import Ink
 
 struct AboutPage: Component {
     var body: some Component {
-        Page(loadCodeStyles: false) {
+        Page(
+            title: "About",
+            description: "Hello 👋 My name's Khan Winter. I'm a Swift and Embedded Systems engineer with experience in iOS and macOS development.",
+            path: "about.html",
+            loadCodeStyles: false
+        ) {
             Tag("article") {
                 Tag("div", ["class": "home-header"]) {
                     Img(resourceName: "avatar-large.webp", alt: "Avatar", size: (128, 128))

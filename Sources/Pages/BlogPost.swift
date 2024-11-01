@@ -2,7 +2,12 @@ struct BlogPost: Component {
     let post: BlogPostContents
 
     var body: some Component {
-        Page(loadCodeStyles: true) {
+        Page(
+            title: post.title,
+            description: post.excerpt,
+            path: String(post.path.dropFirst(postsDir.absoluteURL.path(percentEncoded: false).count + 1)),
+            loadCodeStyles: true
+        ) {
             Tag("article") {
                 Tag("div", ["class": "article-header"]) {
                     P { post.createdAt.formatted(date: .abbreviated, time: .omitted) }
