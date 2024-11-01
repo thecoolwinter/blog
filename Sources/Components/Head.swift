@@ -1,7 +1,5 @@
 import Foundation
-class Balls {
 
-}
 struct Head: Component {
     let title: String
     let description: String
