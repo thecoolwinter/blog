@@ -5,7 +5,7 @@ for file in $(find $1 -type f -name "*.css")
 do
     original_size=$(stat -f%z "$file")
 
-    npx esbuild $file --minify --outfile=$file --allow-overwrite --log-level=warning
+    bunx esbuild $file --minify --outfile=$file --allow-overwrite --log-level=warning
 
     new_size=$(stat -f%z "$file")
     percent_change=$(( 100 * (original_size - new_size) / original_size ))
@@ -18,7 +18,7 @@ for file in $(find $1 -type f -name "*.js")
 do
     original_size=$(stat -f%z "$file")
 
-    npx esbuild $file --minify --outfile=$file --allow-overwrite --log-level=warning
+    bunx esbuild $file --minify --outfile=$file --allow-overwrite --log-level=warning
 
     new_size=$(stat -f%z "$file")
     percent_change=$(( 100 * (original_size - new_size) / original_size ))

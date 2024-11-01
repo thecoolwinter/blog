@@ -27,6 +27,6 @@ enum HTMLBuilder {
 
 enum HTMLRenderer {
     static func render<Content: Component>(@HTMLBuilder page: () -> Content) -> String {
-        "<!DOCTYPE html><html lang=\"en\">" + page().html + "</html>"
+        "<!DOCTYPE html><html lang=\"en\" data-theme=\"light\">" + page().html + "</html>"
     }
 }
