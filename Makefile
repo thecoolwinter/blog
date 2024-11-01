@@ -5,4 +5,4 @@ build: install
 	swift run blog ./
 
 deploy: install
-	./build.sh
+	./deploy.sh
