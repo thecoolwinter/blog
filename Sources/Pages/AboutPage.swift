@@ -10,7 +10,7 @@ struct AboutPage: Component {
                 }
 
                 MarkdownParser().html(from: """
-                    Hello 👋 My name's Khan Winter. I'm a Swift and Embedded Systems engineer with over 5 years of experience doing professional iOS and macOS development.
+                    Hello 👋 My name's Khan Winter. I'm a Swift and Embedded Systems engineer with over 6 years of experience in iOS and macOS development.
                     
                     ## Open Source
                     
@@ -37,7 +37,6 @@ struct AboutPage: Component {
                     ## FuelingTimer
                     
                     [FuelingTimer](https://www.fuelingtimer.app/) is the second somewhat successful app I've published on the App Store. Again, I've not had as much time as I'd like to put towards it. This app had about 10,000 lifetime downloads and gained popularity in a very niche dieting community. FuelingTimer allowed users to set a number of timers at predetermined intervals throughout the day and be reminded when those timers went off.
-                    
                     """
                 )
             }
