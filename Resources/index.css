@@ -1,5 +1,6 @@
 :root {
-    --code-background: rgb(247, 247, 247)
+    --code-background: rgb(247, 247, 247);
+    color-scheme: only light;
 }
 
 html {
