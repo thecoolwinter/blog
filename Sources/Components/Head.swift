@@ -55,9 +55,11 @@ struct Head: Component {
                 Tag("script", ["src": "/assets/prism.js", "defer": ""]) { EmptyComponent() }
             }
 
+            // Hehe, preload the whole site. Makes this bitch SO fast at the cost of like a few kB
             Tag("link", ["rel": "prefetch", "href": "/index.html", "data-nav": "true"])
             Tag("link", ["rel": "prefetch", "href": "/about.html", "data-nav": "true"])
-            for post in JobHelpers.getAllPosts(postsDir: postsDir) {
+            // Stable ordering to avoid destroying cache.
+            for post in JobHelpers.getAllPosts(postsDir: postsDir).sorted(by: { $0.post.createdAt > $1.post.createdAt }) {
                 Tag(
                     "link",
                     [
