@@ -1,3 +1,4 @@
+import Foundation
 import Ink
 
 struct AboutPage: Component {
@@ -9,8 +10,9 @@ struct AboutPage: Component {
                     P { "About Me" }
                 }
 
+                let years = abs(Date(timeIntervalSince1970: 1549432800.0).timeIntervalSinceNow / 3.15576e+7)
                 MarkdownParser().html(from: """
-                    Hello 👋 My name's Khan Winter. I'm a Swift and Embedded Systems engineer with over 6 years of experience in iOS and macOS development.
+                    Hello 👋 My name's Khan Winter. I'm a Swift and Embedded Systems engineer with over \(Int(years)) years of experience in iOS and macOS development.
                     
                     ## Open Source
                     
