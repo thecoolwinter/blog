@@ -35,9 +35,9 @@ struct Head: Component {
             MetaProperty("twitter:description", description)
 
             if path == "index.html" {
-                Tag("link", ["rel": "canonical", "href": "https://khanwinter.com/\(path)"])
-            } else {
                 Tag("link", ["rel": "canonical", "href": "https://khanwinter.com/"])
+            } else {
+                Tag("link", ["rel": "canonical", "href": "https://khanwinter.com/\(path)"])
             }
             Tag("link", ["rel": "me", "href": "https://twitter.com/thecoolwinter"])
             Tag("link", ["rel": "me", "href": "https://mastodon.social/@thecoolwinter"])
