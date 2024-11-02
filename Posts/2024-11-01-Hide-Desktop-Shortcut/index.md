@@ -1,7 +1,7 @@
 ---
 title: Hide Desktop macOS Shortcut
 tags: [macOS]
-excerpt: A quick automations app I use almost daily to toggle my desktop contents. Updated for desktop widgets.
+excerpt: A quick Automator script I use almost daily to toggle my desktop contents. Updated for desktop widgets.
 created_at: 2024-11-01
 ---
 
