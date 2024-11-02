@@ -18,6 +18,7 @@ enum JobHelpers {
             .map { path in
                 (try! BlogPostContents(path: path.absoluteURL.path(percentEncoded: false)), path)
             }
+            .sorted(by: { $0.post.createdAt < $1.post.createdAt })
     }
 
     static func createOutDir(_ outDir: URL) throws {

@@ -14,26 +14,22 @@ struct JobParams {
     let outDir: URL
 }
 
-do {
-    let jobs: [any Job] = [
-        CleanOutJob(),
-        CopyResourcesJob(),
-        HomePageJob(),
-        AboutPageJob(),
-        NotFoundPageJob(),
-        BlogPostJob(),
-        CopySupplementalsJob(),
-        SitemapTxtJob(),
-        RobotsTxtJob(),
-        MinifyJob()
-    ]
+let jobs: [any Job] = [
+    CleanOutJob(),
+    CopyResourcesJob(),
+    HomePageJob(),
+    AboutPageJob(),
+    NotFoundPageJob(),
+    BlogPostJob(),
+    CopySupplementalsJob(),
+    SitemapTxtJob(),
+    RobotsTxtJob(),
+    MinifyJob()
+]
 
-    for (idx, job) in jobs.enumerated() {
-        print("Step \(idx): \(job.title)")
-        try job.handler()
-    }
-
-    print("Finished! 🎉")
-} catch {
-    fatalError(error.localizedDescription)
+for (idx, job) in jobs.enumerated() {
+    print("Step \(idx): \(job.title)")
+    try job.handler()
 }
+
+print("Finished! 🎉")
