@@ -21,7 +21,7 @@ struct Head: Component {
 
             Tag("title") { "Khan's Blog · \(title)" }
             Meta("description", description)
-            Meta("robots", "index, follow")
+            Meta("robots", "all")
             Meta("keywords", "Khan Winter, Swift, macOS, JavaScript, iOS, web development, blog, SwiftUI")
 
             MetaProperty("og:type", "website")
