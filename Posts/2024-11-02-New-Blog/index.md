@@ -208,7 +208,7 @@ The last thing I wanted was to minify my website's assets. There's a few lines o
 
 I'm not only moving domains and site generators, but also my hosting provider. I've used Github pages and Netlify in the past, and while I don't have any issue with them in particular they have some rough edges a few years in. Netlify is nice, but they've clearly adjusted their target audience to larger businesses. Most of the features they provide just don't apply to a little site like mine (beyond the CDN). Github Pages is pretty much perfect, but not transparent enough for my liking. I prefer to know when my content will be live after deploying it.
 
-I initially was going to just host my static files in R2, CloudFlare's block storage offering. While setting that up I noticed they offer a static site hosting option which I tried out. So far, I've loved it. My site's download speed is faster than either Github or Netlify. They offer unlimited bandwidth, and DNS setup with them was faster than any other provider I've worked with. I don't usually give shoutouts for things like this but CloudFlare has been awesome to work with so far.
+I initially was going to just host my static files in R2, CloudFlare's block storage offering. While setting that up I noticed they offer a [static site hosting](https://pages.cloudflare.com/) which I'm trying out. So far, I've loved it. My site's download speed is faster than either Github or Netlify. They offer unlimited bandwidth, and DNS setup with them was faster than any other provider I've worked with. I don't usually give shoutouts for things like this but CloudFlare has been awesome to work with so far.
 
 ## Last Thing - Page Preloading
 
