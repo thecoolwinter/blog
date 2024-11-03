@@ -212,7 +212,7 @@ I initially was going to just host my static files in R2, CloudFlare's block sto
 
 ## Last Thing - Page Preloading
 
-After all this work, all of the HTML, JS, and CSS for my site (not including images and videos) is only 0.33MB on disk uncompressed (_**97KB compressed using ZSTD**, CloudFlare's default compression mechanism_). Each new page is roughly 18KB uncompressed, which is nothing to download for most internet connections. Well, HTML has this nice feature that allows you to [pre-fetch pages for navigation](https://developer.mozilla.org/en-US/docs/Web/Performance/Speculative_loading#link_reldns-prefetch). Inspired in part by this [Youtube Video](https://www.youtube.com/watch?v=-Ln-8QM8KhQ), I decided to preload the entire blog on each page. 
+After all this work, all of the HTML, JS, and CSS for my site (not including images and videos) is only 0.33MB on disk uncompressed (**97KB compressed** using ZSTD, CloudFlare's default compression mechanism). Each new page is roughly 18KB uncompressed, which is nothing to download for most internet connections. Well, HTML has this nice feature that allows you to [pre-fetch pages for navigation](https://developer.mozilla.org/en-US/docs/Web/Performance/Speculative_loading#link_reldns-prefetch). Inspired in part by this [Youtube Video](https://www.youtube.com/watch?v=-Ln-8QM8KhQ), I decided to preload the entire blog on each page. 
 
 Give it a try yourself! If you've made it this far. Clicking the "Random" navigation button a few times really shows off how zippy it is. Ironically, that's what powers that "Random" nav button. It uses the cached pages as the list to choose randomly from!
 
