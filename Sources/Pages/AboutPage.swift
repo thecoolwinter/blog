@@ -6,7 +6,7 @@ struct AboutPage: Component {
         Page(
             title: "About",
             description: "Hello 👋 My name's Khan Winter. I'm a Swift and Embedded Systems engineer with experience in iOS and macOS development.",
-            path: "about.html",
+            path: "about",
             loadCodeStyles: false
         ) {
             Tag("article") {

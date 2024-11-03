@@ -54,15 +54,15 @@ struct Head: Component {
             }
 
             // Hehe, preload the whole site. Makes this bitch SO fast at the cost of like a few kB
-            Tag("link", ["rel": "prefetch", "href": "/index.html", "data-nav": "true"])
-            Tag("link", ["rel": "prefetch", "href": "/about.html", "data-nav": "true"])
+            Tag("link", ["rel": "prefetch", "href": "/", "data-nav": "true"])
+            Tag("link", ["rel": "prefetch", "href": "/about", "data-nav": "true"])
             // Stable ordering to avoid destroying cache.
             for post in JobHelpers.getAllPosts(postsDir: postsDir).sorted(by: { $0.post.createdAt > $1.post.createdAt }) {
                 Tag(
                     "link",
                     [
                         "rel": "prefetch",
-                        "href": "/" + post.url.deletingPathExtension().appendingPathExtension("html").path(),
+                        "href": "/" + post.url.deletingLastPathComponent().path(percentEncoded: true),
                         "data-nav": "true"
                     ]
                 )

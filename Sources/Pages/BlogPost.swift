@@ -5,7 +5,7 @@ struct BlogPost: Component {
         Page(
             title: post.title,
             description: post.excerpt,
-            path: String(post.path.dropFirst(postsDir.absoluteURL.path(percentEncoded: false).count + 1)),
+            path: String(String(post.path.dropFirst(postsDir.absoluteURL.path(percentEncoded: false).count + 1)).dropLast(8)),
             loadCodeStyles: true
         ) {
             Tag("article") {
