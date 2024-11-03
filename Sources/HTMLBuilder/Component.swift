@@ -43,21 +43,3 @@ struct TupleComponent: Component {
 
     var html: String
 }
-
-struct Group<Content: Component>: Component {
-    var content: () -> Content
-
-    init(@HTMLBuilder content: @escaping () -> Content) {
-        self.content = content
-    }
-
-    var body: some Component {
-        content()
-    }
-
-    var html: String {
-        "<div>"
-        + content().html
-        + "</div>"
-    }
-}
