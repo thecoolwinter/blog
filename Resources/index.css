@@ -24,6 +24,37 @@ a:visited {
 	text-decoration-color: #0059b2;
 }
 
+.header-link {
+    color: #000;
+    text-decoration: none;
+}
+
+.header-link::after {
+    display: inline-block;
+    opacity: 0.0;
+    content: "";
+    background-size: cover;
+    background-image: url("data:image/svg+xml;utf8,%3Csvg%20width%3D%22800px%22%20height%3D%22800px%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%0A%20%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%0A%20%20%20%20clip-rule%3D%22evenodd%22%0A%20%20%20%20d%3D%22M10.975%2014.51a1.05%201.05%200%200%200%200-1.485%202.95%202.95%200%200%201%200-4.172l3.536-3.535a2.95%202.95%200%201%201%204.172%204.172l-1.093%201.092a1.05%201.05%200%200%200%201.485%201.485l1.093-1.092a5.05%205.05%200%200%200-7.142-7.142L9.49%207.368a5.05%205.05%200%200%200%200%207.142c.41.41%201.075.41%201.485%200zm2.05-5.02a1.05%201.05%200%200%200%200%201.485%202.95%202.95%200%200%201%200%204.172l-3.5%203.5a2.95%202.95%200%201%201-4.171-4.172l1.025-1.025a1.05%201.05%200%200%200-1.485-1.485L3.87%2012.99a5.05%205.05%200%200%200%207.142%207.142l3.5-3.5a5.05%205.05%200%200%200%200-7.142%201.05%201.05%200%200%200-1.485%200z%22%0A%20%20%20%20fill%3D%22%23000000%22%20%2F%3E%3C%2Fsvg%3E");
+    height: 24px;
+    margin-left: 8px;
+    aspect-ratio: 1;
+    vertical-align: baseline;
+    transition: opacity 0.3s;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.header-link:hover::after {
+    opacity: 1.0;
+    transition: opacity 0.2s;
+}
+
+.header-link:visited {
+    color: #000;
+    text-decoration: none;
+}
+
 .katex-display {
     overflow: auto hidden;
 }

@@ -1,5 +1,36 @@
 import Foundation
+import RegexBuilder
 import Ink
+
+private let headingIdsModifier: Modifier = Modifier(target: .headings) { input in
+    let pattern = Regex {
+        One("<")
+        One("h")
+        Capture {
+            One(.digit)
+        }
+        One(">")
+
+        Capture() {
+            OneOrMore(.any)
+        }
+
+        One("</h")
+        One(.digit)
+        One(">")
+    }
+
+    return input.html.replacing(pattern) { match in
+        let tagId = match.output.2
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "\n", with: "")
+            .filter { $0.isLetter || $0.isNumber || $0.isWhitespace }
+            .replacingOccurrences(of: " ", with: "-")
+            .lowercased()
+
+        return "<h\(match.output.1) id=\"\(tagId)\"><a href=\"#\(tagId)\" class=\"header-link\">\(match.output.2)</a></h\(match.output.1)>"
+    }
+}
 
 struct BlogPostContents {
     let path: String
@@ -12,7 +43,7 @@ struct BlogPostContents {
 
     init(path: String) throws {
         let contents = try String(contentsOfFile: path)
-        let parsed = MarkdownParser().parse(contents)
+        let parsed = MarkdownParser(modifiers: [headingIdsModifier]).parse(contents)
         guard let title = parsed.metadata["title"] else {
             fatalError("No title in metadata")
         }
