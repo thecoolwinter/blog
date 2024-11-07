@@ -23,6 +23,8 @@ struct AboutPage: Component {
                     
                     I co-lead and maintain the [CodeEdit](https://codeedit.app) project, an unapologetically macOS code editor. I've built out CodeEdits custom editor using CoreText and AppKit APIs, and have contributed to nearly every feature in the app. While working on this project I've gotten to meet some amazing people and hone my AppKit and Swift skills to a sharp edge. We don't yet have a v1.0, but are constantly working towards it.
                     
+                    Before Swift was an officially supported platform, [I helped build](https://supabase.com/blog/supabase-swift#contributors:~:text=grdsdev%2C%20satishbabariya%2C%20AngCosmin%2C-,thecoolwinter,-%2C%20maail%2C%20gentilijuanmanuel%2C%20mbarnach) the Swift client libraries for [Supabase](supabase.com). I wanted to bring this technology to my own apps and jumped into helping develop those libraries at an early stage. I was involved with some planning of libraries, and we attempted to mimic the official JavaScript library's architecture. Since contributing, Supabase now officially maintains and supports those libraries and ownership has been transferred to them. 
+                    
                     I've also built a few Swift example projects and doo-dads over on my [github](https://github.com/thecoolwinter).
                     
                     ## Education
