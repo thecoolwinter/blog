@@ -1,0 +1,1 @@
+function navRandom(){const o=Array.from(document.head.querySelectorAll('link[data-nav="true"]')).map(n=>n.href).filter(n=>n!==window.location.href);if(console.log(o),o.length>0){const n=o[Math.floor(Math.random()*o.length)];window.location.href=n}}
