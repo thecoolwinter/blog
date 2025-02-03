@@ -39,9 +39,11 @@ struct Head: Component {
             } else {
                 Tag("link", ["rel": "canonical", "href": "https://khanwinter.com/\(path)"])
             }
+            Tag("link", ["rel": "me", "href": "https://bsky.app/profile/khanwinter.com"])
             Tag("link", ["rel": "me", "href": "https://twitter.com/thecoolwinter"])
             Tag("link", ["rel": "me", "href": "https://mastodon.social/@thecoolwinter"])
             Tag("link", ["rel": "me", "href": "https://threads.net/thecoolwinter"])
+            Tag("link", ["rel": "me", "href": "https://www.linkedin.com/in/thecoolwinter/"])
 
             Tag("link", ["rel": "stylesheet", "href": "/assets/index.css"])
             Tag("script", ["src": "/assets/index.js"]) { EmptyComponent() }

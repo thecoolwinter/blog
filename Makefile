@@ -2,7 +2,7 @@ install:
 	cd Scripts && bun install
 
 build: install
-	swift run blog ./
+	swift run --configuration release blog ./
 
 deploy: install
 	./deploy.sh

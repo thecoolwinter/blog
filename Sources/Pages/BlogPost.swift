@@ -25,11 +25,8 @@ struct BlogPost: Component {
                             Tag("span") { "Khan Winter" }
                         }
                         "·"
-                        A("https://twitter.com/thecoolwinter", ["target": "_blank", "aria-label": "My Twitter"]) {
-                            Constants.xSVG
-                        }
-                        A("https://threads.net/thecoolwinter", ["target": "_blank", "aria-label": "My Threads"]) {
-                            Constants.threadsSVG
+                        A("https://bsky.app/profile/khanwinter.com", ["target": "_blank"]) {
+                            Constants.bskySVG
                         }
                     }
                 }
@@ -93,11 +90,8 @@ struct BlogPost: Component {
                             Tag("span") { "Khan Winter" }
                         }
                         "·"
-                        A("https://twitter.com/thecoolwinter", ["target": "_blank"]) {
-                            Constants.xSVG
-                        }
-                        A("https://threads.net/thecoolwinter", ["target": "_blank"]) {
-                            Constants.threadsSVG
+                        A("https://bsky.app/profile/khanwinter.com", ["target": "_blank"]) {
+                            Constants.bskySVG
                         }
                     }
                 }
