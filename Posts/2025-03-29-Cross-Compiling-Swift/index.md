@@ -106,7 +106,6 @@ docker run --platform linux/amd64 \
     swift build -c release --static-swift-stdlib && \
     rm -rf .build/install && \
     mkdir -p .build/install && \
-    strip --strip-unneeded .build/release/CaptainItsWednesday \
     cp -P .build/release/CaptainItsWednesday .build/install/'
 ```
 
