@@ -5,7 +5,7 @@ excerpt: There are multiple ways to cross-compile Swift on different platforms. 
 created_at: 2025-03-29
 ---
 
-I recently did a few small projects in Swift, and I wanted to run each of them on my home server running Gentoo Linux. I decided to do each of them in Swift, not because I thought it'd be easiest, but because I was curious about the challenge of compiling Swift from my Mac to my Linux machine. I'd heard lots recently about new [static Linux SDKs](https://www.swift.org/documentation/articles/static-linux-getting-started.html) (and the SDK API being introduced), and have always had an interest in [Vapor](https://vapor.codes/)
+I recently did a few small projects in Swift, and I wanted to run each of them on my home server running Gentoo Linux. I decided to do each of them in Swift, not because I thought it'd be easiest, but because I was curious about the challenge of compiling Swift from my Mac to my Linux machine. I'd heard lots recently about new [static Linux Swift SDKs](https://www.swift.org/documentation/articles/static-linux-getting-started.html) (and the Swift SDK API being introduced), and have always had an interest in [Vapor](https://vapor.codes/)
 
 ## Link Embed Bot
 
@@ -20,17 +20,17 @@ I used the [DiscordBM](https://github.com/DiscordBM/DiscordBM) package (the same
   	Your browser does not support the video tag.
 </video>
 
-Anyways, what I ended up with was a working Swift executable package. When executed, it started the connection with Discord and began processing events. The issue was, I wanted to run this on my [Gentoo](https://www.gentoo.org/) machine, but I had developed it on my Mac. In comes the power of static Linux SDKs!
+Anyways, what I ended up with was a working Swift executable package. When executed, it started the connection with Discord and began processing events. The issue was, I wanted to run this on my [Gentoo](https://www.gentoo.org/) machine, but I had developed it on my Mac. In comes the power of static Linux Swift SDKs!
 
-## Method 1: Static Linux SDK
+## Method 1: Static Linux Swift SDK
 
-Swift introduced static Linux SDKs a while ago to help meet the need to compile Swift programs for a platform other than the one it's being compiled on. An SDK contains the information Swift needs to know to create a *statically linked executable*. This executable contains the Swift runtime, standard libraries, even libraries the standard library depends on. This executable will run on any Linux machine once compiled, with no dependencies.
+Swift introduced static Linux Swift SDKs a while ago to help meet the need to compile Swift programs for a platform other than the one it's being compiled on. A Swift SDK contains the information Swift needs to know to create a *statically linked executable*. This executable contains the Swift runtime, standard libraries, even libraries the standard library depends on. This executable will run on any Linux machine once compiled, with no dependencies.
 
 The downside of this method is that we cannot make use of the fact that most distros ship with dynamically linkable libraries. We have to statically link the binary, which causes the resulting binary to be quite large. This isn't the biggest deal, but isn't very user-friendly if you were looking to ship a user application. However, for a server-based app like mine, it really doesn't matter.
 
 ### Step 1: Install the Open-Source Toolchain (Not Xcode)
 
-This part is where I got seriously tripped up. You need to install the open source Swift toolchain from [Swift.org](https://www.swift.org/install/macos/). This is different from the Swift toolchain that is installed with Xcode, and includes support for features like Embedded Swift and SDKs. Installing an open source Swift version is really straightforwards with the new [Swiftly](https://www.swift.org/install/macos/swiftly/) tool. 
+This part is very important. You need to use the open source Swift toolchain from [Swift.org](https://www.swift.org/install/macos/). This is different from the Swift toolchain that is installed with Xcode, and includes support for features like Embedded Swift and Swift SDKs. Installing an open source Swift version is really straightforwards with the new [Swiftly](https://www.swift.org/install/macos/swiftly/) tool. 
 
 #### Using Swiftly
 
@@ -40,29 +40,29 @@ Follow the instructions on Swift.org to [install Swiftly](https://www.swift.org/
 
 Download the install package from Swift.org and download the Package Installer .pkg file. Open the installer and it'll install a new `.xctoolchain` Xcode toolchain file on your system.
 
-#### This is where I got tripped up. 
+> This tripped me up for a while. When you run `swift` after installing a toolchain using this method, you'll still be using Xcode's version of Swift. You'll have to run the specific toolchain you just installed using `xcrun` like:
+> ```bash
+> xcrun --toolchain swift swift build -c release
+> ```
+> This may be an issue with my machine and my path settings. Having used `swiftly` since, it seems to work much better. I'd highly recommend using `swiftly`!
 
-When you run `swift` you'll still be using Xcode's version of Swift. You'll have to run the specific toolchain you just installed using `xcrun` like:
+### Step 2: Install the Swift SDK
 
-```bash
-xcrun --toolchain swift swift build -c release
-```
-
-### Step 2: Install the SDK
-
-Swift makes downloading and installing the SDK itself very easy. Grab the URL and checksum from Swift's install page.
+Swift makes downloading and installing the Swift SDK itself very easy. Grab the URL and checksum from Swift's install page.
 
 ```bash
 swift sdk install <URL-or-filename-here> [--checksum <checksum-for-archive-URL>]
 ```
 
-You can list installed SDKs with `swift sdk list` and see more options with `swift sdk --help`. It doesn't matter which toolchain (Xcode or open source) you use to install the SDK, they'll install to the same spot.
+You can list installed Swift SDKs with `swift sdk list` and see more options with `swift sdk --help`. It doesn't matter which toolchain (Xcode or open source) you use to install the SDK, they'll install to the same spot.
 
-### Step 3: Compile using the SDK
+>   Quick note, I've been made aware that there's two closely named concepts that are very different. *SDK*s are an Xcode/Clang concept, but *Swift SDK*s are what we're working with. I've gone back and edited this (as of Sept 9th, 2025) to make sure I've referenced the correct SDK concept!
+
+### Step 3: Compile using the Swift SDK
 
 Now that everything is installed, compiling the package is *very* easy. Make sure you're using the open source toolchain by running it using `xcrun` (yeah, I know that sentence didn't make sense. If someone has a suggestion for how I'm doing this wrong, *please* DM me).
 
-Just run `swift build` with the specified SDK and in release mode for performance.
+Just run `swift build` with the specified Swift SDK and in release mode for performance.
 
 ```bash
 xcrun --toolchain swift swift build --swift-sdk x86_64-swift-linux-musl -c release
@@ -70,7 +70,7 @@ xcrun --toolchain swift swift build --swift-sdk x86_64-swift-linux-musl -c relea
 
 ## Captain, It's Wednesday
 
-The second project I did was the [captainitswednesday.com](https://captainitswednesday.com) bot on [Bluesky](https://bsky.app/profile/captainitswednesday.com). This little app was **much** simpler. I used the [ATProtoKit](https://github.com/MasterJ93/ATProtoKit/tree/0.25.0) Swift library by [Christopher Riley](https://bsky.app/profile/cjrriley.com) to send posts for the Bluesky account and set up a really simple cron job to post every Wednesday at 9 a.m. The issue I had with this project was actually a compiler crash when using the previously discussed static Linux SDKs. So I realized I'd have to go back to the original method for cross-compiling Swift, *Docker*.
+The second project I did was the [captainitswednesday.com](https://captainitswednesday.com) bot on [Bluesky](https://bsky.app/profile/captainitswednesday.com). This little app was **much** simpler. I used the [ATProtoKit](https://github.com/MasterJ93/ATProtoKit/tree/0.25.0) Swift library by [Christopher Riley](https://bsky.app/profile/cjrriley.com) to send posts for the Bluesky account and set up a really simple cron job to post every Wednesday at 9 a.m. The issue I had with this project was actually a compiler crash when using the previously discussed static Linux Swift SDKs. So I realized I'd have to go back to the original method for cross-compiling Swift, *Docker*.
 
 ## Method 2: Docker Containers
 
