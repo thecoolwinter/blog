@@ -28,7 +28,7 @@ Swift introduced static Linux Swift SDKs a while ago to help meet the need to co
 
 The downside of this method is that we cannot make use of the fact that most distros ship with dynamically linkable libraries. We have to statically link the binary, which causes the resulting binary to be quite large. This isn't the biggest deal, but isn't very user-friendly if you were looking to ship a user application. However, for a server-based app like mine, it really doesn't matter.
 
-### Step 1: Install the Open-Source Toolchain (Not Xcode)
+### Step 1: Install the Open-Source Toolchain
 
 This part is very important. You need to use the open source Swift toolchain from [Swift.org](https://www.swift.org/install/macos/). This is different from the Swift toolchain that is installed with Xcode, and includes support for features like Embedded Swift and Swift SDKs. Installing an open source Swift version is really straightforwards with the new [Swiftly](https://www.swift.org/install/macos/swiftly/) tool. 
 
