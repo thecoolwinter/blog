@@ -1,16 +1,24 @@
 import Foundation
 
-struct Head: Component {
+struct Head<InjectedComponent: Component>: Component {
     let title: String
     let description: String
     let path: String
     let loadCodeStyles: Bool
+    let otherComponents: () -> InjectedComponent
 
-    init(title: String, description: String, path: String, loadCodeStyles: Bool = false) {
+    init(
+        title: String,
+        description: String,
+        path: String,
+        loadCodeStyles: Bool = false,
+        @HTMLBuilder otherComponents: @escaping () -> InjectedComponent
+    ) {
         self.title = title
         self.description = description
         self.path = path
         self.loadCodeStyles = loadCodeStyles
+        self.otherComponents = otherComponents
     }
 
     var body: some Component {
@@ -70,5 +78,15 @@ struct Head: Component {
                 )
             }
         }
+    }
+}
+
+extension Head where InjectedComponent == Never {
+    init(title: String, description: String, path: String, loadCodeStyles: Bool = false) {
+        self.title = title
+        self.description = description
+        self.path = path
+        self.loadCodeStyles = loadCodeStyles
+        self.otherComponents = { fatalError() }
     }
 }
