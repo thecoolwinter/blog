@@ -39,7 +39,7 @@ struct RSSJob: Job {
 
             for (post, path) in allPosts {
                 Tag("entry") {
-                    Tag("id") { "https://khanwinter/\(post.linkPath)" }
+                    Tag("id") { "https://khanwinter.com/\(post.linkPath)" }
                     Tag("title") { post.title }
                     Tag("link", ["rel": "alternate", "href": "/" + post.linkPath])
                     Tag("published") { formatDate(post.createdAt) }
