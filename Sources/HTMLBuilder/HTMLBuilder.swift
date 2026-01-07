@@ -30,3 +30,11 @@ enum HTMLRenderer {
         "<!DOCTYPE html><html lang=\"en\" data-theme=\"light\">" + page().html + "</html>"
     }
 }
+
+enum ATOMRenderer {
+    static func render<Content: Component>(@HTMLBuilder page: () -> Content) -> String {
+        #"<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom">"#
+        + page().html
+        + "</feed>"
+    }
+}

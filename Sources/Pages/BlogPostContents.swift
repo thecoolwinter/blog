@@ -41,6 +41,10 @@ struct BlogPostContents {
     let createdAt: Date
     let katex: Bool
 
+    var linkPath: String {
+        String(String(path.dropFirst(postsDir.absoluteURL.path(percentEncoded: false).count + 1)).dropLast(8))
+    }
+
     init(path: String) throws {
         let contents = try String(contentsOfFile: path)
         let parsed = MarkdownParser(modifiers: [headingIdsModifier]).parse(contents)

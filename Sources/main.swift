@@ -24,7 +24,8 @@ let jobs: [any Job] = [
     CopySupplementalsJob(),
     SitemapTxtJob(),
     RobotsTxtJob(),
-    MinifyJob()
+    MinifyJob(),
+    RSSJob()
 ]
 
 for (idx, job) in jobs.enumerated() {
