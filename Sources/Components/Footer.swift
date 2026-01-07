@@ -8,7 +8,7 @@ struct Footer: Component {
             P {
                 A("https://bsky.app/profile/khanwinter.com", ["rel": "me", "target": "_blank"]) { "Bluesky" }
                 " | "
-                A("") { "RSS" }
+                A("https://khanwinter.com/feed.rss") { "RSS" }
             }
         }
     }
