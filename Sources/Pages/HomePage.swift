@@ -4,7 +4,7 @@ struct HomePage: Component {
     let postsDir: URL
 
     var body: some Component {
-        let posts = JobHelpers.getAllPosts(postsDir: postsDir).sorted(by: { $0.post.createdAt > $1.post.createdAt })
+        let posts = JobHelpers.getAllPosts(postsDir: postsDir)
 
         Page(title: "Posts", description: "Khan Winter's Blog Posts", path: "", loadCodeStyles: false) {
             Tag("div", ["class": "home"]) {
@@ -14,8 +14,8 @@ struct HomePage: Component {
                 }
 
                 Tag("ul") {
-                    for (post, path) in posts {
-                        let url = "/" + path.deletingLastPathComponent().path(percentEncoded: false)
+                    for post in posts {
+                        let url = "/" + post.linkPath
                         Tag("li") {
                             A(url) {
                                 P { post.createdAt.formatted(date: .abbreviated, time: .omitted).uppercased() }

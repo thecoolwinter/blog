@@ -13,13 +13,13 @@ struct RSSJob: Job {
     var handler: () throws -> Void = {
         let header = #"<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom">"#
         let end = #"</feed>"#
-        let allPosts = JobHelpers.getAllPosts(postsDir: postsDir).sorted(by: { $0.post.createdAt < $1.post.createdAt })
+        let allPosts = JobHelpers.getAllPosts(postsDir: postsDir)
 
         let feed = ATOMRenderer.render {
             Tag("id") { "https://khanwinter.com/" }
             Tag("title") { "Khan's Blog" }
             Tag("subtitle") { "Khan's Online Web Log (aka: my blog)!" }
-            if let updatedAt = allPosts.compactMap({ fileModificationDate(url: $0.url) }).max() {
+            if let updatedAt = allPosts.compactMap({ fileModificationDate(url: $0.path) }).max() {
                 Tag("updated") { formatDate(updatedAt) }
             }
             Tag("author") {
@@ -37,7 +37,7 @@ struct RSSJob: Job {
             Tag("category", ["term": "apple"])
             Tag("rights") { "Copyright © Khan Winter 2025" }
 
-            for (post, path) in allPosts {
+            for post in allPosts {
                 Tag("entry") {
                     Tag("id") { "https://khanwinter.com/\(post.linkPath)" }
                     Tag("title") { post.title }

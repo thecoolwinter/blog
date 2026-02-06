@@ -5,7 +5,7 @@ struct SitemapTxtJob: Job {
             "",
             "about"
         ] + JobHelpers.getAllPosts(postsDir: postsDir).map({
-            $0.url.deletingLastPathComponent().path()
+            $0.path.deletingLastPathComponent().relativePath
         })
 
         let contents = sites.map({ "https://khanwinter.com/" + $0 }).joined(separator: "\n")

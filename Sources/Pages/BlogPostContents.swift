@@ -33,7 +33,8 @@ private let headingIdsModifier: Modifier = Modifier(target: .headings) { input i
 }
 
 struct BlogPostContents {
-    let path: String
+    // Points to the relative markdown file (index.md)
+    let path: URL
     let markdown: Markdown
     let title: String
     let excerpt: String
@@ -42,11 +43,11 @@ struct BlogPostContents {
     let katex: Bool
 
     var linkPath: String {
-        String(String(path.dropFirst(postsDir.absoluteURL.path(percentEncoded: false).count + 1)).dropLast(8))
+        path.deletingLastPathComponent().relativePath
     }
 
-    init(path: String) throws {
-        let contents = try String(contentsOfFile: path)
+    init(path: URL) throws {
+        let contents = try String(contentsOf: path)
         let parsed = MarkdownParser(modifiers: [headingIdsModifier]).parse(contents)
         guard let title = parsed.metadata["title"] else {
             fatalError("No title in metadata")

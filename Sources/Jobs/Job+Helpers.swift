@@ -12,13 +12,13 @@ enum JobHelpers {
         return enumerator.allObjects.compactMap({ $0 as? URL })
     }
 
-    static func getAllPosts(postsDir: URL) -> [(post: BlogPostContents, url: URL)] {
+    static func getAllPosts(postsDir: URL) -> [BlogPostContents] {
         return getAllFiles(in: postsDir)
             .filter({ $0.pathExtension == "md" })
             .map { path in
-                (try! BlogPostContents(path: path.absoluteURL.path(percentEncoded: false)), path)
+                try! BlogPostContents(path: path)
             }
-            .sorted(by: { $0.post.createdAt < $1.post.createdAt })
+            .sorted(by: { $0.createdAt > $1.createdAt })
     }
 
     static func createOutDir(_ outDir: URL) throws {

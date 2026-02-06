@@ -67,12 +67,12 @@ struct Head<InjectedComponent: Component>: Component {
             Tag("link", ["rel": "prefetch", "href": "/", "data-nav": "true"])
             Tag("link", ["rel": "prefetch", "href": "/about", "data-nav": "true"])
             // Stable ordering to avoid destroying cache.
-            for post in JobHelpers.getAllPosts(postsDir: postsDir).sorted(by: { $0.post.createdAt > $1.post.createdAt }) {
+            for post in JobHelpers.getAllPosts(postsDir: postsDir).sorted(by: { $0.createdAt > $1.createdAt }) {
                 Tag(
                     "link",
                     [
                         "rel": "prefetch",
-                        "href": "/" + post.url.deletingLastPathComponent().path(percentEncoded: true),
+                        "href": "/" + post.path.deletingLastPathComponent().relativePath,
                         "data-nav": "true"
                     ]
                 )
