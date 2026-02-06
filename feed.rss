@@ -1,0 +1,997 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><id>https://khanwinter.com/</id><title>Khan's Blog</title><subtitle>Khan's Online Web Log (aka: my blog)!</subtitle><updated>2026-02-06T18:24:20.610Z</updated><author><name>Khan Winter</name><uri>https://bsky.app/profile/khanwinter.com</uri></author><link href="https://khanwinter.com/feed.rss" rel="self" type="application/rss+xml"/><link href="https://khanwinter.com/"/><link href="https://bsky.app/profile/khanwinter.com"/><link href="https://github.com/thecoolwinter"/><category term="programming"/><category term="swift"/><category term="macos"/><category term="ios"/><category term="apple"/><rights>Copyright © Khan Winter 2025</rights><entry><id>https://khanwinter.com/2026-02-06-OpenType-UIFont</id><title>Using OpenType Attributes with UIFont</title><link href="/2026-02-06-OpenType-UIFont" rel="alternate"/><published>2026-02-06T06:00:00.000Z</published><summary>Fonts come with numerous style settings that are difficult to use in UIKit and AppKit. Learn how to determine which ones are available, and how to use them.</summary><content type="html">&#x3C;h2 id=&#x22;opentype-features&#x22;&#x3E;&#x3C;a href=&#x22;#opentype-features&#x22; class=&#x22;header-link&#x22;&#x3E;OpenType Features&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Modern fonts come with hidden attributes that modify their look in subtle ways. Some examples are making the &#x3C;code&#x3E;4&#x3C;/code&#x3E; glyph have an open back, making the &#x3C;code&#x3E;6&#x3C;/code&#x3E; and &#x3C;code&#x3E;9&#x3C;/code&#x3E; glyphs have straight tails rather than curved, and many more.&#x3C;/p&#x3E;&#x3C;p&#x3E;On the web, you can activate these features with well-defined, documented, CSS modifiers. It&#x27;s very easy to load in a font, say you want the alternate G glyph, and move on! Here&#x27;s the very &#x3C;a href=&#x22;https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Fonts/OpenType_fonts&#x22;&#x3E;lengthy documentation&#x3C;/a&#x3E; from Mozilla for that.&#x3C;/p&#x3E;&#x3C;p&#x3E;I&#x27;ve used these features a couple of times previously, once for replicating the beautiful typography that Xcode uses for its line number gutter. A while ago, for CodeEdit, we were stumped as to how Xcode was making their line number font have open fours, straight tailed sixes and nines, until we found the following in a different open-source project.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;func rulerFont() -&#x26;gt; NSFont {
+    /// Set the open four
+    let alt4: [NSFontDescriptor.FeatureKey: Int] = [
+        .selectorIdentifier: kStylisticAltOneOnSelector,
+        .typeIdentifier: kStylisticAlternativesType
+    ]
+    
+    /// Set alternate styling for 6 and 9
+    let alt6and9: [NSFontDescriptor.FeatureKey: Int] = [
+        .selectorIdentifier: kStylisticAltTwoOnSelector,
+        .typeIdentifier: kStylisticAlternativesType
+    ]
+    
+    let features = [alt4, alt6and9]
+    let descriptor = font.fontDescriptor.addingAttributes([.featureSettings: features, .fixedAdvance: fontAdvance])
+    return NSFont(descriptor: descriptor, size: 0) ?? font
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;We were not OpenType experts, so this tipped us off that we were missing something. This led us down a rabbit hole of figuring out exactly what the font was, including what features, attributes, and sizes it had until we had it &#x3C;em&#x3E;perfect&#x3C;/em&#x3E;.&#x3C;/p&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;Eventually we were able to perfectly replicate the Xcode font, it&#x27;s hilariously specific but pixel perfect, &#x3C;a href=&#x22;https://github.com/CodeEditApp/CodeEditSourceEditor/blob/main/Sources/CodeEditSourceEditor/Extensions/NSFont/NSFont%2BRulerFont.swift&#x22;&#x3E;check it out&#x3C;/a&#x3E;.&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;p&#x3E;This still left me wondering how I could find what features a font supported, or how in the world you could find those seemingly random C identifiers.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;finding-which-features-a-font-supports&#x22;&#x3E;&#x3C;a href=&#x22;#finding-which-features-a-font-supports&#x22; class=&#x22;header-link&#x22;&#x3E;Finding Which Features a Font Supports&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;I&#x27;m now working on a version 2.0 of my budgeting app &#x3C;a href=&#x22;https://openbudget.us&#x22;&#x3E;OpenBudget&#x3C;/a&#x3E;, and while designing in Sketch I found that to make some small currency labels legible, I wanted three specific OpenType features:&#x3C;/p&#x3E;&#x3C;ul&#x3E;&#x3C;li&#x3E;Open Currency.&#x3C;/li&#x3E;&#x3C;li&#x3E;Open Fours.&#x3C;/li&#x3E;&#x3C;li&#x3E;Straight Six and Nine.&#x3C;/li&#x3E;&#x3C;/ul&#x3E;&#x3C;p&#x3E;Sketch handily lets you view all the available options for a font in a nice menu with labels and checkboxes. However, if you try and google &#x22;UIFont OpenType Open Four&#x22; you&#x27;ll be sorely disappointed. I knew that CoreText had constants somewhere for each feature, but looking up the &#x3C;a href=&#x22;https://github.com/bruce0505/ios7frameworks/blob/master/CoreText/SFNTLayoutTypes.h&#x22;&#x3E;CoreText headers&#x3C;/a&#x3E; yields a list of undocumented constants. As it turns out Apple&#x27;s CoreType predates OpenType, so the identifiers don&#x27;t match to what OpenType calls them and Apple has no documentation for what each of them do.&#x3C;/p&#x3E;&#x3C;p&#x3E;Eventually I stumbled upon the CoreText documentation for font features and found the following magical CoreText function.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;func CTFontCopyFeatures(_ font: CTFont) -&#x26;gt; CTArray?
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Every font in Cocoa stores a list of &#x3C;em&#x3E;every&#x3C;/em&#x3E; supported feature in their features array. If you pass a &#x3C;code&#x3E;UIFont&#x3C;/code&#x3E; or &#x3C;code&#x3E;NSFont&#x3C;/code&#x3E; to this function (thank goodness for class bridging) you&#x27;ll find a map like the following.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-bash&#x22;&#x3E;{
+    CTFeatureTypeIdentifier = 35;
+    CTFeatureTypeName = &#x22;Alternative Stylistic Sets&#x22;;
+    CTFeatureTypeSelectors =     (
+                {
+            CTFeatureOpenTypeTag = ss01;
+            CTFeatureOpenTypeValue = 1;
+            CTFeatureSelectorIdentifier = 2;
+            CTFeatureSelectorName = &#x22;Straight-sided six and nine&#x22;;
+        },
+                {
+            CTFeatureOpenTypeTag = ss02;
+            CTFeatureOpenTypeValue = 1;
+            CTFeatureSelectorIdentifier = 4;
+            CTFeatureSelectorName = &#x22;Open four&#x22;;
+        },
+                {
+            CTFeatureOpenTypeTag = ss03;
+            CTFeatureOpenTypeValue = 1;
+            CTFeatureSelectorIdentifier = 6;
+            CTFeatureSelectorName = &#x22;Vertically centered colon&#x22;;
+        },
+                {
+            CTFeatureOpenTypeTag = ss04;
+            CTFeatureOpenTypeValue = 1;
+            CTFeatureSelectorIdentifier = 8;
+            CTFeatureSelectorName = &#x22;Open currencies&#x22;;
+        },
+    );
+},
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;You may note here, that these labels indicate these constants are exactly what I&#x27;m looking for.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;mapping-selectors-to-identifiers-to-uifont&#x22;&#x3E;&#x3C;a href=&#x22;#mapping-selectors-to-identifiers-to-uifont&#x22; class=&#x22;header-link&#x22;&#x3E;Mapping Selectors To Identifiers To UIFont&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Now, if you take the map you printed from your font and try to put it into a features array, you&#x27;ll quickly realize that you don&#x27;t have a whole lot of information. Here&#x27;s how to read that map to find exactly what to put in your Swift code.&#x3C;/p&#x3E;&#x3C;p&#x3E;For creating a &#x3C;code&#x3E;UIFont&#x3C;/code&#x3E; or &#x3C;code&#x3E;NSFont&#x3C;/code&#x3E;, we need to create an array of attribute dictionaries. Here&#x27;s what they look like.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;let attribute: [UIFontDescriptor.FeatureKey: Int] = [
+    .type: // The type of attribute we&#x27;re adding
+    .selector: // What option we&#x27;re enabling (or disabling) on the type.
+]
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;For &#x3C;code&#x3E;NSFont&#x3C;/code&#x3E;, the type and selectors are named &#x3C;code&#x3E;selectorIdentifier&#x3C;/code&#x3E; and &#x3C;code&#x3E;typeIdentifier&#x3C;/code&#x3E;.&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;h3 id=&#x22;features-with-unnamed-constants&#x22;&#x3E;&#x3C;a href=&#x22;#features-with-unnamed-constants&#x22; class=&#x22;header-link&#x22;&#x3E;Features With Unnamed Constants&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;You&#x27;ll see the top-level dictionary here has a &#x3C;code&#x3E;CTFeatureTypeIdentifier&#x3C;/code&#x3E; key. This key maps to the &#x22;Feature types&#x22; enum from those &#x3C;a href=&#x22;https://github.com/bruce0505/ios7frameworks/blob/master/CoreText/SFNTLayoutTypes.h&#x22;&#x3E;CoreText headers&#x3C;/a&#x3E; I referenced earlier. That&#x27;s the &#x3C;code&#x3E;.type&#x3C;/code&#x3E; we&#x27;re looking for. To find the selector, we&#x27;ll take a look at the &#x3C;code&#x3E;CTFeatureOpenTypeTag&#x3C;/code&#x3E;. The &#x3C;code&#x3E;CTFeatureOpenTypeTag&#x3C;/code&#x3E; (if it&#x27;s available on your feature) maps to a constant we can provide to CoreText to indicate if we want the feature on or off. That constant looks like:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;kStylisticAlt[Number][On/Off]Selector
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;If we look at the map from earlier, to enable &#x22;Open currencies&#x22; we have the dictionary:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code&#x3E;{
+    CTFeatureOpenTypeTag = ss04;
+    CTFeatureOpenTypeValue = 1;
+    CTFeatureSelectorIdentifier = 8;
+    CTFeatureSelectorName = &#x22;Open currencies&#x22;;
+},
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;So we&#x27;ll want the fourth selector, and we&#x27;ll want it on. So we get the constant.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;kStylisticAltFourOnSelector
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;And we already determined the type from the parent (number 35) which maps to the &#x3C;code&#x3E;kStylisticAlternativesType&#x3C;/code&#x3E; constant in the CoreText headers. Combining this gives us the resulting Swift dictionary.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;let altCurrency: [UIFontDescriptor.FeatureKey: Int] = [
+    .selector: kStylisticAltFourOnSelector,
+    .type: kStylisticAlternativesType
+]
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h3 id=&#x22;features-with-named-constants&#x22;&#x3E;&#x3C;a href=&#x22;#features-with-named-constants&#x22; class=&#x22;header-link&#x22;&#x3E;Features With Named Constants&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;There&#x27;s a second case here, you&#x27;ll likely see other font features that don&#x27;t have the number-based constants. Instead, those dictionaries will look like:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;{
+    CTFeatureTypeExclusive = 1;
+    CTFeatureTypeIdentifier = 37;
+    CTFeatureTypeName = &#x22;Lower Case&#x22;;
+    CTFeatureTypeSelectors =     (
+                {
+            CTFeatureSelectorDefault = 1;
+            CTFeatureSelectorIdentifier = 0;
+            CTFeatureSelectorName = Default;
+        },
+                {
+            CTFeatureOpenTypeTag = smcp;
+            CTFeatureOpenTypeValue = 1;
+            CTFeatureSelectorIdentifier = 1;
+            CTFeatureSelectorName = &#x22;Small Capitals&#x22;;
+        }
+    );
+},
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;For these, head to the CoreText headers, find your type constant (37 here, &#x3C;code&#x3E;kLowerCaseType&#x3C;/code&#x3E;) and search the headers for that constant. The options here will have their own enum. This is the case for all options that have &#x3C;em&#x3E;set&#x3C;/em&#x3E; standard options. For the previous example some fonts may have different features enabled by different numbers there. Here, the options are known beforehand.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-c&#x22;&#x3E;/*
+ *  Summary:
+ *    Selectors for feature type kLowerCaseType
+ */
+enum {
+  kDefaultLowerCaseSelector     = 0,
+  kLowerCaseSmallCapsSelector   = 1,
+  kLowerCasePetiteCapsSelector  = 2
+};
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h2 id=&#x22;conclusion&#x22;&#x3E;&#x3C;a href=&#x22;#conclusion&#x22; class=&#x22;header-link&#x22;&#x3E;Conclusion&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;After printing the font features and doing this investigating, I now have the following extension for &#x3C;code&#x3E;UIFont&#x3C;/code&#x3E;.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;import UIKit
+
+extension UIFont {
+    public func currency() -&#x26;gt; UIFont {
+        /// Set the alt currency
+        let altCurrency: [UIFontDescriptor.FeatureKey: Int] = [
+            .selector: kStylisticAltFourOnSelector,
+            .type: kStylisticAlternativesType
+        ]
+
+        /// Set the open four
+        let alt4: [UIFontDescriptor.FeatureKey: Int] = [
+            .selector: kStylisticAltOneOnSelector,
+            .type: kStylisticAlternativesType
+        ]
+
+
+        /// Set alternate styling for 6 and 9
+        let alt6and9: [UIFontDescriptor.FeatureKey: Int] = [
+            .selector: kStylisticAltTwoOnSelector,
+            .type: kStylisticAlternativesType
+        ]
+
+        let newDescriptor = fontDescriptor.addingAttributes([
+            .featureSettings: [alt4, alt6and9, altCurrency]
+        ])
+        return UIFont(descriptor: newDescriptor, size: pointSize)
+    }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Which gives me this beautiful typography for my currency labels.&#x3C;/p&#x3E;&#x3C;img src=&#x22;./typography.png&#x22; alt=&#x22;typograph-screenshot&#x22;/&#x3E;&#x3C;p&#x3E;This is one of the many changes I&#x27;m working on for version two of OpenBudget. Modifying fonts slightly for labels like this that are common throughout my app is essential for making everything legible.&#x3C;/p&#x3E;&#x3C;p&#x3E;It&#x27;s a little annoying that CoreText doesn&#x27;t map nicely to OpenType feature names, but honestly it&#x27;s understandable. I think there&#x27;s an opportunity here for some lookup tool that could select a font, open it up, and list all the available features with a preview. But honestly, now that I know how to find those features, it&#x27;s such a small one-time task that I don&#x27;t really mind doing it by hand.&#x3C;/p&#x3E;</content></entry><entry><id>https://khanwinter.com/2025-03-29-Cross-Compiling-Swift</id><title>Cross Compiling Swift</title><link href="/2025-03-29-Cross-Compiling-Swift" rel="alternate"/><published>2025-03-29T05:00:00.000Z</published><summary>There are multiple ways to cross-compile Swift on different platforms. I explored a few methods while building a Discord bot and a Bluesky bot.</summary><content type="html">&#x3C;p&#x3E;I recently did a few small projects in Swift, and I wanted to run each of them on my home server running Gentoo Linux. I decided to do each of them in Swift, not because I thought it&#x27;d be easiest, but because I was curious about the challenge of compiling Swift from my Mac to my Linux machine. I&#x27;d heard lots recently about new &#x3C;a href=&#x22;https://www.swift.org/documentation/articles/static-linux-getting-started.html&#x22;&#x3E;static Linux Swift SDKs&#x3C;/a&#x3E; (and the Swift SDK API being introduced), and have always had an interest in &#x3C;a href=&#x22;https://vapor.codes/&#x22;&#x3E;Vapor&#x3C;/a&#x3E;&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;link-embed-bot&#x22;&#x3E;&#x3C;a href=&#x22;#link-embed-bot&#x22; class=&#x22;header-link&#x22;&#x3E;Link Embed Bot&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;The first project was a small link embedding bot for Discord. Some websites don&#x27;t support Discord&#x27;s embed UI when sending their links. One such website is Instagram. My friends often send memes and such from Instagram, and we&#x27;d used the &#x3C;a href=&#x22;https://github.com/Wikidepia/InstaFix&#x22;&#x3E;ddinstagram&#x3C;/a&#x3E; URL previously to embed those videos in Discord messages, but that URL has become flaky and often just refuses to embed anything (it&#x27;s a volunteer-run service and I don&#x27;t want to bash on it, it works about 70% of the time).&#x3C;/p&#x3E;&#x3C;p&#x3E;So my goal was to create a Discord bot that would run 24/7 with an open WebSocket connection. That could get a little more expensive than I was willing to pay if run on a cloud provider (I was hoping to pay nothing). The bot would download images too, so it needed some memory. Thankfully, my home server meets those requirements perfectly. It&#x27;s on all the time and has 8GB of RAM.&#x3C;/p&#x3E;&#x3C;p&#x3E;I used the &#x3C;a href=&#x22;https://github.com/DiscordBM/DiscordBM&#x22;&#x3E;DiscordBM&#x3C;/a&#x3E; package (the same one that powers Vapor&#x27;s Penny bot!) to implement it, and I won&#x27;t go into the details of reverse engineering Instagram&#x27;s API to download images, reels, and videos from their server and upload them to Discord, but it is really cool if I do say so myself.&#x3C;/p&#x3E;&#x3C;video controls width=&#x22;90%&#x22; style=&#x22;margin-bottom: 1.5em;&#x22;&#x3E;
+    &#x3C;source src=&#x22;linkembedbot.mp4&#x22; type=&#x22;video/mp4&#x22;&#x3E;
+  	Your browser does not support the video tag.
+&#x3C;/video&#x3E;&#x3C;p&#x3E;Anyways, what I ended up with was a working Swift executable package. When executed, it started the connection with Discord and began processing events. The issue was, I wanted to run this on my &#x3C;a href=&#x22;https://www.gentoo.org/&#x22;&#x3E;Gentoo&#x3C;/a&#x3E; machine, but I had developed it on my Mac. In comes the power of static Linux Swift SDKs!&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;method-1-static-linux-swift-sdk&#x22;&#x3E;&#x3C;a href=&#x22;#method-1-static-linux-swift-sdk&#x22; class=&#x22;header-link&#x22;&#x3E;Method 1: Static Linux Swift SDK&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Swift introduced static Linux Swift SDKs a while ago to help meet the need to compile Swift programs for a platform other than the one it&#x27;s being compiled on. A Swift SDK contains the information Swift needs to know to create a &#x3C;em&#x3E;statically linked executable&#x3C;/em&#x3E;. This executable contains the Swift runtime, standard libraries, even libraries the standard library depends on. This executable will run on any Linux machine once compiled, with no dependencies.&#x3C;/p&#x3E;&#x3C;p&#x3E;The downside of this method is that we cannot make use of the fact that most distros ship with dynamically linkable libraries. We have to statically link the binary, which causes the resulting binary to be quite large. This isn&#x27;t the biggest deal, but isn&#x27;t very user-friendly if you were looking to ship a user application. However, for a server-based app like mine, it really doesn&#x27;t matter.&#x3C;/p&#x3E;&#x3C;h3 id=&#x22;step-1-install-the-opensource-toolchain&#x22;&#x3E;&#x3C;a href=&#x22;#step-1-install-the-opensource-toolchain&#x22; class=&#x22;header-link&#x22;&#x3E;Step 1: Install the Open-Source Toolchain&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;This part is very important. You need to use the open source Swift toolchain from &#x3C;a href=&#x22;https://www.swift.org/install/macos/&#x22;&#x3E;Swift.org&#x3C;/a&#x3E;. This is different from the Swift toolchain that is installed with Xcode, and includes support for features like Embedded Swift and Swift SDKs. Installing an open source Swift version is really straightforwards with the new &#x3C;a href=&#x22;https://www.swift.org/install/macos/swiftly/&#x22;&#x3E;Swiftly&#x3C;/a&#x3E; tool.&#x3C;/p&#x3E;&#x3C;h4 id=&#x22;using-swiftly&#x22;&#x3E;&#x3C;a href=&#x22;#using-swiftly&#x22; class=&#x22;header-link&#x22;&#x3E;Using Swiftly&#x3C;/a&#x3E;&#x3C;/h4&#x3E;&#x3C;p&#x3E;Follow the instructions on Swift.org to &#x3C;a href=&#x22;https://www.swift.org/install/macos/swiftly/&#x22;&#x3E;install Swiftly&#x3C;/a&#x3E; and the latest version of Swift.&#x3C;/p&#x3E;&#x3C;h4 id=&#x22;using-an-installer&#x22;&#x3E;&#x3C;a href=&#x22;#using-an-installer&#x22; class=&#x22;header-link&#x22;&#x3E;Using an Installer&#x3C;/a&#x3E;&#x3C;/h4&#x3E;&#x3C;p&#x3E;Download the install package from Swift.org and download the Package Installer .pkg file. Open the installer and it&#x27;ll install a new &#x3C;code&#x3E;.xctoolchain&#x3C;/code&#x3E; Xcode toolchain file on your system.&#x3C;/p&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;This tripped me up for a while. When you run &#x3C;code&#x3E;swift&#x3C;/code&#x3E; after installing a toolchain using this method, you&#x27;ll still be using Xcode&#x27;s version of Swift. You&#x27;ll have to run the specific toolchain you just installed using &#x3C;code&#x3E;xcrun&#x3C;/code&#x3E; like: &#x3C;code&#x3E;&#x3C;/code&#x3E;`bash xcrun --toolchain swift swift build -c release &#x3C;code&#x3E;&#x3C;/code&#x3E;` This may be an issue with my machine and my path settings. Having used &#x3C;code&#x3E;swiftly&#x3C;/code&#x3E; since, it seems to work much better. I&#x27;d highly recommend using &#x3C;code&#x3E;swiftly&#x3C;/code&#x3E;!&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;h3 id=&#x22;step-2-install-the-swift-sdk&#x22;&#x3E;&#x3C;a href=&#x22;#step-2-install-the-swift-sdk&#x22; class=&#x22;header-link&#x22;&#x3E;Step 2: Install the Swift SDK&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;Swift makes downloading and installing the Swift SDK itself very easy. Grab the URL and checksum from Swift&#x27;s install page.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-bash&#x22;&#x3E;swift sdk install &#x26;lt;URL-or-filename-here&#x26;gt; [--checksum &#x26;lt;checksum-for-archive-URL&#x26;gt;]
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;You can list installed Swift SDKs with &#x3C;code&#x3E;swift sdk list&#x3C;/code&#x3E; and see more options with &#x3C;code&#x3E;swift sdk --help&#x3C;/code&#x3E;. It doesn&#x27;t matter which toolchain (Xcode or open source) you use to install the SDK, they&#x27;ll install to the same spot.&#x3C;/p&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;Quick note, I&#x27;ve been made aware that there&#x27;s two closely named concepts that are very different. &#x3C;em&#x3E;SDK&#x3C;/em&#x3E;s are an Xcode/Clang concept, but &#x3C;em&#x3E;Swift SDK&#x3C;/em&#x3E;s are what we&#x27;re working with. I&#x27;ve gone back and edited this (as of Sept 9th, 2025) to make sure I&#x27;ve referenced the correct SDK concept!&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;h3 id=&#x22;step-3-compile-using-the-swift-sdk&#x22;&#x3E;&#x3C;a href=&#x22;#step-3-compile-using-the-swift-sdk&#x22; class=&#x22;header-link&#x22;&#x3E;Step 3: Compile using the Swift SDK&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;Now that everything is installed, compiling the package is &#x3C;em&#x3E;very&#x3C;/em&#x3E; easy. Make sure you&#x27;re using the open source toolchain by running it using &#x3C;code&#x3E;xcrun&#x3C;/code&#x3E; (yeah, I know that sentence didn&#x27;t make sense. If someone has a suggestion for how I&#x27;m doing this wrong, &#x3C;em&#x3E;please&#x3C;/em&#x3E; DM me).&#x3C;/p&#x3E;&#x3C;p&#x3E;Just run &#x3C;code&#x3E;swift build&#x3C;/code&#x3E; with the specified Swift SDK and in release mode for performance.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-bash&#x22;&#x3E;xcrun --toolchain swift swift build --swift-sdk x86_64-swift-linux-musl -c release
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h2 id=&#x22;captain-its-wednesday&#x22;&#x3E;&#x3C;a href=&#x22;#captain-its-wednesday&#x22; class=&#x22;header-link&#x22;&#x3E;Captain, It&#x27;s Wednesday&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;The second project I did was the &#x3C;a href=&#x22;https://captainitswednesday.com&#x22;&#x3E;captainitswednesday.com&#x3C;/a&#x3E; bot on &#x3C;a href=&#x22;https://bsky.app/profile/captainitswednesday.com&#x22;&#x3E;Bluesky&#x3C;/a&#x3E;. This little app was &#x3C;strong&#x3E;much&#x3C;/strong&#x3E; simpler. I used the &#x3C;a href=&#x22;https://github.com/MasterJ93/ATProtoKit/tree/0.25.0&#x22;&#x3E;ATProtoKit&#x3C;/a&#x3E; Swift library by &#x3C;a href=&#x22;https://bsky.app/profile/cjrriley.com&#x22;&#x3E;Christopher Riley&#x3C;/a&#x3E; to send posts for the Bluesky account and set up a really simple cron job to post every Wednesday at 9 a.m. The issue I had with this project was actually a compiler crash when using the previously discussed static Linux Swift SDKs. So I realized I&#x27;d have to go back to the original method for cross-compiling Swift, &#x3C;em&#x3E;Docker&#x3C;/em&#x3E;.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;method-2-docker-containers&#x22;&#x3E;&#x3C;a href=&#x22;#method-2-docker-containers&#x22; class=&#x22;header-link&#x22;&#x3E;Method 2: Docker Containers&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;&#x3C;a href=&#x22;https://docker.com&#x22;&#x3E;Docker&#x3C;/a&#x3E; is a really cool tool. I&#x27;ve been digging into it recently, and I&#x27;ve known for a while that the Vapor community has had to use Docker to compile their applications for Linux cloud hosts before Swift really started building out tooling for both cross-compilation and even Linux as a target platform. There is actually a guide on Swift&#x27;s website for &#x3C;a href=&#x22;https://www.swift.org/documentation/server/guides/packaging.html&#x22;&#x3E;packaging Swift projects&#x3C;/a&#x3E;, which mentions being able to compile to Linux. However, I found that I still needed some more information after reading it, so I&#x27;ll outline the steps I took here.&#x3C;/p&#x3E;&#x3C;p&#x3E;The Docker cross-compilation method uses a Docker container to compile your Swift project in the Docker container, then copies the executable file out of the container for use. It might be easier to just ship the Docker container with the compiled executable, but for my use case (and I&#x27;m sure others), I didn&#x27;t want to run Docker; I just wanted an executable to kick off.&#x3C;/p&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;A note about architecture: Each command listed in this section will contain a &#x3C;code&#x3E;--platform&#x3C;/code&#x3E; flag to indicate the target architecture. Each example will compile to &#x3C;code&#x3E;x86&#x3C;/code&#x3E; (&#x3C;code&#x3E;amd64&#x3C;/code&#x3E;), swap that out with &#x3C;code&#x3E;arm64&#x3C;/code&#x3E; to target an ARM CPU.&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;h3 id=&#x22;step-1-download-the-target-docker-container&#x22;&#x3E;&#x3C;a href=&#x22;#step-1-download-the-target-docker-container&#x22; class=&#x22;header-link&#x22;&#x3E;Step 1: Download the target Docker container&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;The official Swift guide mentions a &#x3C;code&#x3E;swift:bionic&#x3C;/code&#x3E; container that I think is obsolete. I&#x27;d suggest downloading the &#x3C;code&#x3E;swift:latest&#x3C;/code&#x3E; package, which is an Ubuntu container with everything you need to use Swift pre-installed. There are other Linux flavors you could use if necessary (bookworm, AmazonLinux2, Fedora, etc.), but in most cases, you&#x27;ll be compiling against the Linux standard libraries and system calls, which should stay the same between most distributions. For instance, compiling in the Ubuntu container worked fine for running on my Gentoo server.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-bash&#x22;&#x3E;docker pull swift:latest --platform linux/amd64
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h3 id=&#x22;step-2-compile-amp-copy-out&#x22;&#x3E;&#x3C;a href=&#x22;#step-2-compile-amp-copy-out&#x22; class=&#x22;header-link&#x22;&#x3E;Step 2: Compile &#x26;amp; Copy Out&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;Now that we have the Swift container, Docker makes it really easy to spin up a container. This command will mount the current directory in the &#x3C;code&#x3E;/workspace&#x3C;/code&#x3E; folder in the container and set it as the working directory.&#x3C;/p&#x3E;&#x3C;p&#x3E;We&#x27;ll then run some bash commands in the container to: compile the Swift package in Release mode, delete the contents of the &#x3C;code&#x3E;.build/install&#x3C;/code&#x3E; directory, and copy the compiled output to the &#x3C;code&#x3E;.build/install&#x3C;/code&#x3E; directory.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-bash&#x22;&#x3E;docker run --platform linux/amd64 \
+  --rm \
+  -v &#x22;$PWD:/workspace&#x22; \
+  -w /workspace \
+  swift:latest \
+  /bin/bash -cl &#x27;\
+    swift build -c release --static-swift-stdlib &#x26;amp;&#x26;amp; \
+    rm -rf .build/install &#x26;amp;&#x26;amp; \
+    mkdir -p .build/install &#x26;amp;&#x26;amp; \
+    cp -P .build/release/CaptainItsWednesday .build/install/&#x27;
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;Note: Change the path of the &#x3C;code&#x3E;cp&#x3C;/code&#x3E; step to match your target&#x27;s name. In my case it was &#x3C;code&#x3E;CaptainItsWednesday&#x3C;/code&#x3E;. You could also copy the entire &#x3C;code&#x3E;release&#x3C;/code&#x3E; directory here if you need.&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;h2 id=&#x22;step-3-profit&#x22;&#x3E;&#x3C;a href=&#x22;#step-3-profit&#x22; class=&#x22;header-link&#x22;&#x3E;Step 3: Profit&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;I have this whole step in a script named &#x3C;code&#x3E;deploy.sh&#x3C;/code&#x3E; that then copies the resulting executable into my home server using &#x3C;code&#x3E;scp&#x3C;/code&#x3E;&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-bash&#x22;&#x3E;scp .build/install/CaptainItsWednesday khan@homeserver.local:/home/khan/
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Pretty nice to have around. If you want to verify the resulting executable&#x27;s target platform you can run &#x3C;code&#x3E;file&#x3C;/code&#x3E; against it to check.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-bash&#x22;&#x3E;file .build/release/CaptainItsWednesday
+&#x26;gt; .build/install/CaptainItsWednesday: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, with debug_info, not stripped
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Another tip is to add a stripping step to remove all unnecessary code from the final executable. That reduced my resulting executable from 100MB to 64MB. Still large, but a significant improvement. My final deploy script looks like this, including the copy to my home server and strip steps.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-bash&#x22;&#x3E;docker run --platform linux/amd64 \
+  --rm \
+  -v &#x22;$PWD:/workspace&#x22; \
+  -w /workspace \
+  swift:latest \
+  /bin/bash -cl &#x27;\
+    swift build -c release --static-swift-stdlib &#x26;amp;&#x26;amp; \
+    strip --strip-unneeded .build/release/CaptainItsWednesday &#x26;amp;&#x26;amp; \
+    rm -rf .build/install &#x26;amp;&#x26;amp; \
+    mkdir -p .build/install &#x26;amp;&#x26;amp; \
+    cp -P .build/release/CaptainItsWednesday .build/install/&#x27; \
+&#x26;amp;&#x26;amp; scp .build/install/CaptainItsWednesday khan@homeserver.local:/home/khan
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;And it works on a test run!&#x3C;/p&#x3E;&#x3C;img src=&#x22;./screenshot.webp&#x22; alt=&#x22;Captain its Wednesday screenshot&#x22;/&#x3E;&#x3C;h2 id=&#x22;final-thoughts&#x22;&#x3E;&#x3C;a href=&#x22;#final-thoughts&#x22; class=&#x22;header-link&#x22;&#x3E;Final Thoughts&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Swift&#x27;s cross-compilation capabilities have come a long way from only compiling using Docker. It&#x27;s nice having these instructions down somewhere even as it continues to get better, and I expect I&#x27;ll continue amending this post as the tooling gets better. Shoutout to the new Swiftly tool too, I got to try that out while I was writing this up and it&#x27;s a huge improvement.&#x3C;/p&#x3E;&#x3C;p&#x3E;It&#x27;s very exciting to see the Swift devs continue to hammer away at Linux and cross-compilation. I think my only remaining pain point is the confusion surrounding the toolchain, SDKs, and why (even using Swiftly) you can only run the open-source toolchain using &#x3C;code&#x3E;xcrun&#x3C;/code&#x3E;.&#x3C;/p&#x3E;&#x3C;p&#x3E;I continue to have a blast programming in Swift. The language feels &#x27;right&#x27; in a way other languages have not. I&#x27;m extremely grateful to be a part of this community and I&#x27;m excited for Swift&#x27;s tooling to continue to improve. It&#x27;s a long way from where it was when I started using Swift back in Swift 4. It made both of these afternoon projects super fun and exciting.&#x3C;/p&#x3E;</content></entry><entry><id>https://khanwinter.com/2024-11-02-New-Blog</id><title>New Blog, New Me</title><link href="/2024-11-02-New-Blog" rel="alternate"/><published>2024-11-03T05:00:00.000Z</published><summary>I redesigned my blog, in Swift.</summary><content type="html">&#x3C;h2 id=&#x22;why-restart&#x22;&#x3E;&#x3C;a href=&#x22;#why-restart&#x22; class=&#x22;header-link&#x22;&#x3E;Why Restart?&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Previously, my blog was published using the popular &#x3C;a href=&#x22;https://jekyllrb.com/&#x22;&#x3E;Jekyll&#x3C;/a&#x3E; static site generator. While Jekyll worked well for a long time, it has became a serious pain to maintain.&#x3C;/p&#x3E;&#x3C;p&#x3E;I often have long periods of time where I don&#x27;t post. Ideally when I come back after a year of not posting I&#x27;d like my tools to work just as well as they did previously. Jekyll did not meet this requirement well. With Ruby increasingly losing popularity and Gems requiring some serious finagling, I often had to completely reinstall the entire tool and all dependencies every time I wanted to write a new post. This was not working well.&#x3C;/p&#x3E;&#x3C;p&#x3E;Therefore, my new system had the following requirements:&#x3C;/p&#x3E;&#x3C;ul&#x3E;&#x3C;li&#x3E;&#x3C;strong&#x3E;No or few outside dependencies.&#x3C;/strong&#x3E; Whatever dependencies are used need to be well known to me and well known what they do.&#x3C;/li&#x3E;&#x3C;li&#x3E;&#x3C;strong&#x3E;Familiar tools.&#x3C;/strong&#x3E; I need whatever this is built on to be entirely familiar to me. At this point (2024) this likely means &#x3C;strong&#x3E;Swift and JavaScript&#x3C;/strong&#x3E;.&#x3C;/li&#x3E;&#x3C;li&#x3E;&#x3C;strong&#x3E;Static HTML.&#x3C;/strong&#x3E; I dislike overuse of JS libraries. This means no TailwindCSS, no React, only CSS, JS and HTML.&#x3C;/li&#x3E;&#x3C;/ul&#x3E;&#x3C;h2 id=&#x22;existing-tools&#x22;&#x3E;&#x3C;a href=&#x22;#existing-tools&#x22; class=&#x22;header-link&#x22;&#x3E;Existing Tools&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;If you&#x27;re familiar with the Swift ecosystem, you may have heard of the tool &#x3C;a href=&#x22;https://github.com/JohnSundell/Publish?tab=readme-ov-file&#x22;&#x3E;Publish&#x3C;/a&#x3E; by &#x3C;a href=&#x22;https://www.swiftbysundell.com/&#x22;&#x3E;John Sundell&#x3C;/a&#x3E;. This looks like it was going to be a perfect tool! It is actually a really nice tool. It&#x27;s well built, entirely Swift, and fairly extendable. However, while it likely works for a lot of developers and blogs, mine needed some customizations that the library did not support.&#x3C;/p&#x3E;&#x3C;p&#x3E;Publish&#x27;s markdown rendering engine &#x3C;a href=&#x22;https://github.com/JohnSundell/Ink/tree/master&#x22;&#x3E;Ink&#x3C;/a&#x3E; though, turned out to be perfect. It did require some modification to support LaTeX, but it&#x27;s very fast and I was very surprised to find that it didn&#x27;t rely on any C libraries like cmark. This ended up being one of two dependencies I allowed and I&#x27;m very thankful for the work John has done on this package.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;swift-result-builders&#x22;&#x3E;&#x3C;a href=&#x22;#swift-result-builders&#x22; class=&#x22;header-link&#x22;&#x3E;Swift Result Builders&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Swift seems the obvious choice for building my own blog. I&#x27;ve been in love with the language for years now, and it continues to improve. One of the features that I&#x27;ve been eyeing for a long time but hadn&#x27;t been able to dig into myself is &#x3C;a href=&#x22;https://docs.swift.org/swift-book/documentation/the-swift-programming-language/advancedoperators/#Result-Builders&#x22;&#x3E;Result Builders&#x3C;/a&#x3E;.&#x3C;/p&#x3E;&#x3C;p&#x3E;Using result builders for HTML has been well documented, and I think it&#x27;s perfect for this job. My goal was to make some Swift syntax that can compile into HTML. Ideally it should look kind of like SwiftUI, and it shouldn&#x27;t be a hinderance to maintaining or building the website itself.&#x3C;/p&#x3E;&#x3C;p&#x3E;The core of my website is the following protocol:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;protocol Component {
+    associatedtype Body: Component
+
+    @HTMLBuilder
+    var body: Self.Body { get }
+
+    var html: String { get }
+}
+
+extension Component {
+    var html: String { body.html }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;This allows me to define components that can optionally provide HTML contents. Similar to SwiftUI, I defined a &#x3C;code&#x3E;TupleComponent&#x3C;/code&#x3E; for the result builder to use. This one is fun because it uses Swift&#x27;s new parameter packs to take multiple types of components in the initializer. I did have to use a &#x3C;code&#x3E;[any Component]&#x3C;/code&#x3E; in one spot, and I&#x27;d very much like to not have to do that but I&#x27;ll revisit that in the future.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;struct TupleComponent: Component {
+    init&#x26;lt;each Content&#x26;gt;(_ content: repeat each Content) where repeat each Content: Component {
+        func buildHTML&#x26;lt;T: Component&#x26;gt;(_ item: T, html: inout String) {
+            if T.self != EmptyComponent.self {
+                html += item.html
+            }
+        }
+        var value = &#x22;&#x22;
+        repeat buildHTML(each content, html: &#x26;amp;value)
+        self.html = value
+    }
+
+    init(_ components: [any Component]) {
+        self.html = components.filter { type(of: $0) != EmptyComponent.self }.map { $0.html }.joined()
+    }
+
+    var body: some Component {
+        fatalError(&#x22;&#x22;)
+    }
+
+    var html: String
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Also similar to SwiftUI, some components need to not have their children evaluated. In the previous example, &#x3C;code&#x3E;TupleComponent&#x3C;/code&#x3E;&#x27;s &#x3C;code&#x3E;body&#x3C;/code&#x3E; compiles to &#x3C;code&#x3E;Never&#x3C;/code&#x3E; but still produces HTML using it&#x27;s children. To get around this I used Swift&#x27;s typing system to extend &#x3C;code&#x3E;Never&#x3C;/code&#x3E; to be a component. While I was at it I made an &#x3C;code&#x3E;EmptyComponent&#x3C;/code&#x3E; similar to SwiftUI&#x27;s &#x3C;code&#x3E;EmptyView&#x3C;/code&#x3E; to help myself avoid &#x3C;code&#x3E;fatalError&#x3C;/code&#x3E;s.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;extension Never: Component {
+    var body: some Component { self }
+    var html: String { &#x22;&#x22; }
+}
+
+struct EmptyComponent: Component {
+    var body: some Component { fatalError() }
+    var html: String { fatalError() }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;This component type made simple HTML tags easy to make Swift-y syntax for, and allowed for nesting content easily.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;struct A&#x26;lt;Content: Component&#x26;gt;: Component {
+    let url: String
+    let content: () -&#x26;gt; Content
+
+    init(_ url: String, @HTMLBuilder content: @escaping () -&#x26;gt; Content) {
+        self.url = url
+        self.content = content
+    }
+
+    var body: some Component {
+        content()
+    }
+
+    var html: String {
+        return &#x22;&#x26;lt;a href=\&#x22;\(url.path()\&#x22;&#x26;gt;&#x22; + content().html + &#x22;&#x26;lt;/a&#x26;gt;&#x22;
+    }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Then, because I was using a protocol as my base type, I was able to extend some standard lib types for my HTML builder. One key thing is Strings. Again, I used that &#x3C;code&#x3E;Never&#x3C;/code&#x3E; extension to make this possible, as Strings won&#x27;t ever have HTML children to evaluate.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;extension String: Component {
+    var body: some Component { fatalError() }
+    var html: String { self }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Finally, using that I was able to define a result builder that combines components and allows for the syntax I was aiming for.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;@resultBuilder
+enum HTMLBuilder {
+    static func buildBlock&#x26;lt;each Content&#x26;gt;(_ content: repeat each Content) -&#x26;gt; TupleComponent where repeat each Content: Component {
+        TupleComponent(repeat each content)
+    }
+
+    static func buildOptional(_ component: TupleComponent?) -&#x26;gt; TupleComponent {
+        if let component {
+            component
+        } else {
+            TupleComponent([EmptyComponent()])
+        }
+    }
+
+    static func buildEither&#x26;lt;Content: Component&#x26;gt;(first component: Content) -&#x26;gt; Content {
+        component
+    }
+
+    static func buildEither&#x26;lt;Content: Component&#x26;gt;(second component: Content) -&#x26;gt; Content {
+        component
+    }
+
+    static func buildArray(_ components: [any Component]) -&#x26;gt; TupleComponent {
+        TupleComponent(components)
+    }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;To actually generate the HTML document I just added a small function that uses the &#x3C;code&#x3E;.html&#x3C;/code&#x3E; property on the &#x3C;code&#x3E;Component&#x3C;/code&#x3E; type. This also adds a few common sense things for an HTML document like the language, HTML5 support, etc.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;enum HTMLRenderer {
+    static func render&#x26;lt;Content: Component&#x26;gt;(@HTMLBuilder page: () -&#x26;gt; Content) -&#x26;gt; String {
+        &#x22;&#x26;lt;!DOCTYPE html&#x26;gt;&#x26;lt;html lang=\&#x22;en\&#x22; data-theme=\&#x22;light\&#x22;&#x26;gt;&#x22; + page().html + &#x22;&#x26;lt;/html&#x26;gt;&#x22;
+    }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;This is slightly different from other methods I&#x27;ve seen around. The primary difference is the use of a root protocol type for each component, rather than inheritance from a class. I also wanted a system very similar to SwiftUI, in that there is no &#x3C;code&#x3E;children&#x3C;/code&#x3E; array on any components. Instead, each component is a distinct element in the hierarchy of the page.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;but-why&#x22;&#x3E;&#x3C;a href=&#x22;#but-why&#x22; class=&#x22;header-link&#x22;&#x3E;But Why?&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;A good question to ask is is this effort worth it? I certainly think so. This resulted in a syntax that lets me express the HTML content of the webpage, while mixing in Swift logic that is never exposed to the browser.&#x3C;/p&#x3E;&#x3C;p&#x3E;For example, after a little more work the entire home page is represented using just this component.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;struct HomePage: Component {
+    var body: some Component {
+        let posts = /* Get All Posts */
+
+        Page(title: &#x22;Posts&#x22;, description: &#x22;Khan Winter&#x27;s Blog Posts&#x22;, path: &#x22;index.html&#x22;, loadCodeStyles: false) {
+            Tag(&#x22;div&#x22;, [&#x22;class&#x22;: &#x22;home&#x22;]) {
+                Tag(&#x22;div&#x22;, [&#x22;class&#x22;: &#x22;home-header&#x22;]) {
+                    Img(resourceName: &#x22;avatar-large.webp&#x22;, alt: &#x22;Avatar&#x22;, size: (128, 128))
+                    P { &#x22;Khan&#x27;s Online Web Log (aka: my blog)!&#x22; }
+                }
+
+                Tag(&#x22;ul&#x22;) {
+                    for (post, path) in posts {
+                        let url = path.deletingPathExtension().appendingPathExtension(&#x22;html&#x22;).path()
+
+                        Tag(&#x22;li&#x22;) {
+                            A(url) {
+                                P { post.createdAt.formatted() }
+                                H(3) { post.title }
+                                P { post.excerpt }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;The largest benefit being able to use logic like for loops, variables, and branches directly in the page&#x27;s code.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;for (post, path) in posts {
+    // ...
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;To me, this is very appealing. This is written in raw Swift, meaning as long as I have a Swift compiler on my machine it&#x27;ll work. It also generates static HTML, with dynamic structure like loops and branches performed without JavaScript or an ugly syntax like Liquid. It meets the last goal I set for myself by not having any unecessary dependencies (Ink is pure Swift, &#x3C;em&#x3E;doesn&#x27;t even need Foundation&#x3C;/em&#x3E;).&#x3C;/p&#x3E;&#x3C;p&#x3E;So yeah, for my use case and my blog it was very worth the effort. On top of that, I got to explore Result Builders! You can check out the entire site on &#x3C;a href=&#x22;https://github.com/thecoolwinter&#x22;&#x3E;my GitHub&#x3C;/a&#x3E; if you&#x27;d like to check out more.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;embunemdling&#x22;&#x3E;&#x3C;a href=&#x22;#embunemdling&#x22; class=&#x22;header-link&#x22;&#x3E;&#x3C;em&#x3E;Bun&#x3C;/em&#x3E;dling&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;The last thing I wanted was to minify my website&#x27;s assets. There&#x27;s a few lines of JS and CSS for highlighting code, displaying Math, etc. I&#x27;ve liked &#x3C;a href=&#x22;https://esbuild.github.io/&#x22;&#x3E;esbuild&#x3C;/a&#x3E; in the past so I decided to run esbuild on each file using &#x3C;a href=&#x22;https://bun.sh/&#x22;&#x3E;Bun&#x3C;/a&#x3E; (instead of NodeJS). The speed Bun provided is awesome. It&#x27;s so fast that the script I made to minify all the JS and CSS files was moved to be in the main loop when generating the site rather than something that happens only when I deploy. Serious props to the team at Bun. Figured I&#x27;d share that while I was at it.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;cloudflare&#x22;&#x3E;&#x3C;a href=&#x22;#cloudflare&#x22; class=&#x22;header-link&#x22;&#x3E;CloudFlare&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;I&#x27;m not only moving domains and site generators, but also my hosting provider. I&#x27;ve used Github pages and Netlify in the past, and while I don&#x27;t have any issue with them in particular they have some rough edges a few years in. Netlify is nice, but they&#x27;ve clearly adjusted their target audience to larger businesses. Most of the features they provide just don&#x27;t apply to a little site like mine (beyond the CDN). Github Pages is pretty much perfect, but not transparent enough for my liking. I prefer to know when my content will be live after deploying it.&#x3C;/p&#x3E;&#x3C;p&#x3E;I initially was going to just host my static files in R2, CloudFlare&#x27;s block storage offering. While setting that up I noticed they offer a &#x3C;a href=&#x22;https://pages.cloudflare.com/&#x22;&#x3E;static site hosting&#x3C;/a&#x3E; which I&#x27;m trying out. So far, I&#x27;ve loved it. My site&#x27;s download speed is faster than either Github or Netlify. They offer unlimited bandwidth, and DNS setup with them was faster than any other provider I&#x27;ve worked with. I don&#x27;t usually give shoutouts for things like this but CloudFlare has been awesome to work with so far.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;last-thing--page-preloading&#x22;&#x3E;&#x3C;a href=&#x22;#last-thing--page-preloading&#x22; class=&#x22;header-link&#x22;&#x3E;Last Thing - Page Preloading&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;After all this work, all of the HTML, JS, and CSS for my site (not including images and videos) is only 0.33MB on disk uncompressed (&#x3C;strong&#x3E;97KB compressed&#x3C;/strong&#x3E; using ZSTD, CloudFlare&#x27;s default compression mechanism). Each new page is roughly 18KB uncompressed, which is nothing to download for most internet connections. Well, HTML has this nice feature that allows you to &#x3C;a href=&#x22;https://developer.mozilla.org/en-US/docs/Web/Performance/Speculative_loading#link_reldns-prefetch&#x22;&#x3E;pre-fetch pages for navigation&#x3C;/a&#x3E;. Inspired in part by this &#x3C;a href=&#x22;https://www.youtube.com/watch?v=-Ln-8QM8KhQ&#x22;&#x3E;Youtube Video&#x3C;/a&#x3E;, I decided to preload the entire blog on each page.&#x3C;/p&#x3E;&#x3C;p&#x3E;Give it a try yourself! If you&#x27;ve made it this far. Clicking the &#x22;Random&#x22; navigation button a few times really shows off how zippy it is. Ironically, that&#x27;s what powers that &#x22;Random&#x22; nav button. It uses the cached pages as the list to choose randomly from!&#x3C;/p&#x3E;&#x3C;p&#x3E;Is this tidbit useful anywhere else in any other context? No. But it&#x27;s really funny to me to make every visitor download and cache the entire blog just to save a few milliseconds loading the post they&#x27;re looking for &#x1F609;.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;conclusion&#x22;&#x3E;&#x3C;a href=&#x22;#conclusion&#x22; class=&#x22;header-link&#x22;&#x3E;Conclusion&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;So that&#x27;s the post. New domain, new blog, new me! This has mostly been my rambling about some cool Swift features and a few things I found while rewriting this website. I hope it was worth the read!&#x3C;/p&#x3E;</content></entry><entry><id>https://khanwinter.com/2024-11-01-Hide-Desktop-Shortcut</id><title>Hide Desktop macOS Shortcut</title><link href="/2024-11-01-Hide-Desktop-Shortcut" rel="alternate"/><published>2024-11-01T05:00:00.000Z</published><summary>A quick Automator script I use almost daily to toggle my desktop contents. Updated for desktop widgets.</summary><content type="html">&#x3C;p&#x3E;I often find myself needing to hide my desktop icons. Whether for a demo for &#x3C;a href=&#x22;https://codeedit.app&#x22;&#x3E;CodeEdit&#x3C;/a&#x3E;, sharing my screen for work, or any other task that requires sharing my screen, I prefer to have my desktop contents hidden.&#x3C;/p&#x3E;&#x3C;p&#x3E;So here&#x27;s a really simple Automator script to toggle your desktop. To show your desktop items again just run the script! Note: it kills Finder, so any finder panels you have open will be closed when this is run.&#x3C;/p&#x3E;&#x3C;p&#x3E;Throw this in a &#x3C;code&#x3E;Run Shell Script&#x3C;/code&#x3E; action in a new automation:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-bash&#x22;&#x3E;previous_val=$(defaults read com.apple.finder CreateDesktop)
+
+if [ &#x22;$previous_val&#x22; = &#x22;true&#x22; ]
+then
+	defaults write com.apple.finder CreateDesktop &#x27;false&#x27;
+	defaults write com.apple.WindowManager StandardHideWidgets -int 1
+else
+    defaults write com.apple.finder CreateDesktop &#x27;true&#x27;
+	defaults write com.apple.WindowManager StandardHideWidgets -int 0
+fi
+
+
+killall Finder
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;img src=&#x22;./automator.webp&#x22; alt=&#x22;Automator Screenshot&#x22;/&#x3E;&#x3C;p&#x3E;Then I like to export it to an application so I can run it easily from Spotlight&#x3C;/p&#x3E;&#x3C;img src=&#x22;./application.webp&#x22; alt=&#x22;example application icon in finder&#x22;/&#x3E;&#x3C;p&#x3E;Demo Video:&#x3C;/p&#x3E;&#x3C;video controls width=&#x22;90%&#x22; style=&#x22;margin-bottom: 1.5em;&#x22;&#x3E;
+    &#x3C;source src=&#x22;demo.mp4&#x22; type=&#x22;video/mp4&#x22;&#x3E;
+  Your browser does not support the video tag.
+&#x3C;/video&#x3E;</content></entry><entry><id>https://khanwinter.com/2021-08-07-Sort-List-Of-Objects</id><title>Sort a List of Objects</title><link href="/2021-08-07-Sort-List-Of-Objects" rel="alternate"/><published>2021-08-07T05:00:00.000Z</published><summary>Learn how to store a sort order on a list of items saved in a database.</summary><content type="html">&#x3C;h2 id=&#x22;sorting-objects-in-a-db&#x22;&#x3E;&#x3C;a href=&#x22;#sorting-objects-in-a-db&#x22; class=&#x22;header-link&#x22;&#x3E;Sorting Objects In A DB&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Lists of objects can often be sorted by a variable, eg calendar events are often sorted by the date they are for. Like so:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-plaintext&#x22;&#x3E;Event 1: 10:00 AM
+Event 2: 11:00 AM
+Event 3: 12:00 PM
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Sometimes though, we need to sort objects in a list that don&#x27;t have an easy way to sort, or we need to allow users to sort the objects to their desire. The user will most likely expect his/her sort order to be kept, and we also can&#x27;t just store an Array of objects in a db.&#x3C;/p&#x3E;&#x3C;p&#x3E;The other problem is if we give all the objects a number value to sort by, we can&#x27;t update &#x3C;u&#x3E;every single object&#x3C;/u&#x3E; in the database with a new sort number. That&#x27;s just impractical and a waste of compute time and energy.&#x3C;/p&#x3E;&#x3C;p&#x3E;The solution is to sort the items by a &#x3C;code&#x3E;Double&#x3C;/code&#x3E; variable. The objects will look basically like this at first:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-plaintext&#x22;&#x3E;Item 1: 10.0
+Item 2: 20.0
+Item 3: 30.0
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;When the user moves Item 3 up a slot, we just give it a number between items 1 and 2, like this:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-plaintext&#x22;&#x3E;Item 1: 10.0
+Item 3: 25.0 &#x26;lt;- Inserted here
+Item 2: 20.0
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;If a user moves Item 3 back down, we just add 10.0 to the biggest item&#x27;s order, and get the list we started out with:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-plaintext&#x22;&#x3E;Item 1: 10.0
+Item 2: 20.0
+Item 3: 30.0
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Finally, if the user moves Item 3 to the top of the list, we find a number between &#x3C;code&#x3E;0.0&#x3C;/code&#x3E; and Item 1&#x27;s order, and give it to Item 3:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-plaintext&#x22;&#x3E;Item 3:  5.0 &#x26;lt;-- Halfway between 0 and 10
+Item 1: 10.0
+Item 2: 20.0
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Pretty simple! We don&#x27;t have to update every single item in the list, and &#x3C;code&#x3E;Double&#x3C;/code&#x3E;s can be divided for a long time, so it will be rare to run out of space between items in the list.&#x3C;/p&#x3E;&#x3C;p&#x3E;This article will give an example of how to give users the ability to sort items and keep the sort order using Core Data in SwiftUI. This same method applies to any database/UI framework that allows you to sort your items by a &#x3C;code&#x3E;Double&#x3C;/code&#x3E; type.&#x3C;/p&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;There&#x27;s also a fully functional example project &#x3C;a href=&#x22;https://github.com/thecoolwinter/SortDBExample&#x22;&#x3E;available for download here&#x3C;/a&#x3E; that implements the ideas talked about.&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;h2 id=&#x22;order-variable&#x22;&#x3E;&#x3C;a href=&#x22;#order-variable&#x22; class=&#x22;header-link&#x22;&#x3E;Order Variable&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;The main idea behind this solution is having a variable on all our objects in the list that&#x27;s a &#x3C;code&#x3E;Double&#x3C;/code&#x3E; type. For this example, say we have a list of items that we&#x27;re going to allow the user to sort at will. The &#x3C;code&#x3E;Item&#x3C;/code&#x3E; object may look something like this:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;struct Item {
+    var id: UUID = UUID()
+    var label: String
+    var order: Double
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Notice that we&#x27;re adding an &#x3C;code&#x3E;order&#x3C;/code&#x3E; variable as type &#x3C;code&#x3E;Double&#x3C;/code&#x3E; to this object. In Core Data, this can be done super easily by just adding a variable of type &#x3C;code&#x3E;Double&#x3C;/code&#x3E; to your .xcdatamodeld file.&#x3C;/p&#x3E;&#x3C;p&#x3E;When we go to fetch the &#x3C;code&#x3E;Todo&#x3C;/code&#x3E;s we&#x27;ll just sort them by the &#x3C;code&#x3E;order&#x3C;/code&#x3E; variable. For Core Data this looks like this:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;@FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Item.order, ascending: true)], animation: .default)
+private var items: FetchedResults&#x26;lt;Item&#x26;gt;
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h2 id=&#x22;updating-the-order&#x22;&#x3E;&#x3C;a href=&#x22;#updating-the-order&#x22; class=&#x22;header-link&#x22;&#x3E;Updating The Order&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;There are 2 pieces of code we need to modify to make this actually work:&#x3C;/p&#x3E;&#x3C;ol&#x3E;&#x3C;li&#x3E;When an &#x3C;code&#x3E;Item&#x3C;/code&#x3E; is added&#x3C;/li&#x3E;&#x3C;li&#x3E;When an &#x3C;code&#x3E;Item&#x3C;/code&#x3E; is moved&#x3C;/li&#x3E;&#x3C;/ol&#x3E;&#x3C;h3 id=&#x22;added&#x22;&#x3E;&#x3C;a href=&#x22;#added&#x22; class=&#x22;header-link&#x22;&#x3E;Added&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;When an &#x3C;code&#x3E;Item&#x3C;/code&#x3E; is added, we need to give it an initial order value. The code may look something like below, where I&#x27;m just getting the biggest order value, and adding more onto it for the new object. If there aren&#x27;t any &#x3C;code&#x3E;Item&#x3C;/code&#x3E;s I just give it a value of &#x3C;code&#x3E;100.0&#x3C;/code&#x3E;&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;func addItem() {
+    withAnimation {
+        let newItem = Item(context: viewContext)
+        newItem.label = &#x22;New Item!&#x22;
+
+        if items.count &#x26;gt; 0 { // Check if there are items
+            newItem.order = items.last!.order + 25.0 // Add some more to the order
+        } else {
+            newItem.order = 100.0 // Give some padding from 0.0 for later
+        }
+
+        try! viewContext.save()
+    }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Awesome, now when items are added they will automatically go to the bottom of the list. If there are no items, we&#x27;ll give ourselves some padding numerically for the next case.&#x3C;/p&#x3E;&#x3C;h3 id=&#x22;moved&#x22;&#x3E;&#x3C;a href=&#x22;#moved&#x22; class=&#x22;header-link&#x22;&#x3E;Moved&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;When an item is moved, things get a little more tricky. There are 3 paths here to handle:&#x3C;/p&#x3E;&#x3C;ol&#x3E;&#x3C;li&#x3E;The item is moved to the top of the list&#x3C;/li&#x3E;&#x3C;li&#x3E;The item is moved to the bottom of the list&#x3C;/li&#x3E;&#x3C;li&#x3E;The item is put somewhere in the middle&#x3C;/li&#x3E;&#x3C;/ol&#x3E;&#x3C;p&#x3E;We&#x27;ll always need to find an order value between two values to insert the item somewhere.&#x3C;/p&#x3E;&#x3C;p&#x3E;For the three cases the &#x3C;code&#x3E;upper&#x3C;/code&#x3E; and &#x3C;code&#x3E;lower&#x3C;/code&#x3E; order values will be between:&#x3C;/p&#x3E;&#x3C;ol&#x3E;&#x3C;li&#x3E;0.0 -&#x26;gt; next list item&#x3C;/li&#x3E;&#x3C;li&#x3E;last list item -&#x26;gt; last list item + 100.0&#x3C;/li&#x3E;&#x3C;li&#x3E;Next destination list item -&#x26;gt; destination list item&#x3C;/li&#x3E;&#x3C;/ol&#x3E;&#x3C;p&#x3E;In swift this looks like the following code&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;var upper: Double
+var lower: Double
+
+if destination == items.count {
+    print(&#x22;Appending to the end of the list&#x22;)
+    lower = items.last!.order
+    upper = items.last!.order + 100.0
+} else if destination == 0 {
+    print(&#x22;Inserting into the begining&#x22;)
+    lower = 0.0
+    upper = items.first?.order ?? 100.0
+} else {
+    print(&#x22;Inserting into the middle of the list&#x22;)
+    // Find the upper and lower sort around the destination and make some sort orders
+    upper = items[destination - 1].order
+    lower = items[destination].order
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Then, we can get numbers between the upper and lower limits like&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;var newOrders: [Double] = stride(from: lower, to: upper, by: (upper - lower)/Double(sourceItems.count + 1)).map { $0 }
+newOrders.remove(at: 0)
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;We&#x27;re handling the case where we&#x27;re moving more than one item too. So if two items are inserted between 10.0 and 20.0 we should generate 12.5 and 17.5 to insert both the items in the correct spot.&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;p&#x3E;Then, its a simple matter of updating the sort order of the objects!&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;var i = 0
+source.forEach { index in
+    items[index].order = newOrders[i]
+    i += 1
+}
+
+try! viewContext.save()
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Done! &#x1F389;&#x3C;/p&#x3E;&#x3C;p&#x3E;Here&#x27;s the code from the example project in action.&#x3C;/p&#x3E;&#x3C;video width=&#x22;400&#x22; controls&#x3E;
+  &#x3C;source src=&#x22;video.mp4&#x22; type=&#x22;video/mp4&#x22;&#x3E;
+  Your browser does not support the video tag.
+&#x3C;/video&#x3E;</content></entry><entry><id>https://khanwinter.com/2021-05-08-Implementing-Sin</id><title>Implementing Sin(x)</title><link href="/2021-05-08-Implementing-Sin" rel="alternate"/><published>2021-05-08T05:00:00.000Z</published><summary>We have a basic sin function, now we need to calculate more than π/2, and do it fast.</summary><content type="html">&#x3C;h2 id=&#x22;previously-on&#x22;&#x3E;&#x3C;a href=&#x22;#previously-on&#x22; class=&#x22;header-link&#x22;&#x3E;Previously on...&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;In my last post, I used Taylor Series to come up with a function to estimate &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E; for any number between &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$0$&#x3C;/span&#x3E; and &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi}{2}$&#x3C;/span&#x3E;. While this is cool, it&#x27;s rather useless. But, thankfully, I can use the numbers we can already to calculate any number of &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E;.&#x3C;/p&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;If you haven&#x27;t read my previous post, it&#x27;s a good read and will definitely make this post make much more sense. &#x3C;a href=&#x22;https://windchillblog.com/2021/03/17/How-Computers-Calculate-Sin.html&#x22;&#x3E;You can read that post here&#x3C;/a&#x3E;.&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;h2 id=&#x22;sin-repeats&#x22;&#x3E;&#x3C;a href=&#x22;#sin-repeats&#x22; class=&#x22;header-link&#x22;&#x3E;Sin Repeats&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$sin(x)$$&#x3C;/span&#x3E;&#x3C;p&#x3E;has an awesome property that I&#x27;m going to take complete advantage of for this implementation. &#x3C;strong&#x3E;Sin is the exact same from &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$0$&#x3C;/span&#x3E; to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi}{2}$&#x3C;/span&#x3E; everywhere else on the number line.&#x3C;/strong&#x3E; All the rest of the numbers are flipped horizontally, or vertically, or both.&#x3C;/p&#x3E;&#x3C;p&#x3E;It&#x27;s easier to see this with the graph of &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E;.&#x3C;/p&#x3E;&#x3C;img src=&#x22;sin.png&#x22; alt=&#x22;sin(x) with points 0, pi/2, 3pi/2, pi and 2pi highlighted&#x22;/&#x3E;&#x3C;p&#x3E;It&#x27;s pretty easy if you can rotate your phone/laptop to see that the curve from &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$0$&#x3C;/span&#x3E; to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi}{2}$&#x3C;/span&#x3E; is the flipped horizontally between &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi}{2}$&#x3C;/span&#x3E; and &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\pi$&#x3C;/span&#x3E;, then horizontally and vertically between &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\pi$&#x3C;/span&#x3E; and &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{3\pi}{2}$&#x3C;/span&#x3E;, and finally flipped vertially from &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{3\pi}{2}$&#x3C;/span&#x3E; to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$2\pi$&#x3C;/span&#x3E;.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;flip-flops-&#x22;&#x3E;&#x3C;a href=&#x22;#flip-flops-&#x22; class=&#x22;header-link&#x22;&#x3E;Flip Flops &#x1FA74;&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Since we can already calculate all the numbers from &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$0$&#x3C;/span&#x3E; to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi}{2}$&#x3C;/span&#x3E; in &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin$&#x3C;/span&#x3E;, all we&#x27;ve gotta do is figure out some swift functions to flip flop around our existing results.&#x3C;/p&#x3E;&#x3C;p&#x3E;Here&#x27;s what we&#x27;re starting with, with each quadrant that we need to flip or flop in a different color.&#x3C;/p&#x3E;&#x3C;img src=&#x22;orig.png&#x22; alt=&#x22;orig&#x22;/&#x3E;&#x3C;ol&#x3E;&#x3C;li&#x3E;Vertical Flips&#x3C;/li&#x3E;&#x3C;/ol&#x3E;&#x3C;p&#x3E;It&#x27;s pretty easy to flip a function vertically. In math it&#x27;s called the &#x3C;em&#x3E;reflection&#x3C;/em&#x3E; of a function. All we have to do is make the entire function negative and it&#x27;ll be flipped vertically.&#x3C;/p&#x3E;&#x3C;img src=&#x22;vert.gif&#x22;/&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;Source: https://mathbitsnotebook.com/Algebra1/FunctionGraphs/FNGTransformationFunctions.html&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;p&#x3E;The only areas we need to vertically flip &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E; are between &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\pi$&#x3C;/span&#x3E; and &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$2\pi$&#x3C;/span&#x3E;, where &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E; is negative.&#x3C;/p&#x3E;&#x3C;p&#x3E;After applying the vertical flops, our graph looks like this&#x3C;/p&#x3E;&#x3C;img src=&#x22;vert-flip.png&#x22; alt=&#x22;vert-flip&#x22;/&#x3E;&#x3C;ol start=&#x22;2&#x22;&#x3E;&#x3C;li&#x3E;Horizontal Flops&#x3C;/li&#x3E;&#x3C;/ol&#x3E;&#x3C;p&#x3E;Now all we have to do is flop the blue and purple lines backwards. We can do this by just shifting the &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$x$&#x3C;/span&#x3E; value &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi}{2}$&#x3C;/span&#x3E; to the left.&#x3C;/p&#x3E;&#x3C;p&#x3E;After the horizontal flop we end up with this graph.&#x3C;/p&#x3E;&#x3C;img src=&#x22;hor-flip.png&#x22; alt=&#x22;hor-flip&#x22;/&#x3E;&#x3C;p&#x3E;Sweet! Now we can use these flip flops in our sin function in swift to calculate any value for &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E;.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;swift-flip-flops-&#x22;&#x3E;&#x3C;a href=&#x22;#swift-flip-flops-&#x22; class=&#x22;header-link&#x22;&#x3E;Swift Flip Flops &#x1F425;&#x1FA74;&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Now to implement these stylish shoes in Swift.&#x3C;/p&#x3E;&#x3C;ol&#x3E;&#x3C;li&#x3E;Vertical Flips&#x3C;/li&#x3E;&#x3C;/ol&#x3E;&#x3C;p&#x3E;As said before, all we have to do to flip a function vertically is make sin negative. That&#x27;s super easy in swift, so here&#x27;s the vertical flip function.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;sin(-input)
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;ol start=&#x22;2&#x22;&#x3E;&#x3C;li&#x3E;Horizontal Flops&#x3C;/li&#x3E;&#x3C;/ol&#x3E;&#x3C;p&#x3E;All we need to do here is subtract &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi}{2}$&#x3C;/span&#x3E; from the &#x3C;code&#x3E;input&#x3C;/code&#x3E; variable and we&#x27;re good to go!&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;sin(input - (Double.pi/2))
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h2 id=&#x22;finally&#x22;&#x3E;&#x3C;a href=&#x22;#finally&#x22; class=&#x22;header-link&#x22;&#x3E;Finally...&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Yay! Now all we have to do is&#x3C;/p&#x3E;&#x3C;ol&#x3E;&#x3C;li&#x3E;Reduce &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$x$&#x3C;/span&#x3E; to be between &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$0$&#x3C;/span&#x3E; and &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$2\pi$&#x3C;/span&#x3E;.&#x3C;/li&#x3E;&#x3C;li&#x3E;Flip flop our way to our result!&#x3C;/li&#x3E;&#x3C;/ol&#x3E;&#x3C;p&#x3E;Here are the few rules that we&#x27;ll need to follow to figure out which flip or flop to use.&#x3C;/p&#x3E;&#x3C;ol&#x3E;&#x3C;li&#x3E;If &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$x$&#x3C;/span&#x3E; is between &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\pi$&#x3C;/span&#x3E; and &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$2\pi$&#x3C;/span&#x3E;, flip it &#x3C;u&#x3E;vertically&#x3C;/u&#x3E;.&#x3C;/li&#x3E;&#x3C;li&#x3E;If &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$x$&#x3C;/span&#x3E; is between &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi}{2}$&#x3C;/span&#x3E; and &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\pi$&#x3C;/span&#x3E; &#x3C;em&#x3E;or&#x3C;/em&#x3E; &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{3\pi}{2}$&#x3C;/span&#x3E; and &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$2\pi$&#x3C;/span&#x3E;, flip it &#x3C;u&#x3E;horizontally&#x3C;/u&#x3E;.&#x3C;/li&#x3E;&#x3C;/ol&#x3E;&#x3C;p&#x3E;With these rules in mind, we almost have the swift code written for us! I&#x27;ll just take those &#x22;If &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$x$&#x3C;/span&#x3E; is...&#x22; and turn them into &#x3C;code&#x3E;if&#x3C;/code&#x3E; statements.&#x3C;/p&#x3E;&#x3C;p&#x3E;Here&#x27;s the final swift implementation of &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E;.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;let S1 = -1.66666666666666324348e-01;  // -1/(3!)
+let S2 = 8.3333333332248946124e-03;    //  1/(5!)
+let S3 = -1.98412698298579493134e-04;  // -1/(7!)
+let S4 = 2.75573137070700676789e-06;   //  1/(9!)
+let S5 = -2.50507602534068634195e-08;  // -1/(11!)
+let S6 = 1.58969099521155010221e-10;   //  1/(13!)
+
+func usersin(_ xOrig: Double) -&#x26;gt; Double {
+    // Reduce x to be between 0 and 2pi
+    var x = xOrig.truncatingRemainder(dividingBy: 2 * Double.pi)
+
+    // If it&#x27;s between pi/2 =&#x26;gt; pi or 3pi/2 =&#x26;gt; 2pi. Flip it horizontally
+    if (x &#x26;gt; Double.pi/2 &#x26;amp;&#x26;amp; x &#x26;lt; Double.pi) || (x &#x26;gt; (3*Double.pi)/2 &#x26;amp;&#x26;amp; x &#x26;lt; 2*Double.pi) {
+        x = x - (Double.pi/2)
+    }
+
+    let z = x*x                          // x^2
+    let v = z*x                          // x^3
+    let r = S2+z*(S3+z*(S4+z*(S5+z*S6))) // Taylor function part 1/2
+
+    // Flip the function if needed, eg between pi and 2pi
+    if x &#x26;gt; Double.pi &#x26;amp;&#x26;amp; x &#x26;lt; Double.pi * 2 {
+        return -x+v*(S1+z*r)             // Taylor function part 2/2 (but negative)
+    } else {
+        // No need for vertical flip
+        return x+v*(S1+z*r)             // Taylor function part 2/2
+    }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h2 id=&#x22;benchmark&#x22;&#x3E;&#x3C;a href=&#x22;#benchmark&#x22; class=&#x22;header-link&#x22;&#x3E;Benchmark&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;I decided to test the speed of this implementation, and the benchmarks look pretty good. For 1,000,000 &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E; operations, the results look like:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code&#x3E;Time elapsed for User Sin: 0.7528519630432129 s.
+Time elapsed for Normal Sin: 0.6716610193252563 s.
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;So not too far off between them. The code I used to benchmark is below.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;#!/usr/bin/swift
+
+import Foundation
+
+... User sin defined up here ...
+
+func printTimeElapsedWhenRunning(title: String, operation: (() -&#x26;gt; Void)) {
+    let startTime = CFAbsoluteTimeGetCurrent()
+    operation()
+    let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+    print(&#x22;Time elapsed for \(title): \(timeElapsed) s.&#x22;)
+}
+
+printTimeElapsedWhenRunning(title: &#x22;User Sin&#x22;) {
+    for i in 0..&#x26;lt;1000000 {
+        let _ = usersin(Double(i))
+    }
+}
+
+printTimeElapsedWhenRunning(title: &#x22;Normal Sin&#x22;) {
+    for i in 0..&#x26;lt;1000000 {
+        let _ = sin(Double(i))
+    }
+}
+
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;After running this code ~10 times the results were within 0.001s of each other, so the error from this test is negligible.&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;h2 id=&#x22;conclusion&#x22;&#x3E;&#x3C;a href=&#x22;#conclusion&#x22; class=&#x22;header-link&#x22;&#x3E;Conclusion&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;While it&#x27;s fun to figure out and define our own implementation of &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E;, it&#x27;s not super practical. Other programers have already figured out this math, and have figured out ways of making it slightly faster than my own. So, is it practical? No. But it was fun to do!&#x3C;/p&#x3E;</content></entry><entry><id>https://khanwinter.com/2021-03-17-How-Computers-Calculate-Sin</id><title>How Computers Calculate Sine</title><link href="/2021-03-17-How-Computers-Calculate-Sin" rel="alternate"/><published>2021-03-17T05:00:00.000Z</published><summary>Sine is infinite, so how can a computer calculate an infinite function?</summary><content type="html">&#x3C;h2 id=&#x22;computers-arent-infinite&#x22;&#x3E;&#x3C;a href=&#x22;#computers-arent-infinite&#x22; class=&#x22;header-link&#x22;&#x3E;Computers aren&#x27;t infinite.&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;How can computers compute &#x3C;em&#x3E;(no pun intented)&#x3C;/em&#x3E; infinite functions like sin so fast? Take video games for instance, that need to compute trig functions incredibly fast 100&#x27;s of times a second to render frames. If sine and cosine took long at all, we would never have video games.&#x3C;/p&#x3E;&#x3C;p&#x3E;How do computers do it?&#x3C;/p&#x3E;&#x3C;hr&#x3E;&#x3C;p&#x3E;Historically computer scientists have two ways of getting around this problem.&#x3C;/p&#x3E;&#x3C;ol&#x3E;&#x3C;li&#x3E;Store a table of sine and cosine values, then reference that table whenever you need. Java does this, and it works fairly well until you need a value of sine that isn&#x27;t in the table&#x3C;/li&#x3E;&#x3C;li&#x3E;Estimate &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E; using another function.&#x3C;/li&#x3E;&#x3C;/ol&#x3E;&#x3C;p&#x3E;Here I&#x27;ll show you how computers estimate sin for any value.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;sine-and-derivatives&#x22;&#x3E;&#x3C;a href=&#x22;#sine-and-derivatives&#x22; class=&#x22;header-link&#x22;&#x3E;Sine and derivatives&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;&#x3C;strong&#x3E;Before we take a deeper dive into the math, there&#x27;s two concepts we need to understand.&#x3C;/strong&#x3E;&#x3C;/p&#x3E;&#x3C;hr&#x3E;&#x3C;h3 id=&#x22;sine&#x22;&#x3E;&#x3C;a href=&#x22;#sine&#x22; class=&#x22;header-link&#x22;&#x3E;Sine&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;For a little background I&#x27;ll start by explaining two important concepts. First, &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E;. You may remember this fun function from a high school algebra class. &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E; has these important properties.&#x3C;/p&#x3E;&#x3C;ol&#x3E;&#x3C;li&#x3E;Sine is infinite, meaning it&#x27;ll have a value at any number you put into it.&#x3C;/li&#x3E;&#x3C;li&#x3E;It&#x27;s also periodic, which means that it repeats itself over and over again (like a wave).&#x3C;/li&#x3E;&#x3C;/ol&#x3E;&#x3C;p&#x3E;Here&#x27;s a graph of &#x3C;em&#x3E;y=sin(x)&#x3C;/em&#x3E;.&#x3C;/p&#x3E;&#x3C;img src=&#x22;1.png&#x22; alt=&#x22;y=sin(x)&#x22;/&#x3E;&#x3C;p&#x3E;As you can see, the value of &#x3C;em&#x3E;sin(x)&#x3C;/em&#x3E; goes up and down between &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$-1$&#x3C;/span&#x3E; and &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$1$&#x3C;/span&#x3E;.&#x3C;/p&#x3E;&#x3C;p&#x3E;You can also tell that it&#x27;s not coming to an end. It&#x27;ll go on forever from &#x2212;&#x26;infin; all the way to +&#x26;infin;.&#x3C;/p&#x3E;&#x3C;p&#x3E;&#x3C;strong&#x3E;One more important thing about sine is that the curve 0 to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi}{2}$&#x3C;/span&#x3E; is repeated on the entire rest of sine. The curve might be backwards or upside down, but it&#x27;s always exactly the same.&#x3C;/strong&#x3E;&#x3C;/p&#x3E;&#x3C;p&#x3E;&#x3C;strong&#x3E;That means if we can figure out values for any point in &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$0$&#x3C;/span&#x3E; to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi}{2}$&#x3C;/span&#x3E;, we can figure out points for anywhere on sine.&#x3C;/strong&#x3E;&#x3C;/p&#x3E;&#x3C;hr&#x3E;&#x3C;h3 id=&#x22;derivatives&#x22;&#x3E;&#x3C;a href=&#x22;#derivatives&#x22; class=&#x22;header-link&#x22;&#x3E;Derivatives&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;A derivative is the core concept of Calculus. Basically, when you take a derivative of a function, you create another function that measures the &#x3C;em&#x3E;rate of change&#x3C;/em&#x3E; of the original function. It can be confusing, but a really good example of this comes from physics.&#x3C;/p&#x3E;&#x3C;p&#x3E;If we have a particle that&#x27;s moving according to the position function&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+x=vt+\frac{1}{2}at^2
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;We can take the &#x3C;strong&#x3E;&#x3C;em&#x3E;Derivative&#x3C;/em&#x3E;&#x3C;/strong&#x3E; of that funciton, to get&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+v=at
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;&#x3C;strong&#x3E;&#x3C;em&#x3E;Velocity&#x3C;/em&#x3E;&#x3C;/strong&#x3E; is the derivative of the position function. It&#x27;s literally, &#x3C;em&#x3E;the change in position over time&#x3C;/em&#x3E;. We can even take the derivative of Velocity to get&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+a=\left(some\:number\right)
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;&#x3C;strong&#x3E;&#x3C;em&#x3E;Acceleration&#x3C;/em&#x3E;&#x3C;/strong&#x3E;. Acceleration is &#x3C;em&#x3E;the change in velocity over time&#x3C;/em&#x3E;.&#x3C;/p&#x3E;&#x3C;p&#x3E;Here&#x27;s a graph of all these functions over time. You&#x27;ll notice the velocity is going up at a constant rate &#x3C;em&#x3E;a&#x3C;/em&#x3E;, and the position is going up exponentially. If we dropped a ball off a cliff. The ball would fall faster over time, so the velocity would steadily increase, but the acceleration would always be &#x3C;em&#x3E;&#x3C;span class=&#x22;math-inline&#x22;&#x3E;$9.81\frac{m}{s^2}$&#x3C;/span&#x3E;&#x3C;/em&#x3E;.&#x3C;/p&#x3E;&#x3C;img src=&#x22;derivatives.png&#x22; alt=&#x22;Derivatives&#x22;/&#x3E;&#x3C;p&#x3E;Finally, derivatives are shown using this syntax &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$
+derivative\:of\:f\left(x\right)=f&#x27;\left(x\right)
+$&#x3C;/span&#x3E; So from now on, if you see &#x3C;em&#x3E;f&#x27;(x)&#x3C;/em&#x3E; that&#x27;s the derivative of the function &#x3C;em&#x3E;f&#x3C;/em&#x3E;. If we add more &#x3C;em&#x3E;&#x27;&#x3C;/em&#x3E; to the function if grows in derivatives. So the second derivative of &#x3C;em&#x3E;f&#x3C;/em&#x3E; is &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$
+second\:derivative\:of\:f\left(x\right)=f&#x27;&#x27;\left(x\right)second\:derivative\:of\:f\left(x\right)=f&#x27;&#x27;\left(x\right)
+$&#x3C;/span&#x3E;&#x3C;/p&#x3E;&#x3C;hr&#x3E;&#x3C;h2 id=&#x22;how-do-we-use-derivatives-to-calculate-sine&#x22;&#x3E;&#x3C;a href=&#x22;#how-do-we-use-derivatives-to-calculate-sine&#x22; class=&#x22;header-link&#x22;&#x3E;How do we use derivatives to calculate sine?&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;h3 id=&#x22;a-taylor-series&#x22;&#x3E;&#x3C;a href=&#x22;#a-taylor-series&#x22; class=&#x22;header-link&#x22;&#x3E;A: Taylor Series&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;Taylor series estimate a function. Basically, a mathemetician named Brook Taylor realized that any function is equal to this sum&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+f\left(x\right)=f\left(0\right)+\frac{f&#x27;\left(0\right)}{1!}x+\frac{f&#x27;&#x27;\left(0\right)}{2!}x^2+...
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;Each part that we&#x27;re adding up is the &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$nth$&#x3C;/span&#x3E; derivative of &#x3C;em&#x3E;f&#x3C;/em&#x3E; divided by the number &#x3C;em&#x3E;n!&#x3C;/em&#x3E; it&#x27;s at, times &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$x^n$&#x3C;/span&#x3E;. If we add up infinity&#xA0;of these functions, this Taylor series will be perfectly equal to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$f(x)$&#x3C;/span&#x3E;.&#x3C;/p&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;Each time we add one of the parts above, we&#x27;re adding a &#x3C;em&#x3E;degree&#x3C;/em&#x3E; to the Taylor series. So the above function is to the 3rd degree.&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;p&#x3E;Taylor series work on the idea that the function is related to it&#x27;s derivatives somehow. So we can get the initial value of &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$f(x)$&#x3C;/span&#x3E; at &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$f(0)$&#x3C;/span&#x3E;, and the next derivative &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$f&#x27;(x)$&#x3C;/span&#x3E; gives us the direction it should go next. Each derivative we add in this way points the Taylor series in the correct direction more and more until it&#x27;s exactly equal to the entire original function.&#x3C;/p&#x3E;&#x3C;hr&#x3E;&#x3C;p&#x3E;But, we don&#x27;t always have to add up to infinity. In fact, the series is very close to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$f(x)$&#x3C;/span&#x3E; for a short bit after only a few sums of the Taylor series.&#x3C;/p&#x3E;&#x3C;p&#x3E;This comes in handy if say, we only need to know values for a specific part of the function say &#x3C;em&#x3E;*ahem*&#x3C;/em&#x3E; 0 to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi }{2}$&#x3C;/span&#x3E;.&#x3C;/p&#x3E;&#x3C;p&#x3E;In fact, this is the Taylor series to the 7th degree, which happens to equal &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E; nearly exactly from &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$0$&#x3C;/span&#x3E; to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi }{2}$&#x3C;/span&#x3E;.&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+sin(x)=x-\frac{x^3}{3!}+\frac{x^5}{5!}-\frac{x^7}{7!}+\frac{x^{11}}{11!}-\frac{x^{13}}{13!}+\frac{x^{15}}{15!}
+$$&#x3C;/span&#x3E;&#x3C;img src=&#x22;taylor-sin.png&#x22; alt=&#x22;Taylor Series of Sin&#x22;/&#x3E;&#x3C;p&#x3E;The graph above shows that the Taylor series is equal to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E; until &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi}{4}$&#x3C;/span&#x3E;, where it starts to wander.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;computer-time&#x22;&#x3E;&#x3C;a href=&#x22;#computer-time&#x22; class=&#x22;header-link&#x22;&#x3E;Computer time!&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Now we have a function we can use to estimate &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E; anywhere along &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E;.&#x3C;/p&#x3E;&#x3C;p&#x3E;Since the function isn&#x27;t infinite, we can translate it to a computer function very easily. Heres &#x3C;code&#x3E;sin(x)&#x3C;/code&#x3E; in Swift.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;let S1 = -1.66666666666666324348e-01;  // -1/(3!)
+let S2 = 8.3333333332248946124e-03;    //  1/(5!)
+let S3 = -1.98412698298579493134e-04;  // -1/(7!)
+let S4 = 2.75573137070700676789e-06;   //  1/(9!)
+let S5 = -2.50507602534068634195e-08;  // -1/(11!)
+let S6 = 1.58969099521155010221e-10;   //  1/(13!)
+
+func usersin(_ x: Double) -&#x26;gt; Double {
+    let z = x*x                          // x^2
+    let v = z*x                          // x^3
+    let r = S2+z*(S3+z*(S4+z*(S5+z*S6))) // Taylor function part 1/2
+    return x+v*(S1+z*r)                   // Taylor function part 2/2
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Here&#x27;s how this works.&#x3C;/p&#x3E;&#x3C;ol&#x3E;&#x3C;li&#x3E;First, we&#x27;re storing the larger numbers at the top. These numbers are constants, so we can set them statically outside the function.&#x3C;/li&#x3E;&#x3C;li&#x3E;The variables &#x3C;code&#x3E;z&#x3C;/code&#x3E;, and &#x3C;code&#x3E;v&#x3C;/code&#x3E; are placeholder variables for powers of &#x3C;code&#x3E;x&#x3C;/code&#x3E;, they&#x27;re there mostly for readability&#x3C;/li&#x3E;&#x3C;li&#x3E;&#x3C;code&#x3E;r&#x3C;/code&#x3E; is the first part of the actual Taylor function. I found that if I kept the entire polynomial in one declaration it messed up the final result.&#x3C;/li&#x3E;&#x3C;li&#x3E;We return the final Taylor function.&#x3C;/li&#x3E;&#x3C;/ol&#x3E;&#x3C;p&#x3E;To test this implementation, we can import &#x3C;code&#x3E;Foundation&#x3C;/code&#x3E; and compare it to Swift&#x27;s built-in &#x3C;code&#x3E;sin&#x3C;/code&#x3E;.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;#!/usr/bin/swift
+
+import Foundation
+
+let S1 = -1.66666666666666324348e-01;  // -1/(3!)
+let S2 = 8.3333333332248946124e-03;    //  1/(5!)
+let S3 = -1.98412698298579493134e-04;  // -1/(7!)
+let S4 = 2.75573137070700676789e-06;   //  1/(9!)
+let S5 = -2.50507602534068634195e-08;  // -1/(11!)
+let S6 = 1.58969099521155010221e-10;   //  1/(13!)
+
+func usersin(_ x: Double) -&#x26;gt; Double {
+    let z = x*x                          // x^2
+    let v = z*x                          // x^3
+    let r = S2+z*(S3+z*(S4+z*(S5+z*S6))) // Taylor function part 1/2
+    return x+v*(S1+z*r)                   // Taylor function part 2/2
+}
+
+func printUserSin(_ input: Double, name: String) {
+    print(&#x22;x\t=\t\(name)&#x22;)
+    print(&#x22;usersin(x):\t\(usersin(input))&#x22;)
+    print(&#x22;sin(x):\t\t\(sin(input))&#x22;)
+    print(&#x22;&#x22;)
+}
+printUserSin(Double.pi/6, name: &#x22;Pi/6&#x22;)
+printUserSin(Double.pi/8, name: &#x22;Pi/8&#x22;)
+printUserSin(Double.pi/21, name: &#x22;Pi/21&#x22;)
+printUserSin(Double.pi/2, name: &#x22;Pi/2&#x22;)
+printUserSin(Double.pi/2 - 0.01, name: &#x22;Pi/2 - 0.01&#x22;)
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Which spits out:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-bash&#x22;&#x3E;x	=	Pi/6
+usersin(x): 0.4999999999999961
+sin(x):     0.49999999999999994
+
+x	=	Pi/8
+usersin(x): 0.38268343236508884
+sin(x):     0.3826834323650898
+
+x	=	Pi/21
+usersin(x): 0.14904226617617444
+sin(x):     0.14904226617617444
+
+x	=	Pi/2
+usersin(x): 1.000000000251294
+sin(x):     1.0
+
+x	=	Pi/2 - 0.01
+usersin(x): 0.9999500006418387
+sin(x):     0.9999500004166653
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Which is &#x3C;strong&#x3E;nearly&#x3C;/strong&#x3E; completely accurate for all the values we gave it, plenty close for any calculation we may need, and plenty fast as well!&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;conclusion&#x22;&#x3E;&#x3C;a href=&#x22;#conclusion&#x22; class=&#x22;header-link&#x22;&#x3E;Conclusion&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;I&#x27;ve shown a very naive implementation of &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$sin(x)$&#x3C;/span&#x3E;. It doesn&#x27;t take into account values outside of &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$0$&#x3C;/span&#x3E; to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{\pi}{2}$&#x3C;/span&#x3E; and doesn&#x27;t account for negative values. In fact, this is the bare minimum you would want from a &#x3C;code&#x3E;sin&#x3C;/code&#x3E; function.&#x3C;/p&#x3E;&#x3C;p&#x3E;In a future post I&#x27;ll go over some of the tricks computer scientists have used to get around those problems, and compare speeds of this function with C and C++.&#x3C;/p&#x3E;&#x3C;blockquote&#x3E;&#x3C;p&#x3E;If you&#x27;d like to run the code above on your own, create a file called &#x3C;code&#x3E;main.swift&#x3C;/code&#x3E; and copy-paste the code into that file. Then run&#x3C;code&#x3E;chmod +x main.swift &#x26;amp;&#x26;amp; ./main.swift&#x3C;/code&#x3E; to run the script.&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;</content></entry><entry><id>https://khanwinter.com/2021-02-02-The-Search-Engine-Matrix</id><title>The Search Engine Matrix</title><link href="/2021-02-02-The-Search-Engine-Matrix" rel="alternate"/><published>2021-02-03T06:00:00.000Z</published><summary>One way search engines like google rank page poplarity using matrices.</summary><content type="html">&#x3C;h2 id=&#x22;search-engines-rank-pages-based-on-how-likely-you-are-to-visit-them&#x22;&#x3E;&#x3C;a href=&#x22;#search-engines-rank-pages-based-on-how-likely-you-are-to-visit-them&#x22; class=&#x22;header-link&#x22;&#x3E;Search engines rank pages based on how likely you are to visit them&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;For a person, this might be a simple thing to understand. You would probably think the search engine should probably rank websites that are more popular higher on the list. However, computers don&#x27;t understand popularity inherently. We have to convert a human problem, &#x22;How popular is this website&#x22; into a math problem. How does one do that?&#x3C;/p&#x3E;&#x3C;p&#x3E;The answer: &#x3C;strong&#x3E;Matrices&#x3C;/strong&#x3E;&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;a-bit-of-a-primer&#x22;&#x3E;&#x3C;a href=&#x22;#a-bit-of-a-primer&#x22; class=&#x22;header-link&#x22;&#x3E;A bit of a primer&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;If you haven&#x27;t taken Linear Algebra, there&#x27;s a good chance you have never heard of matrices. So here&#x27;s a brief explaination.&#x3C;/p&#x3E;&#x3C;p&#x3E;&#x3C;strong&#x3E;Matrices&#x3C;/strong&#x3E; hold numbers in a grid, sort of like a Sudoku board. Below is a matrix called the &#x3C;em&#x3E;Identity Matrix&#x3C;/em&#x3E; You can think of it as the 1 of matrices.&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+I=\begin{pmatrix}1&#x26;0&#x26;0\\ 0&#x26;1&#x26;0\\ 0&#x26;0&#x26;1\end{pmatrix}
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;You can use matrices like other numbers, adding, subtracting, multiplying, dividing etc. For instance if we multiply &#x3C;em&#x3E;I&#x3C;/em&#x3E; by 2 we get&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+I\cdot 2=\begin{pmatrix}2&#x26;0&#x26;0\\ 0&#x26;2&#x26;0\\ 0&#x26;0&#x26;2\end{pmatrix}
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;We can also put numbers in where we currently have 0 like below, as well as have different numbers of rows and columns.&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+I_2=\begin{pmatrix}1\\ 0\\ 0\end{pmatrix},\:I_3=\begin{pmatrix}1&#x26;\frac{1}{2}&#x26;\infty \\ sin\left(\theta \right)&#x26;\pi &#x26;\log \left(20\right)\\ -1&#x26;2&#x26;\frac{3}{4}\end{pmatrix}
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;If you multiply a narrow matrix by a wider matrix with the same number of rows, you&#x27;ll end up with a narrow matrix. This will come in handy later when calculating probabilities.&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+I_2\cdot I=\begin{pmatrix}1&#x26;0&#x26;0\\ 0&#x26;1&#x26;0\\ 0&#x26;0&#x26;1\end{pmatrix}\begin{pmatrix}1\\ 0\\ 0\end{pmatrix}=\begin{pmatrix}1\\ 0\\ 0\end{pmatrix}
+$$&#x3C;/span&#x3E;&#x3C;h2 id=&#x22;turning-the-emhumanem-problem-into-a-emcomputerem-problem&#x22;&#x3E;&#x3C;a href=&#x22;#turning-the-emhumanem-problem-into-a-emcomputerem-problem&#x22; class=&#x22;header-link&#x22;&#x3E;Turning the &#x3C;em&#x3E;human&#x3C;/em&#x3E; problem into a &#x3C;em&#x3E;computer&#x3C;/em&#x3E; problem&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Say, for instance, we have a group of 3 websites which are linked in a graph like this:&#x3C;/p&#x3E;&#x3C;img src=&#x22;1.png&#x22; alt=&#x22;Website Graph&#x22;/&#x3E;&#x3C;p&#x3E;In this graph, website 1 links only to website 2, website 2 links to both 1 and 3, and website 3 links to both 1 and 2.&#x3C;/p&#x3E;&#x3C;p&#x3E;For each website we want to know how it links to the other websites &#x3C;strong&#x3E;mathematically&#x3C;/strong&#x3E;. So, for website 2, we&#x27;ll make a single-column matrix like this: &#x3C;img src=&#x22;2.png&#x22; alt=&#x22;Single-column matrix&#x22;/&#x3E;&#x3C;/p&#x3E;&#x3C;p&#x3E;This matrix only has one column, which adds up to 1. We got the numbers for the matrix by adding up all the links that that website links to, and dividing one by that sum, eg: &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\frac{1}{Number\:Of\:Links}$&#x3C;/span&#x3E;. We&#x27;ll now create this matrix for each website, and combine them into one, larger matrix which we&#x27;ll label &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$A$&#x3C;/span&#x3E;.&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+A=\:\begin{pmatrix}0&#x26;\frac{1}{2}&#x26;\frac{1}{2}\\ 1&#x26;0&#x26;\frac{1}{2}\\ 0&#x26;\frac{1}{2}&#x26;0\end{pmatrix}
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;Each column in this matrix represents how one of the three websites links to the other two.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;follow-the-links&#x22;&#x3E;&#x3C;a href=&#x22;#follow-the-links&#x22; class=&#x22;header-link&#x22;&#x3E;Follow the links&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Now that we have a matrix representing the website graph, we can start following it around to different websites. We&#x27;ll start at website 3. We&#x27;ve got a 50/50 chance of going to either website 1 or website 2. I&#x27;ll roll a dice and it landed on website 2, so we&#x27;ll go there.&#x3C;/p&#x3E;&#x3C;p&#x3E;Now that we&#x27;re at website two, we have a 50/50 chance of going to either website 3, or website 1. The dice picks website 1.&#x3C;/p&#x3E;&#x3C;p&#x3E;Website 1 is different, it only links to website 2. So I don&#x27;t even have to roll a die, I can only go to website 2.&#x3C;/p&#x3E;&#x3C;p&#x3E;This is a lot of writing, so I&#x27;ll convert this into a formula.&#x3C;/p&#x3E;&#x3C;hr&#x3E;&#x3C;p&#x3E;We&#x27;ll start our walk through the links at page one. This is step one, so we&#x27;ll name this variable &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p_0$&#x3C;/span&#x3E;. &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p_0$&#x3C;/span&#x3E; is going to be a matrix representing the probability of us being on any page after we&#x27;ve taken 0 steps. We&#x27;re starting at website 1, so we have a 100% probability in the next step of going to website 2, meaning the matrix looks like this.&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+p_0=\begin{pmatrix}0\\ 1\\ 0\end{pmatrix}
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;If I multiply &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p_0$&#x3C;/span&#x3E; by &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$A$&#x3C;/span&#x3E; (which we created earlier) we&#x27;ll end up with the probability of being at any of the resulting websites after one step (&#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p_1$&#x3C;/span&#x3E;).&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+p_1=A\cdot \:p_0=\:\begin{pmatrix}0&#x26;\frac{1}{2}&#x26;\frac{1}{2}\\ 1&#x26;0&#x26;\frac{1}{2}\\ 0&#x26;\frac{1}{2}&#x26;0\end{pmatrix}\cdot \begin{pmatrix}1\\ 0\\ 0\end{pmatrix}=\begin{pmatrix}0\\ 1\\ 0\end{pmatrix}
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;The resulting matrix tells us that we have a 100% probability of being at website 2 after one step. This makes sence, since website 1 only links to website 2.&#x3C;/p&#x3E;&#x3C;p&#x3E;To find the next step, we just multiply &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p_1$&#x3C;/span&#x3E; by &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$A$&#x3C;/span&#x3E; to get &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p_2$&#x3C;/span&#x3E;.&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+p_2=A\cdot \:p_1=A\cdot A\cdot p_0=A^2p_0=\:\begin{pmatrix}0&#x26;\frac{1}{2}&#x26;\frac{1}{2}\\ \:1&#x26;0&#x26;\frac{1}{2}\\ \:0&#x26;\frac{1}{2}&#x26;0\end{pmatrix}\cdot \begin{pmatrix}0\\ \:1\\ \:0\end{pmatrix}=\begin{pmatrix}\frac{1}{2}\\ 0\\ \frac{1}{2}\end{pmatrix}
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;I&#x27;m starting to see a patern. For each step we take, we&#x27;re really just adding one power to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$A$&#x3C;/span&#x3E;. On step one, we found &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$A^1*p_0$&#x3C;/span&#x3E;, on step two we found &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$A^2*p_0$&#x3C;/span&#x3E;, and so on. Because of that, we can say the following formula is true.&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+p_n=Ap_n=A^np_0
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;&#x3C;strong&#x3E;If we take a larger number of steps, we&#x27;ll find the probability of being at any website in the graph.&#x3C;/strong&#x3E;&#x3C;/p&#x3E;&#x3C;p&#x3E;What if we find &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p_{15}$&#x3C;/span&#x3E;? &#x3C;em&#x3E;(by the way I&#x27;m using &#x3C;a href=&#x22;https://www.symbolab.com/solver/matrix-calculator&#x22;&#x3E;symbolab&#x3C;/a&#x3E; for these smaller computations)&#x3C;/em&#x3E;&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+p_{15}=\:\begin{pmatrix}0&#x26;\frac{1}{2}&#x26;\frac{1}{2}\\ 1&#x26;0&#x26;\frac{1}{2}\\ 0&#x26;\frac{1}{2}&#x26;0\end{pmatrix}^{15}\begin{pmatrix}1\\ 0\\ 0\end{pmatrix}=\begin{pmatrix}0.333313\\ 0.444763\\ 0.221924\end{pmatrix}
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;This means after 15 steps through each website, &#x3C;strong&#x3E;we&#x27;ve got the highest probability of landing on website 2, then website 1, then website 3.&#x3C;/strong&#x3E;&#x3C;/p&#x3E;&#x3C;p&#x3E;&#x3C;strong&#x3E;Congrats! You&#x27;ve found how likely a user is to navigate to each of these three sites!&#x3C;/strong&#x3E;&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;this-seems-really-workintensive&#x22;&#x3E;&#x3C;a href=&#x22;#this-seems-really-workintensive&#x22; class=&#x22;header-link&#x22;&#x3E;This seems really work-intensive&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;It is tough to calculate &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p$&#x3C;/span&#x3E; for each step, what if we had a &#x3C;strong&#x3E;huge&#x3C;/strong&#x3E; graph of websites. We wouldn&#x27;t know if we needed to stop walking the graph at 15 steps or 500! So how can we solve this problem?&#x3C;/p&#x3E;&#x3C;hr&#x3E;&#x3C;p&#x3E;&#x3C;em&#x3E;Side note: I&#x27;m going to redefine &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$A$&#x3C;/span&#x3E; from now on, so we&#x27;re working with 5 websites.&#x3C;/em&#x3E;&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+A=\begin{pmatrix}0&#x26;\frac{1}{3}&#x26;\frac{1}{2}&#x26;\frac{1}{2}&#x26;0\\ \frac{1}{2}&#x26;0&#x26;0&#x26;0&#x26;0\\ 0&#x26;\frac{1}{3}&#x26;0&#x26;0&#x26;0\\ 0&#x26;\frac{1}{3}&#x26;\frac{1}{2}&#x26;0&#x26;1\\ \frac{1}{2}&#x26;0&#x26;0&#x26;\frac{1}{2}&#x26;0\end{pmatrix}
+$$&#x3C;/span&#x3E;&#x3C;hr&#x3E;&#x3C;p&#x3E;For starters lets define the actual formula we&#x27;re working with here (&#x3C;span class=&#x22;math-inline&#x22;&#x3E;$n$&#x3C;/span&#x3E; is the number of steps we take).&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+p_{n+1}=Ap_n
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;If we take &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$\infty$&#x3C;/span&#x3E; steps, this equation becomes&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+p_\infty =Ap_\infty
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;Which is equal to a proof meaning that &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p$&#x3C;/span&#x3E; is actually something called an &#x3C;em&#x3E;eigenvector&#x3C;/em&#x3E; which corrensponds to &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$A$&#x3C;/span&#x3E; and an &#x3C;em&#x3E;eigenvalue&#x3C;/em&#x3E; of 1 since &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p_n$&#x3C;/span&#x3E; will always add up to 1. (&#x3C;a href=&#x22;https://www.khanacademy.org/math/linear-algebra/alternate-bases/eigen-everything/v/linear-algebra-introduction-to-eigenvalues-and-eigenvectors&#x22;&#x3E;More about eigenvectors and eigenvalues&#x3C;/a&#x3E;)&#x3C;/p&#x3E;&#x3C;p&#x3E;Using this proof we can use the calculation below to find an eigenvector of &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$A$&#x3C;/span&#x3E; which I&#x27;m going to call &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$R$&#x3C;/span&#x3E;. &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$I$&#x3C;/span&#x3E; is the identity matrix. &#x3C;em&#x3E;(now I&#x27;m using Matlab for these calculations since it&#x27;s easier to work with matrices, I&#x27;ll include the code at the bottom of this page)&#x3C;/em&#x3E;&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+I=\begin{pmatrix}1&#x26;0&#x26;0&#x26;0&#x26;0\\ \:\:0&#x26;1&#x26;0&#x26;0&#x26;0\\ \:\:0&#x26;0&#x26;1&#x26;0&#x26;0\\ \:\:0&#x26;0&#x26;0&#x26;1&#x26;0\\ \:\:0&#x26;0&#x26;0&#x26;0&#x26;1\end{pmatrix},\:R=rref\left(A-I\right)
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;After this computation, &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$R$&#x3C;/span&#x3E; equals&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+R=\begin{pmatrix}1&#x26;0&#x26;0&#x26;0&#x26;-0.8\\ 0&#x26;1&#x26;0&#x26;0&#x26;-0.4\\ 0&#x26;0&#x26;1&#x26;0&#x26;-1.33\\ 0&#x26;0&#x26;0&#x26;1&#x26;-1.2\\ 0&#x26;0&#x26;0&#x26;0&#x26;0\end{pmatrix}
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;From which we can draw the eigenvector &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$v$&#x3C;/span&#x3E; and the probability matrix &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p$&#x3C;/span&#x3E;. &#x3C;em&#x3E;The first equation takes only the left column of &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$R$&#x3C;/span&#x3E; and then sets the 5th value to 1. Since &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p$&#x3C;/span&#x3E; is a probability matrix, it always needs to add up to 1, so we divide it by it&#x27;s sum to reduce it down to 1.&#x3C;/em&#x3E;&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+v=-R\left(:,5\right),\:v\left(5\right)=1
+$$&#x3C;/span&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+p=\frac{v}{sum\left(v\right)}
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;At this point, &#x3C;span class=&#x22;math-inline&#x22;&#x3E;$p$&#x3C;/span&#x3E; equals&#x3C;/p&#x3E;&#x3C;span class=&#x22;math-block&#x22;&#x3E;$$
+p=\begin{pmatrix}0.2264\\ 0.1132\\ 0.0377\\ 0.3396\\ 0.2830\end{pmatrix}
+$$&#x3C;/span&#x3E;&#x3C;p&#x3E;Which is the final probability matrix.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;conclusion&#x22;&#x3E;&#x3C;a href=&#x22;#conclusion&#x22; class=&#x22;header-link&#x22;&#x3E;Conclusion&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Using some fun math we&#x27;re able to turn a human problem (&#x3C;em&#x3E;what&#x27;s the most popular page&#x3C;/em&#x3E;) into a computer problem (&#x3C;em&#x3E;what&#x27;s the probability of reaching any page&#x3C;/em&#x3E;). This is the job of computer scientists, to be able to break down problems in our world into their mathematical components, and tell a computer how to solve them.&#x3C;/p&#x3E;&#x3C;p&#x3E;KhanAcademy has some great resources on Matrices, Eigenvectors and Eigenvalues if you&#x27;d like to learn more here -&#x26;gt; &#x3C;a href=&#x22;https://www.khanacademy.org/math/linear-algebra&#x22;&#x3E;https://www.khanacademy.org/math/linear-algebra&#x3C;/a&#x3E;&#x3C;/p&#x3E;&#x3C;p&#x3E;&#x3C;em&#x3E;If you have access to Matlab, and want to check my work or mess around on your own, here&#x27;s the Matlab code I used for the second example.&#x3C;/em&#x3E;&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-matlab&#x22;&#x3E;&#x26;gt;&#x26;gt; A = [0 1/3 1/2 1/2 0; 1/2 0 0 0 0; 0 1/3 0 0 0; 0 1/3 1/2 0 1; 1/2 0 0 1/2 0];
+&#x26;gt;&#x26;gt; I = eye(5); R = rref(A-I);
+&#x26;gt;&#x26;gt; v=-R(:,5); v(5)=1; p=v/sum(v);
+&#x26;gt;&#x26;gt; p
+
+p =
+
+    0.2264
+    0.1132
+    0.0377
+    0.3396
+    0.2830
+
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;</content></entry><entry><id>https://khanwinter.com/2021-01-07-Save-Codable-Dates-In-Firestore</id><title>Save Codable Dates In Firestore</title><link href="/2021-01-07-Save-Codable-Dates-In-Firestore" rel="alternate"/><published>2021-01-07T06:00:00.000Z</published><summary>Avoid JSON decoding errors when using Dates with Firestore and Codable.</summary><content type="html">&#x3C;h2 id=&#x22;lets-say-we-have-a-codable-object-we-want-to-save-in-firestore&#x22;&#x3E;&#x3C;a href=&#x22;#lets-say-we-have-a-codable-object-we-want-to-save-in-firestore&#x22; class=&#x22;header-link&#x22;&#x3E;Lets say we have a Codable object we want to save in Firestore&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;This object has &#x3C;code&#x3E;name&#x3C;/code&#x3E;, and &#x3C;code&#x3E;dateUpdated&#x3C;/code&#x3E; properties. The &#x3C;code&#x3E;dateUpdated&#x3C;/code&#x3E; property is a &#x3C;code&#x3E;Date&#x3C;/code&#x3E; object. The implementation looks like this:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;class Name: Codable {
+    var name: String
+    var dateUpdated: Date
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;To make my life easier, I&#x27;ve added a custom init to this object to convert it from &#x3C;code&#x3E;[String: Any]&#x3C;/code&#x3E; to a &#x3C;code&#x3E;Name&#x3C;/code&#x3E; object.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;extension Name {
+    init(dictionary: [String: Any]) throws {
+        let data = try JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted)
+        self = try decoder.decode(Self.self, from: data)
+    }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Pretty easy! Now when I get a response from Firestore I can just convert it to my object like this.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;if let document = snapshot.documents.first {
+    let data = document.data()
+    let name: Name? = try? Name(data)
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;And I have a function that converts the object into a dictionary to save it to firestore.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;func dictionary() throws -&#x26;gt; [String: Any] {
+    let data = try JSONEncoder().encode(self)
+    guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+        throw NSError()
+    }
+    return dictionary
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h2 id=&#x22;whats-the-problem&#x22;&#x3E;&#x3C;a href=&#x22;#whats-the-problem&#x22; class=&#x22;header-link&#x22;&#x3E;What&#x27;s the problem?&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;If you try saving an object with a &#x3C;code&#x3E;Date&#x3C;/code&#x3E; property to Firestore, Firestore automatically changes the &#x3C;code&#x3E;Date&#x3C;/code&#x3E; to a &#x3C;code&#x3E;Timestamp&#x3C;/code&#x3E;. This probably wouldn&#x27;t be a problem, unless you&#x27;re trying to decode that same object where you&#x27;ll get the error:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;&#x22;Invalid type in JSON write (FIRTimestamp)&#x22;
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;This is being caused because Swift&#x27;s Foundation doesn&#x27;t know how to decode Firestore&#x27;s &#x3C;code&#x3E;Timestamp&#x3C;/code&#x3E; type from JSON.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;how-do-you-fix-it&#x22;&#x3E;&#x3C;a href=&#x22;#how-do-you-fix-it&#x22; class=&#x22;header-link&#x22;&#x3E;How do you fix it?&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;It&#x27;s pretty simple actually, we just tell the &#x3C;code&#x3E;JSONDecoder&#x3C;/code&#x3E; and &#x3C;code&#x3E;JSONEncoder&#x3C;/code&#x3E; to use a special way of encoding/decoding dates. It&#x27;s just a few line&#x27;s change for each of the methods in the class.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;extension Name {
+    init(dictionary: [String: Any]) throws {
+        let data = try JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted)
+        let decoder = JSONDecoder() // Change
+        decoder.dateDecodingStrategy = .secondsSince1970 // Change
+        self = try decoder.decode(Self.self, from: data) // Change
+    }
+
+    func dictionary() throws -&#x26;gt; [String: Any] {
+        let encoder = JSONEncoder() // Change
+        encoder.dateEncodingStrategy = .secondsSince1970 // Change    
+        let data = try encoder.encode(self)
+        guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+          throw NSError()
+        }
+        return dictionary
+    }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;All this is doing is telling swift to save our &#x3C;code&#x3E;dateUpdated&#x3C;/code&#x3E; date as a number instead of an actual date. This way, Firestore doesn&#x27;t try to change any &#x3C;code&#x3E;Date&#x3C;/code&#x3E; types to &#x3C;code&#x3E;Timestamps&#x3C;/code&#x3E; and we don&#x27;t get the aforementioned error.&#x3C;/p&#x3E;&#x3C;p&#x3E;The change made was instead of using a bare &#x3C;code&#x3E;JSONEncoder&#x3C;/code&#x3E; or &#x3C;code&#x3E;JSONDecoder&#x3C;/code&#x3E;, I changed it to use this:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;let encoder = JSONEncoder()
+encoder.dateEncodingStrategy = .secondsSince1970
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;This is applicable to other environments too. If you&#x27;re building a server using swift, you can use those custom &#x3C;code&#x3E;JSONEncoder&#x3C;/code&#x3E;/&#x3C;code&#x3E;JSONDecoder&#x3C;/code&#x3E; date strategies to encode date types so you know what they&#x27;ll look like on the server side. The other options for date strategies can be found in the &#x3C;a href=&#x22;https://developer.apple.com/documentation/foundation/jsondecoder/2895216-datedecodingstrategy&#x22;&#x3E;documentation&#x3C;/a&#x3E;.&#x3C;/p&#x3E;</content></entry><entry><id>https://khanwinter.com/2020-05-5-Scripting-With-Swift</id><title>Scripting With Swift</title><link href="/2020-05-5-Scripting-With-Swift" rel="alternate"/><published>2020-11-04T06:00:00.000Z</published><summary>Make fast, simple scripts with my favorite language.</summary><content type="html">&#x3C;h2 id=&#x22;create-the-script&#x22;&#x3E;&#x3C;a href=&#x22;#create-the-script&#x22; class=&#x22;header-link&#x22;&#x3E;Create the script&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Launch the terminal and &#x3C;code&#x3E;cd&#x3C;/code&#x3E; into the directory you want your script to be. Eg: &#x3C;code&#x3E;cd Desktop/Scripts&#x3C;/code&#x3E;.&#x3C;/p&#x3E;&#x3C;p&#x3E;Enter &#x3C;code&#x3E;touch main.swift&#x3C;/code&#x3E; to create a new swift file.&#x3C;/p&#x3E;&#x3C;p&#x3E;Then, to make it executable change the chmod on the file with &#x3C;code&#x3E;chmod +x main.swift&#x3C;/code&#x3E;. This makes it so your computer recognizes the file as something that can be run. Instead of something to read.&#x3C;/p&#x3E;&#x3C;p&#x3E;Launch Xcode (or another editor) and open your new swift file. Then add this bit to the top:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;#!/usr/bin/swift // This is crucial. Without it your script will not run.
+
+print(&#x22;Hello World&#x22;)
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Now, go back to your terminal and run the script using &#x3C;code&#x3E;./main.swift&#x3C;/code&#x3E;. It should read something like&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-bash&#x22;&#x3E;user@Computer ~ % ./main.swift 
+Hello World
+user@Computer ~ % 
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h3 id=&#x22;one-more-thing-to-note&#x22;&#x3E;&#x3C;a href=&#x22;#one-more-thing-to-note&#x22; class=&#x22;header-link&#x22;&#x3E;One more thing to note&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;Xcode&#x27;s autocomplete will not work for scripts. So what I do is create a playground, write and debug the script and then when it&#x27;s ready copy-paste it into the script file you just made. Then, you have autocomplete while writing the script.&#x3C;/p&#x3E;</content></entry><entry><id>https://khanwinter.com/2020-02-24-Programatic-UI-In-UIKit-Without-Storyboards</id><title>Programatic UI in UIKit without Storyboards</title><link href="/2020-02-24-Programatic-UI-In-UIKit-Without-Storyboards" rel="alternate"/><published>2020-11-04T06:00:00.000Z</published><summary>Use simple functions and layout anchors to create a simple UI without storyboards.</summary><content type="html">&#x3C;blockquote&#x3E;&#x3C;p&#x3E;This doesn&#x27;t reflect my opinions circa 2024, however I&#x27;m leaving this public cause removing media is always bad. This was written while I was in high school, so take it with a large grain of salt and don&#x27;t judge my writing abilities &#x1F605;.&#x3C;/p&#x3E;&#x3C;/blockquote&#x3E;&#x3C;h2 id=&#x22;why-are-storyboards-all-that-bad&#x22;&#x3E;&#x3C;a href=&#x22;#why-are-storyboards-all-that-bad&#x22; class=&#x22;header-link&#x22;&#x3E;Why are storyboards all that bad?&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;h3 id=&#x22;answer-theyre-not&#x22;&#x3E;&#x3C;a href=&#x22;#answer-theyre-not&#x22; class=&#x22;header-link&#x22;&#x3E;Answer: They&#x27;re not&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;Really, storyboards are super good at helping create UI. They make it easy to see exactly what you&#x27;re building and work with constraints on each view. Sometimes though, it&#x27;s easier to not use them. For more repetitive views, using storyboards will be a pain, having to link every single input and output to your &#x3C;code&#x3E;UIViewController&#x3C;/code&#x3E; file, copy-pasting the whole thing. It leads to bugs and spaghetti code.&#x3C;/p&#x3E;&#x3C;p&#x3E;Sometimes though, in an app with many views storyboards get messy and overloaded. It then becomes easier to use programmatic views and try not to use storyboards. Otherwise there&#x27;s no disadvantage to using them.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;the-best-way-that-ive-found-to-create-view-controllers-programmatically-is-this&#x22;&#x3E;&#x3C;a href=&#x22;#the-best-way-that-ive-found-to-create-view-controllers-programmatically-is-this&#x22; class=&#x22;header-link&#x22;&#x3E;The best way that I&#x27;ve found to create View Controllers programmatically is this.&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;&#x3C;strong&#x3E;We&#x27;ll be making a simple UI with a label, image and button as an example.&#x3C;/strong&#x3E;&#x3C;/p&#x3E;&#x3C;p&#x3E;First, create your &#x3C;code&#x3E;UIViewController&#x3C;/code&#x3E;. We&#x27;ll call it &#x3C;code&#x3E;SampleViewController&#x3C;/code&#x3E;&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;import UIKit
+
+class SampleViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+    }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;There. Now lets add a few methods underneath the &#x3C;code&#x3E;viewDidLoad()&#x3C;/code&#x3E; function.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;private func setUpViews() {
+
+}
+
+private func setUpConstraints() {
+
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;These methods will hold our UI setup code. Let&#x27;s add some variables to the top of this class to reference the 3 UI item&#x27;s we&#x27;re going to add&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;class SampleViewController: UIViewController {
+
+var label: UILabel?
+var button: UIButton?
+var image: UIImage?
+
+...
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h2 id=&#x22;great-now-lets-populate-those-variables&#x22;&#x3E;&#x3C;a href=&#x22;#great-now-lets-populate-those-variables&#x22; class=&#x22;header-link&#x22;&#x3E;Great! Now lets populate those variables.&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;In the &#x3C;code&#x3E;setUpViews()&#x3C;/code&#x3E; function put this code in.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;private func setUpViews() {
+
+    label = UILabel()
+    label?.text = &#x22;Hello World!&#x22;
+    label?.translatesAutoresizingMaskToConstraints = false //Important to do with all views. If you don&#x27;t set this to false, iOS will break all the constraints you will set.
+
+    button = UIButton()
+    button?.titleLabel.text = &#x22;Press Me&#x22;
+    button?.tintColor = .systemBlue
+    button?.translatesAutoresizingMaskToConstraints = false //Important
+    button?.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside) //Will return an error right now, ignore it as we haven&#x27;t added the target function yet.
+
+    image = UIImage()
+    image?.image = UIImage(systemName: &#x22;gamecontroller&#x22;)
+    image?.translatesAutoresizingMaskToConstraints = false //Important
+
+    //Add the views we just created to the view hierarchy
+    view.addSubview(label!) //we can force-unwrap these because we know we just made them and they won&#x27;t be nil.
+    view.addSubview(button!)
+    view.addSubview(image!)
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Awesome! It&#x27;s easy right? You have complete access to each view you&#x27;re adding right here in this function. You modify it and add targets and images cleanly and knowing exactly what each one is going to be.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;now-lets-add-some-constraints-and-lay-out-our-ui&#x22;&#x3E;&#x3C;a href=&#x22;#now-lets-add-some-constraints-and-lay-out-our-ui&#x22; class=&#x22;header-link&#x22;&#x3E;Now lets add some constraints and lay out our UI.&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;We&#x27;ll be using layout anchors to layout our views. They&#x27;re much simpler to deal with than constraints.&#x3C;/p&#x3E;&#x3C;p&#x3E;In the &#x3C;code&#x3E;setUpConstraints()&#x3C;/code&#x3E; function we defined before enter this.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;private func setUpConstraints() {
+    NSLayoutConstriant.activate([
+        // Place the label in the top
+        label.topAnchor.constraint(equalTo: view.topAnchor),
+        label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+        label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+
+        // put the button centered below the label
+        button.topAnchor.constraint(equalTo: label.bottomAnchor),
+        button.widthAnchor.constraint(equalToConstant: 250),
+        button.heightAnchor.constraint(equalToConstant: 100),
+        button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
+        //put the image below the button
+        image.topAnchor.constraint(equalTo: button.bottomAnchor),
+        image.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+        image.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
+    ])
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;The function &#x3C;code&#x3E;NSLayoutConstraint.activate([])&#x3C;/code&#x3E; activates multiple constraints at once. So we use it here to activate all of ours at once.&#x3C;/p&#x3E;&#x3C;p&#x3E;&#x3C;strong&#x3E;Make sure to add the &#x3C;code&#x3E;setUpViews()&#x3C;/code&#x3E; and &#x3C;code&#x3E;setUpConstraints&#x3C;/code&#x3E; to your &#x3C;code&#x3E;viewDidLoad()&#x3C;/code&#x3E; function. Otherwise our code won&#x27;t ever be executed :).&#x3C;/strong&#x3E;&#x3C;/p&#x3E;&#x3C;p&#x3E;Let&#x27;s also add the button target code at the end of the file:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;@objc func buttonPressed() {
+    print(&#x22;You Pressed the Button!&#x22;)
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h2 id=&#x22;sweet-youre-all-done-youve-made-a-uiviewcontroller-with-a-ui-without-any-storyboards&#x22;&#x3E;&#x3C;a href=&#x22;#sweet-youre-all-done-youve-made-a-uiviewcontroller-with-a-ui-without-any-storyboards&#x22; class=&#x22;header-link&#x22;&#x3E;Sweet! You&#x27;re all done! You&#x27;ve made a UIViewController with a UI without any storyboards.&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;hr&#x3E;&#x3C;p&#x3E;Here&#x27;s the full code:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;import UIKit
+
+class SampleViewController: UIViewController {
+
+    var label: UILabel?
+    var button: UIButton?
+    var image: UIImage?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+     
+        setUpViews()
+        setUpConstraints()
+    }
+
+    private func setUpViews() {
+        label = UILabel()
+        label?.text = &#x22;Hello World!&#x22;
+        label?.translatesAutoresizingMaskToConstraints = false //Important to do with all views. If you don&#x27;t set this to false, iOS will break all the constraints you will set.
+
+        button = UIButton()
+        button?.titleLabel.text = &#x22;Press Me&#x22;
+        button?.tintColor = .systemBlue
+        button?.translatesAutoresizingMaskToConstraints = false //Important
+        button?.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside) //Will return an error right now, ignore it as we haven&#x27;t added the target function yet.
+
+        image = UIImage()
+        image?.image = UIImage(systemName: &#x22;gamecontroller&#x22;)
+        image?.translatesAutoresizingMaskToConstraints = false //Important
+
+        //Add the views we just created to the view hierarchy
+        view.addSubview(label!) //we can force-unwrap these because we know we just made them and they won&#x27;t be nil.
+        view.addSubview(button!)
+        view.addSubview(image!)
+    }
+
+    private func setUpConstraints() {
+        NSLayoutConstriant.activate([
+            // Place the label in the top
+            label.topAnchor.constraint(equalTo: view.topAnchor),
+            label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+
+            // put the button centered below the label
+            button.topAnchor.constraint(equalTo: label.bottomAnchor),
+            button.widthAnchor.constraint(equalToConstant: 250),
+            button.heightAnchor.constraint(equalToConstant: 100),
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
+            //put the image below the button
+            image.topAnchor.constraint(equalTo: button.bottomAnchor),
+            image.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            image.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
+        ])
+    }
+
+    @objc func buttonPressed() {
+        print(&#x22;You Pressed the Button!&#x22;)
+    }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;</content></entry><entry><id>https://khanwinter.com/2020-11-04-Getting-Started-With-Vapor-4</id><title>Getting Started With Vapor 4.0</title><link href="/2020-11-04-Getting-Started-With-Vapor-4" rel="alternate"/><published>2020-11-04T06:00:00.000Z</published><summary>Building a small Toggl Clone using Vapor.</summary><content type="html">&#x3C;h2 id=&#x22;what-is-vapor&#x22;&#x3E;&#x3C;a href=&#x22;#what-is-vapor&#x22; class=&#x22;header-link&#x22;&#x3E;What is Vapor?&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;&#x3C;a href=&#x22;https://vapor.codes/&#x22;&#x3E;Vapor&#x3C;/a&#x3E; is a modern server-side swift framework. It&#x27;s community built , with tons of support for databases, hosting and user management. It&#x27;s built on my favorite language &#x3C;strong&#x3E;Swift&#x3C;/strong&#x3E;, meaning it&#x27;s easy to learn, and has type safety built in.&#x3C;/p&#x3E;&#x3C;p&#x3E;I&#x27;ll be building a small time tracking API similar to &#x3C;a href=&#x22;https://toggl.com/&#x22;&#x3E;Toggl&#x3C;/a&#x3E; over the course of a few posts, this is the first in this series.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;get-started--installation&#x22;&#x3E;&#x3C;a href=&#x22;#get-started--installation&#x22; class=&#x22;header-link&#x22;&#x3E;Get Started - Installation&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;h3 id=&#x22;install-swift&#x22;&#x3E;&#x3C;a href=&#x22;#install-swift&#x22; class=&#x22;header-link&#x22;&#x3E;Install Swift&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;If you&#x27;re running a Mac, and already have Xcode installed. Great, you can skip this step. If not, go to the &#x3C;a href=&#x22;https://apps.apple.com/us/app/xcode/id497799835?mt=12&#x22;&#x3E;App Store&#x3C;/a&#x3E; and download it.&#x3C;/p&#x3E;&#x3C;p&#x3E;If you&#x27;re running a Linux computer, you&#x27;ll have to go over to the &#x3C;a href=&#x22;https://swift.org/download/#using-downloads&#x22;&#x3E;Swift Downloads&#x3C;/a&#x3E; page, and follow the instructions there for your distribution.&#x3C;/p&#x3E;&#x3C;h3 id=&#x22;install-vapor&#x22;&#x3E;&#x3C;a href=&#x22;#install-vapor&#x22; class=&#x22;header-link&#x22;&#x3E;Install Vapor&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;We&#x27;re going to need the vapor toolbox to run any project we make.&#x3C;/p&#x3E;&#x3C;p&#x3E;To install it on mac, you&#x27;ll need &#x3C;a href=&#x22;https://brew.sh/&#x22;&#x3E;homebrew&#x3C;/a&#x3E; installed. Once installed, run &#x3C;code&#x3E;brew install vapor&#x3C;/code&#x3E; and homebrew will install it all for you. Then when it&#x27;s done, verify your installation by running &#x3C;code&#x3E;vapor -help&#x3C;/code&#x3E;. You should see a list of available commands.&#x3C;/p&#x3E;&#x3C;p&#x3E;If you&#x27;re on Linux, you&#x27;ll have to build vapor from source. Just run these commands in a terminal.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-shell&#x22;&#x3E;git clone https://github.com/vapor/toolbox.git
+cd toolbox
+git checkout &#x26;lt;desired version&#x26;gt;
+make install
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Then verify it&#x27;s installed correctly by running &#x3C;code&#x3E;vapor -help&#x3C;/code&#x3E;.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;creating-a-project&#x22;&#x3E;&#x3C;a href=&#x22;#creating-a-project&#x22; class=&#x22;header-link&#x22;&#x3E;Creating a project&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Now, we&#x27;re going to set up our working directory. I&#x27;m going to build a time logging API, so I&#x27;ll name my project TimeLog.&#x3C;/p&#x3E;&#x3C;p&#x3E;We&#x27;ll just run &#x3C;code&#x3E;vapor new TimeLog&#x3C;/code&#x3E; and follow the prompts given to you. You&#x27;ll probably want to answer no to all the questions and get a bare-bones template to get started. For that, you can add a &#x3C;code&#x3E;-n&#x3C;/code&#x3E; flag to the end of the prevous command like this &#x3C;code&#x3E;vapor new TimeLog -n&#x3C;/code&#x3E;.&#x3C;/p&#x3E;&#x3C;p&#x3E;Sweet! Now you have an empty vapor project!&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;get-a-database-running&#x22;&#x3E;&#x3C;a href=&#x22;#get-a-database-running&#x22; class=&#x22;header-link&#x22;&#x3E;Get a Database Running&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;I&#x27;m going to be using the Postgres database, as it&#x27;s the one I have the most experience with. Vapor &#x3C;a href=&#x22;https://github.com/vapor/sqlite-nio&#x22;&#x3E;supports&#x3C;/a&#x3E; &#x3C;a href=&#x22;https://github.com/vapor/fluent-mongo-driver&#x22;&#x3E;tons&#x3C;/a&#x3E; &#x3C;a href=&#x22;https://github.com/vapor/mysql-nio&#x22;&#x3E;of&#x3C;/a&#x3E; &#x3C;a href=&#x22;https://github.com/vapor/postgres-nio&#x22;&#x3E;databases&#x3C;/a&#x3E;. So you should be able to follow along with this tutorial no matter which one you choose.&#x3C;/p&#x3E;&#x3C;p&#x3E;If you don&#x27;t have any databases installed, I&#x27;d recommend Postgres. &#x3C;a href=&#x22;https://gist.github.com/ibraheem4/ce5ccd3e4d7a65589ce84f2a3b7c23a3&#x22;&#x3E;This gist&#x3C;/a&#x3E; helped me a lot when I first installed it.&#x3C;/p&#x3E;&#x3C;p&#x3E;Since I&#x27;m using Postgres, I&#x27;ve created a database named &#x3C;code&#x3E;time-table&#x3C;/code&#x3E; and opened the database to the url &#x3C;code&#x3E;postgres://&#x26;lt;Admin-Name&#x26;gt;:@localhost:5432/time-table&#x3C;/code&#x3E;. Since this isn&#x27;t goint to be a public project quite yet, I left off giving the database a password. If you&#x27;re planning on releasing this server to the world, &#x3C;em&#x3E;you need a password&#x3C;/em&#x3E;.&#x3C;/p&#x3E;&#x3C;p&#x3E;Once you have the url of your database, make a &#x3C;code&#x3E;.env&#x3C;/code&#x3E; file in the root directory of your project. Then, insert the url you just made like this &#x3C;code&#x3E;DB_URL=postgres://&#x26;lt;Admin-Name&#x26;gt;:@localhost:5432/time-table&#x3C;/code&#x3E; on the first line. Then you&#x27;re all set with your database.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;finally-swift&#x22;&#x3E;&#x3C;a href=&#x22;#finally-swift&#x22; class=&#x22;header-link&#x22;&#x3E;Finally, Swift&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;h3 id=&#x22;dependencies&#x22;&#x3E;&#x3C;a href=&#x22;#dependencies&#x22; class=&#x22;header-link&#x22;&#x3E;Dependencies&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;Make an Xcode project by running &#x3C;code&#x3E;vapor xcode&#x3C;/code&#x3E; in your project&#x27;s directory.&#x3C;/p&#x3E;&#x3C;p&#x3E;For this series, I&#x27;m going to be using a few SPM packages. If you&#x27;re following along, install them by opening the &#x3C;code&#x3E;Package.swift&#x3C;/code&#x3E; and adding these three dependencies below &#x3C;code&#x3E;.product(name: &#x22;Vapor&#x22;, package: &#x22;vapor&#x22;),&#x3C;/code&#x3E;:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;.product(name: &#x22;Fluent&#x22;, package: &#x22;fluent&#x22;),
+.product(name: &#x22;FluentPostgresDriver&#x22;, package: &#x22;fluent-postgres-driver&#x22;),
+.product(name: &#x22;JWT&#x22;, package: &#x22;jwt&#x22;)
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Then, below where it says &#x3C;code&#x3E;.package(url: &#x22;https://github.com/vapor/vapor.git&#x22;, from: &#x22;4.0.0&#x22;),&#x3C;/code&#x3E; add these lines.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;.package(url: &#x22;https://github.com/vapor/fluent.git&#x22;, from: &#x22;4.0.0&#x22;),
+.package(url: &#x22;https://github.com/vapor/fluent-postgres-driver.git&#x22;, from: &#x22;2.0.0&#x22;),
+.package(url: &#x22;https://github.com/vapor/jwt.git&#x22;, from: &#x22;4.0.0-rc.1&#x22;),
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;This will install Fluent, Vapor&#x27;s database framework, JWT, which we&#x27;ll use for user authentication and the Fluent Postgres Driver so we can use our Postgres database.&#x3C;/p&#x3E;&#x3C;h3 id=&#x22;connect-the-database&#x22;&#x3E;&#x3C;a href=&#x22;#connect-the-database&#x22; class=&#x22;header-link&#x22;&#x3E;Connect the database&#x3C;/a&#x3E;&#x3C;/h3&#x3E;&#x3C;p&#x3E;In your &#x3C;code&#x3E;configure.swift&#x3C;/code&#x3E; file under Sources &#x26;gt; App add the following extension to the top of the file.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;extension Application {
+    static let databaseURL = URL(string: Environment.get(&#x22;DB_URL&#x22;)!)!
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;This uses the &#x3C;code&#x3E;.env&#x3C;/code&#x3E; file we made earlier to get the database url. You can use &#x3C;code&#x3E;.env&#x3C;/code&#x3E; files for other things like admin keys and passwords you don&#x27;t want plain in your code for anyone to see.&#x3C;/p&#x3E;&#x3C;p&#x3E;Now lets use that url in the &#x3C;code&#x3E;configure(_ )&#x3C;/code&#x3E; function add the following line to the top.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;try app.databases.use(.postgres(url: Application.databaseURL), as: .psql)
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Right now, Xcode will throw an error, so import the required dependencies at the top of the file.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;import Fluent
+import FluentPostgresDriver
+import JWT
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h2 id=&#x22;conclusion&#x22;&#x3E;&#x3C;a href=&#x22;#conclusion&#x22; class=&#x22;header-link&#x22;&#x3E;Conclusion&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;There we go! You now have an empty vapor project with an empty database and all the dependencies installed. I&#x27;ll be making a part 2 soon for this series, when it&#x27;s up it&#x27;ll be linked right here!&#x3C;/p&#x3E;</content></entry><entry><id>https://khanwinter.com/2019-12-17-Save-Array-Of-Any-Object-In-Realm</id><title>Save Arrays of Objects in Realm</title><link href="/2019-12-17-Save-Array-Of-Any-Object-In-Realm" rel="alternate"/><published>2020-05-14T05:00:00.000Z</published><summary>Create a mapping field on a realm object to easily save and retrieve arrays of anything from a realm object.</summary><content type="html">&#x3C;h2 id=&#x22;the-problem-realm-only-allows-you-to-save-lists-of-objects-like-arrays-in-the-codelistlttgtcode-format&#x22;&#x3E;&#x3C;a href=&#x22;#the-problem-realm-only-allows-you-to-save-lists-of-objects-like-arrays-in-the-codelistlttgtcode-format&#x22; class=&#x22;header-link&#x22;&#x3E;The problem: Realm only allows you to save lists of objects (like arrays) in the &#x3C;code&#x3E;List&#x26;lt;T&#x26;gt;&#x3C;/code&#x3E; format.&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;For instance we&#x27;ll take this dog object. The dog can have multiple Collars, but you have to store them in a list like so.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;class Dog: Object {
+    @objc dynamic var name = &#x22;&#x22;
+    @objc dynamic var age = 0
+
+    let collars = List&#x26;lt;Collar&#x26;gt;()
+}
+
+class Collar: Object {
+    @objc dynamic var color = &#x22;Blue&#x22;
+    @objc dynamic var favorite = false
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;This makes for slightly confusing code when trying to retrieve the collars from the dog and do other operations. However, we can abstract the list and make it an array property by adding one propery to the Dog object&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;class Dog: Object {
+    @objc dynamic var name = &#x22;&#x22;
+    @objc dynamic var age = 0
+
+    var collars: [Collar] {
+      get {
+        return _collars.map{ $0 }
+      }
+      set {
+        _collars.removeAll()
+        _collars.append(objectsIn: newValue)
+      }
+    }
+    // The original property is here, we simply renamed it and added the above collar variable.
+    let _collars = List&#x26;lt;Collar&#x26;gt;()
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;We change the &#x3C;code&#x3E;collars&#x3C;/code&#x3E; property to &#x3C;code&#x3E;_collars&#x3C;/code&#x3E;, then make a new variable &#x3C;code&#x3E;collars&#x3C;/code&#x3E; that realm wont track.&#x3C;/p&#x3E;&#x3C;p&#x3E;This variable has two key parts: a getter, and a setter.&#x3C;/p&#x3E;&#x3C;p&#x3E;The getter simply maps the &#x3C;code&#x3E;_collars&#x3C;/code&#x3E; object to an array and returns the array.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;get {
+    return _collars.map{ $0 }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;The setter removes all the values using &#x3C;code&#x3E;.removeAll()&#x3C;/code&#x3E; and then sets the &#x3C;code&#x3E;_collars&#x3C;/code&#x3E; list from the given array.&#x3C;/p&#x3E;&#x3C;p&#x3E;Now we can use the &#x3C;code&#x3E;collars&#x3C;/code&#x3E; property just like any other array. Just make sure to use it in a write block when writing the object to storage like so:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;try! realm.write {
+    dog.collars = [Collar(color: &#x22;Red&#x22;, favorite: false), Collar(color: &#x22;Blue&#x22;, favorite: true)]
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;This method makes it easier to work with the &#x3C;code&#x3E;List&#x26;lt;&#x26;gt;&#x3C;/code&#x3E; object and allows for simpler, easier to read code in the rest of your app.&#x3C;/p&#x3E;</content></entry><entry><id>https://khanwinter.com/2020-05-11-Subclassing-Sprites-In-SpriteKit</id><title>Subclassing Sprites in SpriteKit</title><link href="/2020-05-11-Subclassing-Sprites-In-SpriteKit" rel="alternate"/><published>2020-05-11T05:00:00.000Z</published><summary>Subclass a SKSpriteNode to make multiple types of the same sprite to save time and energy.</summary><content type="html">&#x3C;h2 id=&#x22;subclassing&#x22;&#x3E;&#x3C;a href=&#x22;#subclassing&#x22; class=&#x22;header-link&#x22;&#x3E;Subclassing&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Subclassing &#x3C;code&#x3E;SKSpriteNode&#x3C;/code&#x3E;s makes it easy to have multiple classes of a similar sprite. One use case for this would be in a breakout-like game where there are multiple kinds of blocks that can do different things.&#x3C;/p&#x3E;&#x3C;p&#x3E;In this example we&#x27;ll start with a normal &#x3C;code&#x3E;BlockNode&#x3C;/code&#x3E;. Then, we&#x27;ll subclass it to create a new type of block called &#x3C;code&#x3E;ExplosionNode&#x3C;/code&#x3E;.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;block-node&#x22;&#x3E;&#x3C;a href=&#x22;#block-node&#x22; class=&#x22;header-link&#x22;&#x3E;Block Node&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;The code for the original block node looks like this.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;class BlockNode: SKSpriteNode {
+    
+    var background: SKShapeNode?
+    
+    convenience init(size: CGSize) {
+        self.init(texture: nil, color: .clear, size: size)
+        
+        background = SKShapeNode(rectOf: size, cornerRadius: 5)
+        background!.fillColor = .darkGray
+        background!.strokeColor = .lightGray
+        addChild(background!)
+    }
+    
+    override init(texture: SKTexture?, color: UIColor, size: CGSize) {
+        super.init(texture: texture, color: color, size: size)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError(&#x22;init(coder:) has not been implemented&#x22;)
+    }
+    
+    public func endBlock() {
+        guard let scene = self.scene as? GameScene else { self.removeFromParent(); return }       
+        removeFromParent()
+    }
+    
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;This simple SKSpriteNode class creates a block with a grey background. It can be created using &#x3C;code&#x3E;BlockNode(size: CGSize())&#x3C;/code&#x3E;.&#x3C;/p&#x3E;&#x3C;p&#x3E;In the game when the ball touches the block, &#x3C;code&#x3E;endBlock()&#x3C;/code&#x3E; is called to remove the block.&#x3C;/p&#x3E;&#x3C;p&#x3E;Now that we have a normal block lets make another, more fun, block.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;explosion-block&#x22;&#x3E;&#x3C;a href=&#x22;#explosion-block&#x22; class=&#x22;header-link&#x22;&#x3E;Explosion Block&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;We can easily subclass the &#x3C;code&#x3E;BlockNode&#x3C;/code&#x3E; by adding it to the class definition of &#x3C;code&#x3E;ExplosionBlockNode&#x3C;/code&#x3E; like so.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;class ExplosionBlockNode: BlockNode {
+	...
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Now lets override the init function that makes the block grey, and instead make it red.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;    convenience init(size: CGSize) {
+        self.init(texture: nil, color: .clear, size: size)
+        
+		background = SKShapeNode(rectOf: size, cornerRadius: 5)
+        background!.fillColor = .red
+        background!.strokeColor = .darkGray
+        addChild(background!)
+    }
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Now the block can be created using the same method as the normal block, except now using &#x3C;code&#x3E;ExplosionBlockNode(size: CGSize())&#x3C;/code&#x3E;. This initializer will create a red block instead of a grey one.&#x3C;/p&#x3E;&#x3C;p&#x3E;We can also change the &#x3C;code&#x3E;endBlock()&#x3C;/code&#x3E; function to being special for the explosion block by simply adding it to the &#x3C;code&#x3E;ExplosionBlockNode&#x3C;/code&#x3E; like this.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;    override public func endBlock() {
+        guard let scene = self.scene as? GameScene else { self.removeFromParent(); return }
+
+        let scoreLabel = SKLabelNode(text: &#x22;Boom&#x22;)
+        scoreLabel.color = .red
+        scoreLabel.position = self.position
+        scoreLabel.fontSize = 24
+        scene.addChild(scoreLabel)
+        scoreLabel.run(.sequence([.group([.moveTo(y: self.position.y + 50, duration: 0.4), .fadeOut(withDuration: 0.3)]), .removeFromParent()]))
+
+        scene.addChild(field)
+        field.run(SKAction.sequence([SKAction.wait(forDuration: 0.05),SKAction.removeFromParent()]))
+        removeFromParent()
+    }
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Now when we call the &#x3C;code&#x3E;endBlock&#x3C;/code&#x3E; method on the explosion block it&#x27;ll add a little label saying &#x22;Boom&#x22; that fades quickly and animates up.&#x3C;/p&#x3E;&#x3C;p&#x3E;The final explosion block code looks like this.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;class ExplosionBlockNode: BlockNode {
+
+    convenience init(size: CGSize) {
+        self.init(texture: nil, color: .clear, size: size)
+
+        background = SKShapeNode(rectOf: size, cornerRadius: 5)
+        background!.fillColor = .red
+        background!.strokeColor = .darkGray
+        addChild(background!)
+    }
+
+    override public func endBlock() {
+        guard let scene = self.scene as? GameScene else { self.removeFromParent(); return }
+
+        let scoreLabel = SKLabelNode(text: &#x22;Boom&#x22;)
+        scoreLabel.color = .red
+        scoreLabel.position = self.position
+        scoreLabel.fontSize = 24
+        scene.addChild(scoreLabel)
+        scoreLabel.run(.sequence([.group([.moveTo(y: self.position.y + 50, duration: 0.4), .fadeOut(withDuration: 0.3)]), .removeFromParent()]))
+
+        scene.addChild(field)
+        field.run(SKAction.sequence([SKAction.wait(forDuration: 0.05),SKAction.removeFromParent()]))
+        removeFromParent()
+    }
+
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;</content></entry><entry><id>https://khanwinter.com/2020-05-5-Using-Dependencies-In-Swift-Scripts</id><title>Using Dependencies in Swift Scripts</title><link href="/2020-05-5-Using-Dependencies-In-Swift-Scripts" rel="alternate"/><published>2020-05-05T05:00:00.000Z</published><summary>Use swift-sh to import any SPM module into your scripts.</summary><content type="html">&#x3C;h2 id=&#x22;swiftsh&#x22;&#x3E;&#x3C;a href=&#x22;#swiftsh&#x22; class=&#x22;header-link&#x22;&#x3E;Swift-sh&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Swift-sh is an amazing dependency package from &#x3C;a href=&#x22;https://github.com/mxcl/swift-sh&#x22;&#x3E;Max Howel&#x3C;/a&#x3E;. The library makes it easy to use any Swift Package Manager (SPM) package into your Swift scripts. (&#x3C;a href=&#x22;https://windchillblog.com/snippets/2020/05/05/scripting-with-swift&#x22;&#x3E;more on writing Swift scripts&#x3C;/a&#x3E;)&#x3C;/p&#x3E;&#x3C;p&#x3E;In this example I&#x27;ll be importing the &#x3C;a href=&#x22;https://github.com/paulot/Colors&#x22;&#x3E;Colors library by paulot&#x3C;/a&#x3E; and the &#x3C;a href=&#x22;https://github.com/jkandzi/Progress.swift&#x22;&#x3E;Progress library from jkandzi&#x3C;/a&#x3E; . A mixture of these two libraries makes for fun, colorful script output like this.&#x3C;/p&#x3E;&#x3C;img src=&#x22;Screen Shot 2020-05-05 at 2.10.01 PM.png&#x22; alt=&#x22;cool terminal example&#x22;/&#x3E;&#x3C;p&#x3E;Which I think is fun. We&#x27;ll be importing both libraries using Swift-sh.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;install-swiftsh&#x22;&#x3E;&#x3C;a href=&#x22;#install-swiftsh&#x22; class=&#x22;header-link&#x22;&#x3E;Install Swift-sh&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;To install swift-sh you&#x27;ll need &#x3C;a href=&#x22;https://docs.brew.sh/Installation&#x22;&#x3E;homebrew&#x3C;/a&#x3E; installed on your mac.&#x3C;/p&#x3E;&#x3C;p&#x3E;Then, it&#x27;s just a simple command to install&#x3C;/p&#x3E;&#x3C;p&#x3E;&#x3C;code&#x3E;brew install mxcl/made/swift-sh&#x3C;/code&#x3E;&#x3C;/p&#x3E;&#x3C;small&#x3E;Go check out [Max&#x27;s GitHub](https://github.com/mxcl) and [Patreon](https://www.patreon.com/mxcl). He&#x27;s an amazing programmer and has built tons of important open source tools&#x3C;/small&#x3E;&#x3C;h2 id=&#x22;create-the-script&#x22;&#x3E;&#x3C;a href=&#x22;#create-the-script&#x22; class=&#x22;header-link&#x22;&#x3E;Create The Script&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;&#x3C;code&#x3E;cd&#x3C;/code&#x3E; into the directory you&#x27;ll run your script in and run &#x3C;code&#x3E;touch main.swift&#x3C;/code&#x3E; to create an empty script. Then make it executable using &#x3C;code&#x3E;chmod +x main.swift&#x3C;/code&#x3E;.&#x3C;/p&#x3E;&#x3C;p&#x3E;Now open the file using any editor and enter this on the first line.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;#!/usr/bin/swift sh
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;This tells the terminal to use &#x3C;code&#x3E;swift sh&#x3C;/code&#x3E; to execute our script, which is exactly what we want.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;import-progress&#x22;&#x3E;&#x3C;a href=&#x22;#import-progress&#x22; class=&#x22;header-link&#x22;&#x3E;Import Progress&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Next, in the &#x3C;code&#x3E;main.swift&#x3C;/code&#x3E; file do a normal import like you would in any other Swift project.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;import Foundation
+import Progress
+import Colors
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;If you run this code right now you&#x27;ll get an error because there aren&#x27;t any packages linked to your script. Let&#x27;s import Progress with swift-sh like this.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;import Progress // jkandzi/Progress.swift
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;The comment after the import statement tells swift-sh to retreive the SPM package Progress.swift from GitHub. You tell swift-sh where the package is by giving it the path to the repository on GitHub.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;import-colors&#x22;&#x3E;&#x3C;a href=&#x22;#import-colors&#x22; class=&#x22;header-link&#x22;&#x3E;Import Colors&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Now that Progress is imported successfully lets import Colors.&#x3C;/p&#x3E;&#x3C;p&#x3E;Colors doesn&#x27;t have SPM support naturally, so I&#x27;m going to give it one. I&#x27;ve downloaded the source code from here and grabbed all the files in the folder Colors. I&#x27;ve deleted the files &#x3C;code&#x3E;Colors.o&#x3C;/code&#x3E;&#x3C;code&#x3E;Info.plist&#x3C;/code&#x3E; and &#x3C;code&#x3E;ANSITextColorCode.o&#x3C;/code&#x3E; as the script doesn&#x27;t need them.&#x3C;/p&#x3E;&#x3C;p&#x3E;Now go back to the directory your script is in and run &#x3C;code&#x3E;mkdir Colors&#x3C;/code&#x3E;. &#x3C;code&#x3E;cd&#x3C;/code&#x3E; into the new directory and run &#x3C;code&#x3E;mkdir Sources&#x3C;/code&#x3E;.&#x3C;/p&#x3E;&#x3C;p&#x3E;Next, drag and drop the downloaded Colors folder into the Sources folder you just made.&#x3C;/p&#x3E;&#x3C;p&#x3E;The last thing we need to make is a &#x3C;code&#x3E;Package.swift&#x3C;/code&#x3E; file. This tells SPM what code is available for this package. Make one using &#x3C;code&#x3E;touch Package.swift&#x3C;/code&#x3E;&#x3C;/p&#x3E;&#x3C;p&#x3E;Your file structure should look like this.&#x3C;/p&#x3E;&#x3C;img src=&#x22;Screen Shot 2020-05-05 at 2.31.22 PM.png&#x22; alt=&#x22;file structure&#x22;/&#x3E;&#x3C;p&#x3E;Open Package.swift and copy-paste the following into the file.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;// swift-tools-version:5.1
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
+import PackageDescription
+
+let package = Package(
+    name: &#x22;Colors&#x22;,
+    products: [
+        .library(
+            name: &#x22;Colors&#x22;,
+            targets: [&#x22;Colors&#x22;]),
+    ],
+    targets: [
+        .target(
+            name: &#x22;Colors&#x22;,
+            dependencies: [])
+    ]
+)
+
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Save it, and you now have a SPM package!&#x3C;/p&#x3E;&#x3C;p&#x3E;Lets go back to the &#x3C;code&#x3E;main.swift&#x3C;/code&#x3E; file and import Colors using swift-sh like this.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;import Colors // ./Colors/
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;h2 id=&#x22;run-the-script&#x22;&#x3E;&#x3C;a href=&#x22;#run-the-script&#x22; class=&#x22;header-link&#x22;&#x3E;Run The Script&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Now that all the dependencies are working, your script should look like this.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;#!/usr/bin/swift sh
+
+import Foundation
+import Colors // ./Colors/
+import Progress // jkandzi/Progress.swift
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Add this code to give some fun output when you run the script.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;#!/usr/bin/swift sh
+
+import Foundation
+import Colors // ./Colors/
+import Progress // jkandzi/Progress.swift
+
+print(Colors.Red(&#x22;The Script is Running, Downloading Important Data...&#x22;))
+for _ in Progress(0...100) {
+    sleep(1)
+}
+print(Colors.Green(&#x22;Script Complete!&#x22;))
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;To run the script run &#x3C;code&#x3E;./main.swift&#x3C;/code&#x3E; in the same directory as the script. If you get an error saying &#x3C;code&#x3E;zsh: permission denied: ./main.swift&#x3C;/code&#x3E; run &#x3C;code&#x3E;chmod +x main.swift&#x3C;/code&#x3E; to fix it.&#x3C;/p&#x3E;&#x3C;p&#x3E;Your terminal should now be counting down from 101, nice job!&#x3C;/p&#x3E;&#x3C;img src=&#x22;Screen Shot 2020-05-05 at 2.40.38 PM.png&#x22; alt=&#x22;finished script&#x22;/&#x3E;&#x3C;p&#x3E;Full usage documentation for swift-sh can be found &#x3C;a href=&#x22;https://github.com/mxcl/swift-sh#usage&#x22;&#x3E;here&#x3C;/a&#x3E;. I&#x27;ve only covered two ways of using this library but there&#x27;s much more you can do with it.&#x3C;/p&#x3E;</content></entry><entry><id>https://khanwinter.com/2020-02-21-Easy-Container-Controllers-in-Swift</id><title>Easy Container Controllers in Swift</title><link href="/2020-02-21-Easy-Container-Controllers-in-Swift" rel="alternate"/><published>2020-02-23T06:00:00.000Z</published><summary>Create a container controller to separate and simplify your UIKit views.</summary><content type="html">&#x3C;h2 id=&#x22;what-are-container-controllers&#x22;&#x3E;&#x3C;a href=&#x22;#what-are-container-controllers&#x22; class=&#x22;header-link&#x22;&#x3E;What are container controllers?&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Container controllers are like a larger, older brother to the UIViewController. They come in extremely handy when dealing with things like Auth state and UIViewController transitions. UIKit already comes with a few container controllers that you most likely know very well. Some examples of these are the &#x3C;code&#x3E;UINavigationController&#x3C;/code&#x3E;, or the &#x3C;code&#x3E;UITabViewController&#x3C;/code&#x3E;. Each of those controllers have one or more sub-controllers and help with things like transitions or UI that needs to stay similar between each of the sub-controllers they contain.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;why-should-i-spend-the-time-to-make-one&#x22;&#x3E;&#x3C;a href=&#x22;#why-should-i-spend-the-time-to-make-one&#x22; class=&#x22;header-link&#x22;&#x3E;Why should I spend the time to make one?&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Container controllers do a few things that make life as a developer much easier. First, they naturally separate your UI code. Instead of having your &#x3C;code&#x3E;Auth.onSignOut()&#x3C;/code&#x3E; function in your AppDelegate (which can get very messy, very quickly), you have the &#x3C;code&#x3E;Auth.onSignOut()&#x3C;/code&#x3E; happen in a separated container that can directly interact with it&#x27;s sub-controllers without having to use any &#x3C;code&#x3E;window.controllers.first&#x3C;/code&#x3E; junk.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;first-we-need-a-few-extensions&#x22;&#x3E;&#x3C;a href=&#x22;#first-we-need-a-few-extensions&#x22; class=&#x22;header-link&#x22;&#x3E;First we need a few extensions.&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Make a new file for this extension and put the following code in.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;import UIKit
+
+extension UIViewController {
+    /*
+     This method gives us a function to quickly add a child view controller,
+     it takes care of adding the child, adding the view as a subview and then
+     telling the subview that it&#x27;s moved to a new parent.
+     */
+    func add(_ child: UIViewController) {
+        addChild(child)
+        view.addSubview(child.view)
+        child.didMove(toParent: self)
+    }
+
+    /*
+     This method makes it simpler to remove a child view controller.
+     */
+    func remove() {
+        // First we check if the parent view controller exists,
+        // if not we can stop the whole thing right now.
+        guard parent != nil else { return }
+
+        // Here we enumerate through each subview telling them that their
+        // going to be removed and then removing them.
+        children.forEach({
+            $0.willMove(toParent: nil)
+            $0.view.removeFromSuperview()
+            $0.removeFromParent()
+        })
+
+        // These tell this view controller that it will be moving to nil parent
+        // and then removes it from the parent view controller.
+        willMove(toParent: nil)
+        view.removeFromSuperview()
+        removeFromParent()
+    }
+}
+
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Read through the comments above for more detail on this peice of code. Basically this extension makes it easier to add and remove child view controllers.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;implementing-the-container-controller&#x22;&#x3E;&#x3C;a href=&#x22;#implementing-the-container-controller&#x22; class=&#x22;header-link&#x22;&#x3E;Implementing the Container Controller.&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Here&#x27;s the main code of the controller.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;import UIKit
+
+class ContainerController: UIViewController {
+
+    static let shared = ContainerController()
+
+    var displayedView: UIViewController?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        if displayedView == nil {
+            displayedView = UIStoryboard(name: &#x22;Main&#x22;, bundle: nil).instantiateInitialViewController()
+            add(displayedView!)
+        }
+    }
+
+    public func transitionTo(_ view: UIViewController) {
+        if displayedView != nil{
+            displayedView!.remove()
+        }
+        add(view)
+        displayedView = view
+    }
+}
+
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Simple. In it we give a simple UIViewController with one method called &#x3C;code&#x3E;transitionTo(_ view:)&#x3C;/code&#x3E; which can be called by outside controllers to change what view is displayed.&#x3C;/p&#x3E;&#x3C;p&#x3E;We also added a default view to be displayed in the &#x3C;code&#x3E;viewDidLoad()&#x3C;/code&#x3E;. It just makes sure that when we initialize this class it automatically populates the &#x3C;code&#x3E;displayedView&#x3C;/code&#x3E; variable. In this example I intitialize the root controller from the &#x3C;code&#x3E;main&#x3C;/code&#x3E; storyboard, but you can replace it with any view controller or even omit this code entirely.&#x3C;/p&#x3E;&#x3C;p&#x3E;Also! I created a singleton by adding a &#x3C;code&#x3E;static let shared = ContainerController()&#x3C;/code&#x3E; variable. You can read more about singletons &#x3C;a href=&#x22;https://cocoacasts.com/what-is-a-singleton-and-how-to-create-one-in-swift&#x22;&#x3E;here&#x3C;/a&#x3E; but they basically make it so we can keep track of one container controller for the entire app.&#x3C;/p&#x3E;&#x3C;small&#x3E;TL;DR: Some people dislike singletons. However, in this case the ability to access the container controller from anywhere in your app without having to implement a delegate method or callback into every single view controller greatly outweighs the tiny bit of overhead a singleton creates. &#x3C;/small&#x3E;&#x3C;h2 id=&#x22;sweet-how-do-i-use-it&#x22;&#x3E;&#x3C;a href=&#x22;#sweet-how-do-i-use-it&#x22; class=&#x22;header-link&#x22;&#x3E;Sweet. How do I use it?&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Really easily. The main way I use it is in my AppDelegate (or SceneManager) like so:&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;import UIKit
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -&#x26;gt; Bool {
+
+        var controller: UIViewController!
+
+        let container = ContainerController.shared
+
+        // In this example I&#x27;m using FirebaseAuth for authentication.
+        // I check if a user is logged in, and if they are I send them
+        // to the &#x22;Admin&#x22; view. Otherwise they go to the &#x22;Auth&#x22; view.
+        if Auth.auth().currentUser != nil {
+
+            let storyboard = UIStoryboard(name: &#x22;Admin&#x22;, bundle: nil)
+            controller = storyboard.instantiateInitialViewController()!
+
+        } else {
+
+            let storyboard = UIStoryboard(name: &#x22;Auth&#x22;, bundle: nil)
+            controller = storyboard.instantiateInitialViewController()!
+
+        }
+
+        // Make the container the root view controller.
+        self.window?.rootViewController = container
+        self.window?.makeKeyAndVisible()
+
+        // Transition to the pre-defined controller
+        container.transitionTo(controller)
+
+        return true
+    }
+
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Really fairly simple to use. It can also be used from a view controller after the app is already running. To access the container at the root one can simply use &#x3C;code&#x3E;ContainerController.shared&#x3C;/code&#x3E;.&#x3C;/p&#x3E;&#x3C;hr&#x3E;&#x3C;p&#x3E;This post was heavily inspired by John Sundell&#x27;s post &#x3C;a href=&#x22;https://www.swiftbysundell.com/articles/custom-container-view-controllers-in-swift/&#x22;&#x3E;here&#x3C;/a&#x3E;. Go check it out, he&#x27;s an amazing writer and developer.&#x3C;/p&#x3E;</content></entry><entry><id>https://khanwinter.com/2019-12-19-Firebase-Auth-State-Listeners-iOS</id><title>Firebase Auth State Listeners iOS</title><link href="/2019-12-19-Firebase-Auth-State-Listeners-iOS" rel="alternate"/><published>2019-12-19T06:00:00.000Z</published><summary>Receive notification when firebase users auth state changes on iOS.</summary><content type="html">&#x3C;h2 id=&#x22;firebase-auth-lets-you-pass-a-handler-function-when-the-auth-state-changes&#x22;&#x3E;&#x3C;a href=&#x22;#firebase-auth-lets-you-pass-a-handler-function-when-the-auth-state-changes&#x22; class=&#x22;header-link&#x22;&#x3E;Firebase auth lets you pass a handler function when the auth state changes.&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;In my use case I need to receive state change alerts. My user might be disabled by an admin or a bot, or the account is stopped for security reasons. But, I need to update user interfaces and data code to match that the user is logged out.&#x3C;/p&#x3E;&#x3C;h2 id=&#x22;fortunately-its-easy-with-firebase&#x22;&#x3E;&#x3C;a href=&#x22;#fortunately-its-easy-with-firebase&#x22; class=&#x22;header-link&#x22;&#x3E;Fortunately its easy with firebase&#x3C;/a&#x3E;&#x3C;/h2&#x3E;&#x3C;p&#x3E;Somewhere in your startup code -I use a container view for all my views, but the AppDelegate or SceneManager works well here- put this snippet in.&#x3C;/p&#x3E;&#x3C;pre&#x3E;&#x3C;code class=&#x22;language-swift&#x22;&#x3E;func setAuthListener() {
+    Auth.auth().addStateDidChangeListener { (auth, user) in
+        guard let user else {
+            // The user is either logged out, or something went wrong. 
+            // You can use the Auth.auth().currentUser.reload() function 
+            // to try to find the error using the FIRErrorCode enum
+            return
+        }
+
+        // Otherwise, we now have a signed in user. Usually that just means 
+        // we carry on, but you could put some custom handler here too.
+    }
+}
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;&#x3C;p&#x3E;Then just fire that function somewhere at the start of your app, or in a container controller like we made in &#x3C;a href=&#x22;https://windchillblog.com/2020/2/21/easy-container-controllers-in-swift&#x22;&#x3E;this&#x3C;/a&#x3E; article.&#x3C;/p&#x3E;</content></entry></feed>

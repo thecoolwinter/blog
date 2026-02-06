@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta content="utf-8" name="charset"></meta><meta content="width=device-width, initial-scale=1, maximum-scale=5" name="viewport"></meta><meta content="only light" name="color-scheme"></meta><title>Khan's Blog · New Blog, New Me</title><meta content="I redesigned my blog, in Swift." name="description"></meta><meta content="all" name="robots"></meta><meta content="Khan Winter, Swift, macOS, JavaScript, iOS, web development, blog, SwiftUI" name="keywords"></meta><meta content="website" property="og:type"></meta><meta content="Khan's Blog" property="og:sitename"></meta><meta content="https://khanwinter.com/2024-11-02-New-Blog" property="og:url"></meta><meta content="Khan's Blog · New Blog, New Me" property="og:title"></meta><meta content="I redesigned my blog, in Swift." property="og:description"></meta><meta content="https://khanwinter.com/2024-11-02-New-Blog" property="twitter:url"></meta><meta content="Khan's Blog · New Blog, New Me" property="twitter:title"></meta><meta content="I redesigned my blog, in Swift." property="twitter:description"></meta><link href="https://khanwinter.com/2024-11-02-New-Blog" rel="canonical"/><link href="https://bsky.app/profile/khanwinter.com" rel="me"/><link href="https://twitter.com/thecoolwinter" rel="me"/><link href="https://mastodon.social/@thecoolwinter" rel="me"/><link href="https://threads.net/thecoolwinter" rel="me"/><link href="https://www.linkedin.com/in/thecoolwinter/" rel="me"/><link href="/assets/index.css" rel="stylesheet"/><script src="/assets/index.js"></script><link href="/assets/prism.css" rel="stylesheet"/><link href="/assets/code-theme.css" rel="stylesheet"/><script defer src="/assets/prism.js"></script><link data-nav="true" href="/" rel="prefetch"/><link data-nav="true" href="/about" rel="prefetch"/><link data-nav="true" href="/2026-02-06-OpenType-UIFont" rel="prefetch"/><link data-nav="true" href="/2025-03-29-Cross-Compiling-Swift" rel="prefetch"/><link data-nav="true" href="/2024-11-02-New-Blog" rel="prefetch"/><link data-nav="true" href="/2024-11-01-Hide-Desktop-Shortcut" rel="prefetch"/><link data-nav="true" href="/2021-08-07-Sort-List-Of-Objects" rel="prefetch"/><link data-nav="true" href="/2021-05-08-Implementing-Sin" rel="prefetch"/><link data-nav="true" href="/2021-03-17-How-Computers-Calculate-Sin" rel="prefetch"/><link data-nav="true" href="/2021-02-02-The-Search-Engine-Matrix" rel="prefetch"/><link data-nav="true" href="/2021-01-07-Save-Codable-Dates-In-Firestore" rel="prefetch"/><link data-nav="true" href="/2020-05-5-Scripting-With-Swift" rel="prefetch"/><link data-nav="true" href="/2020-02-24-Programatic-UI-In-UIKit-Without-Storyboards" rel="prefetch"/><link data-nav="true" href="/2020-11-04-Getting-Started-With-Vapor-4" rel="prefetch"/><link data-nav="true" href="/2019-12-17-Save-Array-Of-Any-Object-In-Realm" rel="prefetch"/><link data-nav="true" href="/2020-05-11-Subclassing-Sprites-In-SpriteKit" rel="prefetch"/><link data-nav="true" href="/2020-05-5-Using-Dependencies-In-Swift-Scripts" rel="prefetch"/><link data-nav="true" href="/2020-02-21-Easy-Container-Controllers-in-Swift" rel="prefetch"/><link data-nav="true" href="/2019-12-19-Firebase-Auth-State-Listeners-iOS" rel="prefetch"/></head><body><nav><ul><li><a href="/index.html">Posts</a></li><li><button onclick="navRandom()">Random</button></li><li><a href="/about.html">About</a></li></ul></nav><div class="content"><article><div class="article-header"><p>Nov 3, 2024</p><h1>New Blog, New Me</h1><h3>I redesigned my blog, in Swift.</h3><div class="avatar" href="/about.html"><a href="/about.html"><img alt="Avatar Image" height="24" src="/assets/avatar.webp" width="24"></img><span>Khan Winter</span></a>·<a href="https://bsky.app/profile/khanwinter.com" target="_blank"><svg aria-label="Bluesky" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 530" version="1.1"><path d="m135.72 44.03c66.496 49.921 138.02 151.14 164.28 205.46 26.262-54.316 97.782-155.54 164.28-205.46 47.98-36.021 125.72-63.892 125.72 24.795 0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.3797-3.6904-10.832-3.7077-7.8964-0.0174-2.9357-1.1937 0.51669-3.7077 7.8964-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.4491-163.25-81.433-5.9562-21.282-16.111-152.36-16.111-170.07 0-88.687 77.742-60.816 125.72-24.795z"/></svg></a></div></div><h2 id="why-restart"><a href="#why-restart" class="header-link">Why Restart?</a></h2><p>Previously, my blog was published using the popular <a href="https://jekyllrb.com/">Jekyll</a> static site generator. While Jekyll worked well for a long time, it has became a serious pain to maintain.</p><p>I often have long periods of time where I don't post. Ideally when I come back after a year of not posting I'd like my tools to work just as well as they did previously. Jekyll did not meet this requirement well. With Ruby increasingly losing popularity and Gems requiring some serious finagling, I often had to completely reinstall the entire tool and all dependencies every time I wanted to write a new post. This was not working well.</p><p>Therefore, my new system had the following requirements:</p><ul><li><strong>No or few outside dependencies.</strong> Whatever dependencies are used need to be well known to me and well known what they do.</li><li><strong>Familiar tools.</strong> I need whatever this is built on to be entirely familiar to me. At this point (2024) this likely means <strong>Swift and JavaScript</strong>.</li><li><strong>Static HTML.</strong> I dislike overuse of JS libraries. This means no TailwindCSS, no React, only CSS, JS and HTML.</li></ul><h2 id="existing-tools"><a href="#existing-tools" class="header-link">Existing Tools</a></h2><p>If you're familiar with the Swift ecosystem, you may have heard of the tool <a href="https://github.com/JohnSundell/Publish?tab=readme-ov-file">Publish</a> by <a href="https://www.swiftbysundell.com/">John Sundell</a>. This looks like it was going to be a perfect tool! It is actually a really nice tool. It's well built, entirely Swift, and fairly extendable. However, while it likely works for a lot of developers and blogs, mine needed some customizations that the library did not support.</p><p>Publish's markdown rendering engine <a href="https://github.com/JohnSundell/Ink/tree/master">Ink</a> though, turned out to be perfect. It did require some modification to support LaTeX, but it's very fast and I was very surprised to find that it didn't rely on any C libraries like cmark. This ended up being one of two dependencies I allowed and I'm very thankful for the work John has done on this package.</p><h2 id="swift-result-builders"><a href="#swift-result-builders" class="header-link">Swift Result Builders</a></h2><p>Swift seems the obvious choice for building my own blog. I've been in love with the language for years now, and it continues to improve. One of the features that I've been eyeing for a long time but hadn't been able to dig into myself is <a href="https://docs.swift.org/swift-book/documentation/the-swift-programming-language/advancedoperators/#Result-Builders">Result Builders</a>.</p><p>Using result builders for HTML has been well documented, and I think it's perfect for this job. My goal was to make some Swift syntax that can compile into HTML. Ideally it should look kind of like SwiftUI, and it shouldn't be a hinderance to maintaining or building the website itself.</p><p>The core of my website is the following protocol:</p><pre><code class="language-swift">protocol Component {
+    associatedtype Body: Component
+
+    @HTMLBuilder
+    var body: Self.Body { get }
+
+    var html: String { get }
+}
+
+extension Component {
+    var html: String { body.html }
+}
+</code></pre><p>This allows me to define components that can optionally provide HTML contents. Similar to SwiftUI, I defined a <code>TupleComponent</code> for the result builder to use. This one is fun because it uses Swift's new parameter packs to take multiple types of components in the initializer. I did have to use a <code>[any Component]</code> in one spot, and I'd very much like to not have to do that but I'll revisit that in the future.</p><pre><code class="language-swift">struct TupleComponent: Component {
+    init&lt;each Content&gt;(_ content: repeat each Content) where repeat each Content: Component {
+        func buildHTML&lt;T: Component&gt;(_ item: T, html: inout String) {
+            if T.self != EmptyComponent.self {
+                html += item.html
+            }
+        }
+        var value = ""
+        repeat buildHTML(each content, html: &amp;value)
+        self.html = value
+    }
+
+    init(_ components: [any Component]) {
+        self.html = components.filter { type(of: $0) != EmptyComponent.self }.map { $0.html }.joined()
+    }
+
+    var body: some Component {
+        fatalError("")
+    }
+
+    var html: String
+}
+</code></pre><p>Also similar to SwiftUI, some components need to not have their children evaluated. In the previous example, <code>TupleComponent</code>'s <code>body</code> compiles to <code>Never</code> but still produces HTML using it's children. To get around this I used Swift's typing system to extend <code>Never</code> to be a component. While I was at it I made an <code>EmptyComponent</code> similar to SwiftUI's <code>EmptyView</code> to help myself avoid <code>fatalError</code>s.</p><pre><code class="language-swift">extension Never: Component {
+    var body: some Component { self }
+    var html: String { "" }
+}
+
+struct EmptyComponent: Component {
+    var body: some Component { fatalError() }
+    var html: String { fatalError() }
+}
+</code></pre><p>This component type made simple HTML tags easy to make Swift-y syntax for, and allowed for nesting content easily.</p><pre><code class="language-swift">struct A&lt;Content: Component&gt;: Component {
+    let url: String
+    let content: () -&gt; Content
+
+    init(_ url: String, @HTMLBuilder content: @escaping () -&gt; Content) {
+        self.url = url
+        self.content = content
+    }
+
+    var body: some Component {
+        content()
+    }
+
+    var html: String {
+        return "&lt;a href=\"\(url.path()\"&gt;" + content().html + "&lt;/a&gt;"
+    }
+}
+</code></pre><p>Then, because I was using a protocol as my base type, I was able to extend some standard lib types for my HTML builder. One key thing is Strings. Again, I used that <code>Never</code> extension to make this possible, as Strings won't ever have HTML children to evaluate.</p><pre><code class="language-swift">extension String: Component {
+    var body: some Component { fatalError() }
+    var html: String { self }
+}
+</code></pre><p>Finally, using that I was able to define a result builder that combines components and allows for the syntax I was aiming for.</p><pre><code class="language-swift">@resultBuilder
+enum HTMLBuilder {
+    static func buildBlock&lt;each Content&gt;(_ content: repeat each Content) -&gt; TupleComponent where repeat each Content: Component {
+        TupleComponent(repeat each content)
+    }
+
+    static func buildOptional(_ component: TupleComponent?) -&gt; TupleComponent {
+        if let component {
+            component
+        } else {
+            TupleComponent([EmptyComponent()])
+        }
+    }
+
+    static func buildEither&lt;Content: Component&gt;(first component: Content) -&gt; Content {
+        component
+    }
+
+    static func buildEither&lt;Content: Component&gt;(second component: Content) -&gt; Content {
+        component
+    }
+
+    static func buildArray(_ components: [any Component]) -&gt; TupleComponent {
+        TupleComponent(components)
+    }
+}
+</code></pre><p>To actually generate the HTML document I just added a small function that uses the <code>.html</code> property on the <code>Component</code> type. This also adds a few common sense things for an HTML document like the language, HTML5 support, etc.</p><pre><code class="language-swift">enum HTMLRenderer {
+    static func render&lt;Content: Component&gt;(@HTMLBuilder page: () -&gt; Content) -&gt; String {
+        "&lt;!DOCTYPE html&gt;&lt;html lang=\"en\" data-theme=\"light\"&gt;" + page().html + "&lt;/html&gt;"
+    }
+}
+</code></pre><p>This is slightly different from other methods I've seen around. The primary difference is the use of a root protocol type for each component, rather than inheritance from a class. I also wanted a system very similar to SwiftUI, in that there is no <code>children</code> array on any components. Instead, each component is a distinct element in the hierarchy of the page.</p><h2 id="but-why"><a href="#but-why" class="header-link">But Why?</a></h2><p>A good question to ask is is this effort worth it? I certainly think so. This resulted in a syntax that lets me express the HTML content of the webpage, while mixing in Swift logic that is never exposed to the browser.</p><p>For example, after a little more work the entire home page is represented using just this component.</p><pre><code class="language-swift">struct HomePage: Component {
+    var body: some Component {
+        let posts = /* Get All Posts */
+
+        Page(title: "Posts", description: "Khan Winter's Blog Posts", path: "index.html", loadCodeStyles: false) {
+            Tag("div", ["class": "home"]) {
+                Tag("div", ["class": "home-header"]) {
+                    Img(resourceName: "avatar-large.webp", alt: "Avatar", size: (128, 128))
+                    P { "Khan's Online Web Log (aka: my blog)!" }
+                }
+
+                Tag("ul") {
+                    for (post, path) in posts {
+                        let url = path.deletingPathExtension().appendingPathExtension("html").path()
+
+                        Tag("li") {
+                            A(url) {
+                                P { post.createdAt.formatted() }
+                                H(3) { post.title }
+                                P { post.excerpt }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+</code></pre><p>The largest benefit being able to use logic like for loops, variables, and branches directly in the page's code.</p><pre><code class="language-swift">for (post, path) in posts {
+    // ...
+}
+</code></pre><p>To me, this is very appealing. This is written in raw Swift, meaning as long as I have a Swift compiler on my machine it'll work. It also generates static HTML, with dynamic structure like loops and branches performed without JavaScript or an ugly syntax like Liquid. It meets the last goal I set for myself by not having any unecessary dependencies (Ink is pure Swift, <em>doesn't even need Foundation</em>).</p><p>So yeah, for my use case and my blog it was very worth the effort. On top of that, I got to explore Result Builders! You can check out the entire site on <a href="https://github.com/thecoolwinter">my GitHub</a> if you'd like to check out more.</p><h2 id="embunemdling"><a href="#embunemdling" class="header-link"><em>Bun</em>dling</a></h2><p>The last thing I wanted was to minify my website's assets. There's a few lines of JS and CSS for highlighting code, displaying Math, etc. I've liked <a href="https://esbuild.github.io/">esbuild</a> in the past so I decided to run esbuild on each file using <a href="https://bun.sh/">Bun</a> (instead of NodeJS). The speed Bun provided is awesome. It's so fast that the script I made to minify all the JS and CSS files was moved to be in the main loop when generating the site rather than something that happens only when I deploy. Serious props to the team at Bun. Figured I'd share that while I was at it.</p><h2 id="cloudflare"><a href="#cloudflare" class="header-link">CloudFlare</a></h2><p>I'm not only moving domains and site generators, but also my hosting provider. I've used Github pages and Netlify in the past, and while I don't have any issue with them in particular they have some rough edges a few years in. Netlify is nice, but they've clearly adjusted their target audience to larger businesses. Most of the features they provide just don't apply to a little site like mine (beyond the CDN). Github Pages is pretty much perfect, but not transparent enough for my liking. I prefer to know when my content will be live after deploying it.</p><p>I initially was going to just host my static files in R2, CloudFlare's block storage offering. While setting that up I noticed they offer a <a href="https://pages.cloudflare.com/">static site hosting</a> which I'm trying out. So far, I've loved it. My site's download speed is faster than either Github or Netlify. They offer unlimited bandwidth, and DNS setup with them was faster than any other provider I've worked with. I don't usually give shoutouts for things like this but CloudFlare has been awesome to work with so far.</p><h2 id="last-thing--page-preloading"><a href="#last-thing--page-preloading" class="header-link">Last Thing - Page Preloading</a></h2><p>After all this work, all of the HTML, JS, and CSS for my site (not including images and videos) is only 0.33MB on disk uncompressed (<strong>97KB compressed</strong> using ZSTD, CloudFlare's default compression mechanism). Each new page is roughly 18KB uncompressed, which is nothing to download for most internet connections. Well, HTML has this nice feature that allows you to <a href="https://developer.mozilla.org/en-US/docs/Web/Performance/Speculative_loading#link_reldns-prefetch">pre-fetch pages for navigation</a>. Inspired in part by this <a href="https://www.youtube.com/watch?v=-Ln-8QM8KhQ">Youtube Video</a>, I decided to preload the entire blog on each page.</p><p>Give it a try yourself! If you've made it this far. Clicking the "Random" navigation button a few times really shows off how zippy it is. Ironically, that's what powers that "Random" nav button. It uses the cached pages as the list to choose randomly from!</p><p>Is this tidbit useful anywhere else in any other context? No. But it's really funny to me to make every visitor download and cache the entire blog just to save a few milliseconds loading the post they're looking for 😉.</p><h2 id="conclusion"><a href="#conclusion" class="header-link">Conclusion</a></h2><p>So that's the post. New domain, new blog, new me! This has mostly been my rambling about some cool Swift features and a few things I found while rewriting this website. I hope it was worth the read!</p><hr></hr><div class="article-footer"><p>Nov 3, 2024</p><div class="avatar" href="/about.html"><a href="/about.html"><img alt="Avatar Image" height="24" src="/assets/avatar.webp" width="24"></img><span>Khan Winter</span></a>·<a href="https://bsky.app/profile/khanwinter.com" target="_blank"><svg aria-label="Bluesky" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 530" version="1.1"><path d="m135.72 44.03c66.496 49.921 138.02 151.14 164.28 205.46 26.262-54.316 97.782-155.54 164.28-205.46 47.98-36.021 125.72-63.892 125.72 24.795 0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.3797-3.6904-10.832-3.7077-7.8964-0.0174-2.9357-1.1937 0.51669-3.7077 7.8964-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.4491-163.25-81.433-5.9562-21.282-16.111-152.36-16.111-170.07 0-88.687 77.742-60.816 125.72-24.795z"/></svg></a></div></div></article></div><footer><p>Copyright &copy Khan Winter 2026</p><p><a href="https://github.com/thecoolwinter/blog">Built In Swift</a></p><p><a href="https://bsky.app/profile/khanwinter.com" rel="me" target="_blank">Bluesky</a> | <a href="https://khanwinter.com/feed.rss">RSS</a></p></footer></body></html>
