@@ -117,7 +117,7 @@ kStylisticAlt[Number][On/Off]Selector
 
 If we look at the map from earlier, to enable "Open currencies" we have the dictionary:
 
-```
+```objc
 {
     CTFeatureOpenTypeTag = ss04;
     CTFeatureOpenTypeValue = 1;
