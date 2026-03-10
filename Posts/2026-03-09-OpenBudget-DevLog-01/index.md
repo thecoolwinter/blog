@@ -41,7 +41,7 @@ I did a bit of experimenting with the progress bar design, but ended up deciding
 ### What should change?
 
 -   **Colors**
-    In modern iOS apps we often find a more toned down colors pallet. For one, the greens and reds here are not great for 
+    In modern iOS apps we often find a more toned down colors pallet. For one, the greens and reds here are not great for text legibility.
     
 -   **Repeated text**
     There's a lot of 'budgeted' thrown around here, we'll remove those extra labels.
