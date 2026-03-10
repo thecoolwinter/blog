@@ -2,14 +2,14 @@
 title: OpenBudget Dev Log - Part 1
 tags: [OpenBudget, Swift, UIKit, AppKit]
 excerpt: Working on the design of the new Home Screen, colors, and goals for the rework.
-created_at: 2026-03-07
+created_at: 2026-03-09
 ---
 
 This is the first installment in what I'm hoping is a regular dev log for my rewrite of OpenBudget. My hope is to record my development process for an indie app in the modern software engineering age. I'll be trying to post regular installments, and my goal is to launch the version 2.0 of OpenBudget by the end of the year.
 
 OpenBudget is my personal budgeting app that I developed while in high school. In recent years I've fallen short of my personal expectations for keeping it updated, and it's so far behind that I've decided it's due for a full rewrite. 
 
-I've learned a lot about software engineering since first launching OpenBudget in November of 2020. I've had the opportunity to work on projects ranging from health care, to [IDEs](https://codeedit.app) with CodeEdit, to enterprise b2b software at PepsiCo. I'll be bringing this expertise to the table, but more importantly I'll be bringing a devotion to the craft, working view-by-view to craft a love letter to software. I hope you'll come on this journey with me.
+I've learned a lot about software engineering since first launching OpenBudget in November of 2020. I've had the opportunity to work on projects ranging from health care, to [IDEs](https://codeedit.app) with CodeEdit, to enterprise b2b software at PepsiCo. I'll be bringing this expertise to the table, but more importantly I'll be bringing a devotion to the craft, working view-by-view to develop a love letter to software.
 
 ## OpenBudget v1
 
@@ -63,7 +63,7 @@ I did a bit of experimenting with the progress bar design, but ended up deciding
     Something that's always bothered me is the lack of a place to see the *total* budgeted amount on the Home Screen. I'll be putting that in the header under to the *balance* label. I feel that this matches the rest of the category cells, so it keeps a similar design language.
     
 -   **Negative Progress Bar Width**
-    [Nels Parenteau](https://nelsparenteau.com) pointed out that if a category is negative, there's no point in indicating *how* negative it is, it should just indicate that there's an overspend. In v2, the red bar will cover the entire width of the category cell. This will reduce unnecessary information on the home view.
+    [Nels Parenteau](https://www.nelsparenteau.com) pointed out that if a category is negative, there's no point in indicating *how* negative it is, it should just indicate that there's an overspend. In v2, the red bar will cover the entire width of the category cell. This will reduce unnecessary information on the home view.
 
 ## New Design
 
