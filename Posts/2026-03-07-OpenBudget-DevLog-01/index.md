@@ -1,5 +1,5 @@
 ---
-title: OpenBudget Dev Log - Home Screen - Part 1
+title: OpenBudget Dev Log - Part 1
 tags: [OpenBudget, Swift, UIKit, AppKit]
 excerpt: Working on the design of the new Home Screen, colors, and goals for the rework.
 created_at: 2026-03-07
@@ -9,30 +9,34 @@ This is the first installment in what I'm hoping is a regular dev log for my rew
 
 OpenBudget is my personal budgeting app that I developed while in high school. In recent years I've fallen short of my personal expectations for keeping it updated, and it's so far behind that I've decided it's due for a full rewrite. 
 
-I've learned a lot about software engineering since first launching OpenBudget in November of 2020. I've had the opportunity to work on projects ranging from health care, to [IDEs](https://codeedit.app) with CodeEdit, to enterprise b2b software at PepsiCo. I'll be bringing this expertise to the table, but most importantly I'll be bringing a love for the game.
-
-In an age of software engineering where anyone can spin up a quick app using Claude or ChatGPT, there's even more value in an app that's made with genuine care and good design. I won't be vibe-coding OpenBudget v2. Instead, I'll be going view-by-view and crafting a love letter to software. I hope you'll come on this  journey with me.
+I've learned a lot about software engineering since first launching OpenBudget in November of 2020. I've had the opportunity to work on projects ranging from health care, to [IDEs](https://codeedit.app) with CodeEdit, to enterprise b2b software at PepsiCo. I'll be bringing this expertise to the table, but more importantly I'll be bringing a devotion to the craft, working view-by-view to craft a love letter to software. I hope you'll come on this journey with me.
 
 ## OpenBudget v1
 
-Let's take a brief look at what OpenBudget v1 looks like on the App Store right now. The app revolves around the idea of 'envelope budgeting', with a small twist. In OpenBudget, you log where you spend by *category*. Each category has a set limit for how much you'd like to spend. Categories can range from transportation to food to spending money, or even a goal like saving for a vacation. You can add money to each category to log income.
+Let's take a brief look at what OpenBudget v1 looks like on the App Store right now. The app revolves around the idea of 'envelope budgeting', with a small twist. In OpenBudget, you log where you spend by category. Each category has a set limit for how much you'd like to spend. Categories can range from transportation to food to spending money, or even a goal like saving for a vacation. You can add money to each category to log income.
 
-Often users will use the category method as an *estimate* of how much they spend, rather than an exact cent-by-cent log of every purchase they make. For me as a young person learning how to manage my money, I used OpenBudget to establish what my budget should look like and monitor that I was successfully meeting my goals.
+Often users will use the category method as an estimate of how much they spend, rather than an exact cent-by-cent log of every purchase they make. As a young person learning how to manage my money, I used OpenBudget to establish what my budget should look like and monitor that I was successfully meeting my goals.
 
-To achieve this, OpenBudget presents all categories on the home page with a small, colored, indicator bar indicating how much money is left in the category. Each category has a *balance* depending on the sum of all transactions in the category.
+To achieve this, OpenBudget presents all categories on the home page with a small, colored, indicator bar indicating how much money is left in the category. Each category has a balance depending on the sum of all transactions in the category.
 
 <img src="./v1-home.png" alt="Version One Home Screenshot" style="max-height:580px" />
 
-This design isn't bad. In fact, it landed me a front page spot on the App Store. That being said, there's room for improvement and I'm going to be switching things up.
+This design isn't bad. In fact, it landed a front page spot on the App Store. That being said, there's room for improvement.
 
 ## Where to start?
 
-### To start, what works well with this home design?
+I decided to start with a few questions and work from there.
+
+### What works well with this home design?
 
 -   **Navigation**
-    One of my favorite things about OpenBudget is the lack of a tab bar. I only have a few screens, but tab bars (imho) are often ugly and take up a lot of real estate. I want my content front and center. For some apps like Apple Music, a tab bar *is* the content (with the now playing UI). In OpenBudget, the content is the categories. Navigation is kept to the top in it's own area.
+    One of my favorite things about OpenBudget is the lack of a tab bar. It only has a few screens, but tab bars (imho) take up a lot of real estate for not a lot of benefit. I want my content front and center. For some apps like Apple Music, a tab bar *is* the content (with the now playing UI). In OpenBudget, the content is the categories (and other lists). Navigation is kept to the top in it's own area.
 -   **Progress Bars**
-    Each category has a progress bar. This makes it so so easy to visually tell which categories either overspent, near spent, or doing perfectly fine. It's a good visual indicator and part of the core identity of OpenBudget. Other budgeting apps achieve this in other ways, such as a smaller 1-2px tall indicator or a round progress bar. I'll explore those in a moment.
+    Each category has a progress bar. This makes it extremely easy to tell the spending status of each category in the budget. It's a good visual indicator and part of the core identity of OpenBudget. Other budgeting apps achieve this in other ways, such as a smaller 1-2px tall indicator or a round progress bar. 
+
+I did a bit of experimenting with the progress bar design, but ended up deciding to keep the original full-cell idea, but adjusted the colors to help with text clarity. Here's some of the tossed ideas.
+
+<img src="./progres-bar-exploration.webp" alt="Progress bar exploration" style="max-height:500px" />
 
 ### What should change?
 
@@ -43,11 +47,11 @@ This design isn't bad. In fact, it landed me a front page spot on the App Store.
     There's a lot of 'budgeted' thrown around here, we'll remove those extra labels.
     
 -   **Large text**
-    Some text here is too large, specifically the category names. We should have far more visual real estate by making those labels smaller. This also brings a little more unity with system table cells. Usually font sizes for lists are around 17pts, these are much much larger as it stands.
+    Some text here is too large, specifically the category names. Usually font sizes for lists are around 17pts, the v1 cells are much larger. We should have far more visual real estate by making those labels smaller. This also brings a little more consistency with system table cells.
     <img src="./v1-home-cell.png" alt="Home Cell"  style="max-height:70px;" />
     
 -   **Navigation**
-    While I am a huge fan of this navigation scheme, four buttons on the top does not work well with large accessibility sizes. To fix this I'll be removing the 'Withdraw' and 'Deposit' buttons from this navigation area. I've been developing a new element that will replace these, which I'll go over in a future installment.
+    While I am a huge fan of this navigation scheme, four buttons on the top does not work well with large accessibility text sizes. To fix this I'll be removing the 'Withdraw' and 'Deposit' buttons from this navigation area. I've been developing a new element that will replace these, which I'll go over in a future installment.
     <img src="./v1-nav.png" alt="Home Navigation" style="max-height:95px;" />
 
 ### What might we add?
@@ -59,7 +63,7 @@ This design isn't bad. In fact, it landed me a front page spot on the App Store.
     Something that's always bothered me is the lack of a place to see the *total* budgeted amount on the Home Screen. I'll be putting that in the header under to the *balance* label. I feel that this matches the rest of the category cells, so it keeps a similar design language.
     
 -   **Negative Progress Bar Width**
-    A friend pointed out that if a category is negative, there's no point in indicating *how* negative it is, it's just a problem. Towards that end I'll be changing the design slightly so that negative categories do not have a 'progress'. Instead, the red bar will cover the entire width of the category cell. This should reduce some extraneous information on the home view.
+    [Nels Parenteau](https://nelsparenteau.com) pointed out that if a category is negative, there's no point in indicating *how* negative it is, it should just indicate that there's an overspend. In v2, the red bar will cover the entire width of the category cell. This will reduce unnecessary information on the home view.
 
 ## New Design
 
@@ -77,6 +81,8 @@ This pallet is much lighter. The green and reds of the progress bar allow text t
 Combining all of this, we get a new Home Screen design.
 
 <img src="./v2-home-screen.webp" alt="home screen screenshot" style="max-height:580px;" />
+
+I'm extremely happy with this. There's tons more visual space, the fonts are clearer, and there's more space for user's category names. On top of this, at larger accessibility text sizes the layout doesn't change very much. The fonts grow bigger, but for the most part we can keep the same layout even at those sizes.
 
 One of the most fun things about this is that I did a lot of experimenting with fonts, specifically font modifiers and OpenType features ([which I wrote about here](https://khanwinter.com/2026-02-06-OpenType-UIFont/)). The result is this very nice, specialized, monetary, font for all currency labels in the app. It has more open characters, and emphasizes clarity even on small labels. There's a few other subtle typography improvements as well, such as the fact that the navigator cells now are slightly more bold than category cells, providing more visual distinction between the two.
 
