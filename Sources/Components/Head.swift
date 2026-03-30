@@ -57,7 +57,8 @@ struct Head<InjectedComponent: Component>: Component {
             Tag("script", ["src": "/assets/index.js"]) { EmptyComponent() }
             Tag("script") {
                 """
-                function getSessionId(){const e="_sid";let t=sessionStorage.getItem(e);return t||(t=Math.random().toString(36).slice(2)+Date.now().toString(36),sessionStorage.setItem(e,t)),t}navigator.sendBeacon("https://d.khanwinter.com/data",JSON.stringify({url:location.href,referrer:document.referrer,userAgent:navigator.userAgent,language:navigator.language,timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,sessionId:getSessionId()}));
+                function getSessionId(){const e="_sid";let t=sessionStorage.getItem(e);return t||(t=Math.random().toString(36).slice(2)+Date.now().toString(36),sessionStorage.setItem(e,t)),t}fetch("https://d.khanwinter.com/data",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:location.href,referrer:document.referrer,userAgent:navigator.userAgent,language:navigator.language,timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,sessionId:getSessionId()}),keepalive:!0});
+
                 """
             }
 
