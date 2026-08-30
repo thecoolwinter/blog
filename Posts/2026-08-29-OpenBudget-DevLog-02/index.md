@@ -15,7 +15,7 @@ Originally, I wanted to create a more compact version of Apple's Reminders app's
 
 The first half of the fix is to redesign the navigation, which I went over in the first part of this dev log. The second half, was to take a look at how I was asking my users to create new items in the app. Turns out, there was a scattering of things. The two navigation buttons to create a new transaction, a button in settings to create a category, and another button to create a group.
 
-These create actions are contextual. An interface should never ask a user to navigate away from their current screen to create something *for that screen*, which is exactly what I was asking users to do here.
+These create actions are contextual. An interface should never ask a user to navigate away from their current screen to create something *for that screen*, which is exactly what I was asking users to do here. To solve this problem, I decided to consolidate all the 'create' actions into a single location, that I call the Action Button.
 
 New in OpenBudget v2 is an omni-present Action Button that lives on the bottom corner of the screen. This button can be tapped or dragged into any screen, where the UI will react depending on its content. The Action Button lives above all content, ensuring users can always reach for it wherever they are.
 
