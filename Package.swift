@@ -1,10 +1,10 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.3
 
 import PackageDescription
 
 let package = Package(
     name: "blog",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS(.v26)],
     dependencies: [
         .package(path: "Dependencies/Ink"),
         .package(url: "https://github.com/Kitura/swift-html-entities.git", from: "3.0.0")

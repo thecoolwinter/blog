@@ -2,7 +2,45 @@ import Foundation
 import RegexBuilder
 import Ink
 
-private let headingIdsModifier: Modifier = Modifier(target: .headings) { input in
+private nonisolated(unsafe) let iphoneVideoSrcPattern = Regex {
+    "src=\""
+    Capture { OneOrMore(.any, .reluctant) }
+    "\""
+}
+
+private nonisolated(unsafe) let iphoneVideoSpeedPattern = Regex {
+    "speed=\""
+    Capture { OneOrMore(.any, .reluctant) }
+    "\""
+}
+
+private nonisolated(unsafe) let iphoneVideoModifier: Modifier = Modifier(target: .html) { input in
+    let pattern = Regex {
+        Capture {
+            "<iphone-video"
+            ZeroOrMore(.any)
+            ChoiceOf {
+                "/>"
+                ">"
+            }
+        }
+        Optionally {
+            ZeroOrMore(.any, .reluctant)
+            "</iphone-video>"
+        }
+    }
+
+    return input.html.replacing(pattern) { match in
+        let tag = String(match.output.1)
+        guard let src = tag.firstMatch(of: iphoneVideoSrcPattern)?.output.1 else {
+            return String(match.output.0)
+        }
+        let speed = tag.firstMatch(of: iphoneVideoSpeedPattern)?.output.1
+        return PhoneVideoEmbed(src: String(src), speed: speed.map(String.init)).html
+    }
+}
+
+private nonisolated(unsafe) let headingIdsModifier: Modifier = Modifier(target: .headings) { input in
     let pattern = Regex {
         One("<")
         One("h")
@@ -48,7 +86,7 @@ struct BlogPostContents {
 
     init(path: URL) throws {
         let contents = try String(contentsOf: path)
-        let parsed = MarkdownParser(modifiers: [headingIdsModifier]).parse(contents)
+        let parsed = MarkdownParser(modifiers: [headingIdsModifier, iphoneVideoModifier]).parse(contents)
         guard let title = parsed.metadata["title"] else {
             fatalError("No title in metadata")
         }
