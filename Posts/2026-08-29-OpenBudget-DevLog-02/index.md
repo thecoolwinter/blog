@@ -1,7 +1,7 @@
 ---
 title: OpenBudget Dev Log - Part 2
 tags: [OpenBudget, Swift, UIKit, AppKit]
-excerpt: Glassy, Blobby, Fun and Functional UI
+excerpt: The Action Button - Glassy, Blobby UI
 created_at: 2026-08-29
 ---
 
